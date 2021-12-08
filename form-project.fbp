@@ -11,7 +11,7 @@
         <property name="embedded_files_path">res</property>
         <property name="encoding">UTF-8</property>
         <property name="event_generation">connect</property>
-        <property name="file">MainWindow</property>
+        <property name="file">WindowBase</property>
         <property name="first_id">1000</property>
         <property name="help_provider">none</property>
         <property name="image_path_wrapper_function_name"></property>
@@ -37,7 +37,7 @@
             <property name="context_help"></property>
             <property name="context_menu">1</property>
             <property name="enabled">1</property>
-            <property name="event_handler">decl</property>
+            <property name="event_handler">decl_pure_virtual</property>
             <property name="extra_style"></property>
             <property name="fg"></property>
             <property name="font"></property>
@@ -45,12 +45,12 @@
             <property name="id">wxID_ANY</property>
             <property name="maximum_size"></property>
             <property name="minimum_size"></property>
-            <property name="name">MainWindow</property>
+            <property name="name">WindowBase</property>
             <property name="pos"></property>
             <property name="size">619,411</property>
             <property name="style">wxDEFAULT_FRAME_STYLE</property>
             <property name="subclass">; ; forward_declare</property>
-            <property name="title">DJHCP+</property>
+            <property name="title">DJHCPP</property>
             <property name="tooltip"></property>
             <property name="two_step_creation">0</property>
             <property name="window_extra_style"></property>

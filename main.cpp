@@ -4,7 +4,7 @@
 class App : public wxApp{
 public:
     virtual bool OnInit(){
-        MainWindow* mainwindow = new MainWindow(nullptr);
+        MainWindow* mainwindow = new MainWindow();
         mainwindow->Show();
         return true;
     }
