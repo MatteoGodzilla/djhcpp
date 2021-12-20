@@ -44,10 +44,10 @@
             <property name="hidden">0</property>
             <property name="id">wxID_ANY</property>
             <property name="maximum_size"></property>
-            <property name="minimum_size"></property>
+            <property name="minimum_size">640,320</property>
             <property name="name">WindowBase</property>
             <property name="pos"></property>
-            <property name="size">619,411</property>
+            <property name="size">640,480</property>
             <property name="style">wxDEFAULT_FRAME_STYLE</property>
             <property name="subclass">; ; forward_declare</property>
             <property name="title">DJHCPP</property>
@@ -59,22 +59,22 @@
             <property name="xrc_skip_sizer">1</property>
             <object class="wxBoxSizer" expanded="1">
                 <property name="minimum_size"></property>
-                <property name="name">bSizer2</property>
+                <property name="name">rootSizer</property>
                 <property name="orient">wxVERTICAL</property>
                 <property name="permission">none</property>
                 <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
-                    <property name="flag">wxEXPAND</property>
+                    <property name="flag">wxEXPAND|wxFIXED_MINSIZE</property>
                     <property name="proportion">1</property>
                     <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
-                        <property name="name">bSizer3</property>
+                        <property name="name">topSizer</property>
                         <property name="orient">wxHORIZONTAL</property>
                         <property name="permission">none</property>
                         <object class="sizeritem" expanded="0">
                             <property name="border">5</property>
-                            <property name="flag">wxEXPAND</property>
-                            <property name="proportion">3</property>
+                            <property name="flag">wxFIXED_MINSIZE</property>
+                            <property name="proportion">2</property>
                             <object class="wxBoxSizer" expanded="0">
                                 <property name="minimum_size"></property>
                                 <property name="name">bSizer4</property>
@@ -361,7 +361,7 @@
                     <property name="proportion">5</property>
                     <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
-                        <property name="name">bSizer6</property>
+                        <property name="name">middleSizer</property>
                         <property name="orient">wxHORIZONTAL</property>
                         <property name="permission">none</property>
                         <object class="sizeritem" expanded="1">
@@ -389,6 +389,72 @@
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
+                                <object class="dataViewListColumn" expanded="1">
+                                    <property name="align">wxALIGN_LEFT</property>
+                                    <property name="ellipsize"></property>
+                                    <property name="flags">wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE</property>
+                                    <property name="label">ID</property>
+                                    <property name="mode">wxDATAVIEW_CELL_INERT</property>
+                                    <property name="name">colID</property>
+                                    <property name="permission">protected</property>
+                                    <property name="type">Text</property>
+                                    <property name="width">-1</property>
+                                </object>
+                                <object class="dataViewListColumn" expanded="1">
+                                    <property name="align">wxALIGN_LEFT</property>
+                                    <property name="ellipsize"></property>
+                                    <property name="flags">wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE</property>
+                                    <property name="label">Artist 1</property>
+                                    <property name="mode">wxDATAVIEW_CELL_INERT</property>
+                                    <property name="name">colArtist1</property>
+                                    <property name="permission">protected</property>
+                                    <property name="type">Text</property>
+                                    <property name="width">-1</property>
+                                </object>
+                                <object class="dataViewListColumn" expanded="1">
+                                    <property name="align">wxALIGN_LEFT</property>
+                                    <property name="ellipsize"></property>
+                                    <property name="flags">wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE</property>
+                                    <property name="label">Name 1</property>
+                                    <property name="mode">wxDATAVIEW_CELL_INERT</property>
+                                    <property name="name">colName1</property>
+                                    <property name="permission">protected</property>
+                                    <property name="type">Text</property>
+                                    <property name="width">-1</property>
+                                </object>
+                                <object class="dataViewListColumn" expanded="1">
+                                    <property name="align">wxALIGN_LEFT</property>
+                                    <property name="ellipsize"></property>
+                                    <property name="flags">wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE</property>
+                                    <property name="label">Artist 2</property>
+                                    <property name="mode">wxDATAVIEW_CELL_INERT</property>
+                                    <property name="name">colArtist2</property>
+                                    <property name="permission">protected</property>
+                                    <property name="type">Text</property>
+                                    <property name="width">-1</property>
+                                </object>
+                                <object class="dataViewListColumn" expanded="1">
+                                    <property name="align">wxALIGN_LEFT</property>
+                                    <property name="ellipsize"></property>
+                                    <property name="flags">wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE</property>
+                                    <property name="label">Name 2</property>
+                                    <property name="mode">wxDATAVIEW_CELL_INERT</property>
+                                    <property name="name">colName2</property>
+                                    <property name="permission">protected</property>
+                                    <property name="type">Text</property>
+                                    <property name="width">-1</property>
+                                </object>
+                                <object class="dataViewListColumn" expanded="1">
+                                    <property name="align">wxALIGN_LEFT</property>
+                                    <property name="ellipsize"></property>
+                                    <property name="flags">wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE</property>
+                                    <property name="label">BPM</property>
+                                    <property name="mode">wxDATAVIEW_CELL_INERT</property>
+                                    <property name="name">colBpm</property>
+                                    <property name="permission">protected</property>
+                                    <property name="type">Text</property>
+                                    <property name="width">-1</property>
+                                </object>
                             </object>
                         </object>
                     </object>
@@ -399,7 +465,7 @@
                     <property name="proportion">1</property>
                     <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
-                        <property name="name">bSizer8</property>
+                        <property name="name">bottomSizer</property>
                         <property name="orient">wxHORIZONTAL</property>
                         <property name="permission">none</property>
                         <object class="sizeritem" expanded="1">

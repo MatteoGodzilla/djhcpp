@@ -41,6 +41,12 @@ class WindowBase : public wxFrame
 		wxTextCtrl* searchBox;
 		wxButton* ExtractedFilesBTN;
 		wxDataViewListCtrl* mainTable;
+		wxDataViewColumn* colID;
+		wxDataViewColumn* colArtist1;
+		wxDataViewColumn* colName1;
+		wxDataViewColumn* colArtist2;
+		wxDataViewColumn* colName2;
+		wxDataViewColumn* colBpm;
 		wxButton* addCustomBTN;
 		wxMenuBar* m_menubar1;
 		wxMenu* fileMenu;
@@ -52,7 +58,7 @@ class WindowBase : public wxFrame
 
 	public:
 
-		WindowBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("DJHCPP"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 619,411 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		WindowBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("DJHCPP"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,480 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~WindowBase();
 

@@ -11,14 +11,14 @@
 
 WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetSizeHints( wxSize( 640,320 ), wxDefaultSize );
 	this->SetBackgroundColour( wxColour( 255, 255, 255 ) );
 
-	wxBoxSizer* bSizer2;
-	bSizer2 = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer* rootSizer;
+	rootSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxBoxSizer* bSizer3;
-	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer* topSizer;
+	topSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
@@ -41,34 +41,40 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	bSizer4->Add( bSizer5, 3, wxEXPAND, 5 );
 
 
-	bSizer3->Add( bSizer4, 3, wxEXPAND, 5 );
+	topSizer->Add( bSizer4, 2, wxFIXED_MINSIZE, 5 );
 
 	ExtractedFilesBTN = new wxButton( this, wxID_ANY, wxT("Open Extracted Files"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer3->Add( ExtractedFilesBTN, 1, wxALL|wxEXPAND, 5 );
+	topSizer->Add( ExtractedFilesBTN, 1, wxALL|wxEXPAND, 5 );
 
 
-	bSizer2->Add( bSizer3, 1, wxEXPAND, 5 );
+	rootSizer->Add( topSizer, 1, wxEXPAND|wxFIXED_MINSIZE, 5 );
 
-	wxBoxSizer* bSizer6;
-	bSizer6 = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer* middleSizer;
+	middleSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	mainTable = new wxDataViewListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer6->Add( mainTable, 1, wxALL|wxEXPAND, 5 );
+	colID = mainTable->AppendTextColumn( wxT("ID"), wxDATAVIEW_CELL_INERT, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE );
+	colArtist1 = mainTable->AppendTextColumn( wxT("Artist 1"), wxDATAVIEW_CELL_INERT, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE );
+	colName1 = mainTable->AppendTextColumn( wxT("Name 1"), wxDATAVIEW_CELL_INERT, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE );
+	colArtist2 = mainTable->AppendTextColumn( wxT("Artist 2"), wxDATAVIEW_CELL_INERT, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE );
+	colName2 = mainTable->AppendTextColumn( wxT("Name 2"), wxDATAVIEW_CELL_INERT, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE );
+	colBpm = mainTable->AppendTextColumn( wxT("BPM"), wxDATAVIEW_CELL_INERT, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE );
+	middleSizer->Add( mainTable, 1, wxALL|wxEXPAND, 5 );
 
 
-	bSizer2->Add( bSizer6, 5, wxEXPAND, 5 );
+	rootSizer->Add( middleSizer, 5, wxEXPAND, 5 );
 
-	wxBoxSizer* bSizer8;
-	bSizer8 = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer* bottomSizer;
+	bottomSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	addCustomBTN = new wxButton( this, wxID_ANY, wxT("Add Custom"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer8->Add( addCustomBTN, 2, wxALL|wxEXPAND, 5 );
+	bottomSizer->Add( addCustomBTN, 2, wxALL|wxEXPAND, 5 );
 
 
-	bSizer2->Add( bSizer8, 1, wxEXPAND, 5 );
+	rootSizer->Add( bottomSizer, 1, wxEXPAND, 5 );
 
 
-	this->SetSizer( bSizer2 );
+	this->SetSizer( rootSizer );
 	this->Layout();
 	m_menubar1 = new wxMenuBar( 0 );
 	fileMenu = new wxMenu();
