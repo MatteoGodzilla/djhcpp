@@ -12,8 +12,10 @@ add_executable(djhcpp
     WindowBase.cpp
 )
 
+add_subdirectory(tinyxml2)
 add_subdirectory(wxWidgets)
-target_link_libraries(djhcpp wx::core wx::base wx::xml stdc++fs)
+
+target_link_libraries(djhcpp wx::core wx::base wx::xml tinyxml2 stdc++fs)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

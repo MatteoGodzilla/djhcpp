@@ -15,7 +15,7 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/textctrl.h>
+#include <wx/srchctrl.h>
 #include <wx/sizer.h>
 #include <wx/button.h>
 #include <wx/bitmap.h>
@@ -37,8 +37,7 @@ class WindowBase : public wxFrame
 
 	protected:
 		wxStaticText* baseFolderLabel;
-		wxStaticText* searchLabel;
-		wxTextCtrl* searchBox;
+		wxSearchCtrl* m_searchCtrl2;
 		wxButton* ExtractedFilesBTN;
 		wxDataViewListCtrl* mainTable;
 		wxDataViewColumn* colID;
@@ -54,6 +53,7 @@ class WindowBase : public wxFrame
 
 		// Virtual event handlers, override them in your derived class
 		virtual void OpenExtractedFiles( wxCommandEvent& event ) = 0;
+		virtual void AddCustom( wxCommandEvent& event ) = 0;
 
 
 	public:

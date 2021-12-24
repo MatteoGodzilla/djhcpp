@@ -27,18 +27,12 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	baseFolderLabel->Wrap( -1 );
 	bSizer4->Add( baseFolderLabel, 0, wxALL, 5 );
 
-	wxBoxSizer* bSizer5;
-	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
-
-	searchLabel = new wxStaticText( this, wxID_ANY, wxT("Search:"), wxDefaultPosition, wxDefaultSize, 0 );
-	searchLabel->Wrap( -1 );
-	bSizer5->Add( searchLabel, 0, wxALL|wxEXPAND, 5 );
-
-	searchBox = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer5->Add( searchBox, 1, wxALL|wxEXPAND, 5 );
-
-
-	bSizer4->Add( bSizer5, 3, wxEXPAND, 5 );
+	m_searchCtrl2 = new wxSearchCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	#ifndef __WXMAC__
+	m_searchCtrl2->ShowSearchButton( true );
+	#endif
+	m_searchCtrl2->ShowCancelButton( false );
+	bSizer4->Add( m_searchCtrl2, 0, wxALL|wxEXPAND, 5 );
 
 
 	topSizer->Add( bSizer4, 2, wxFIXED_MINSIZE, 5 );
@@ -98,12 +92,15 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 
 	// Connect Events
 	ExtractedFilesBTN->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::OpenExtractedFiles ), NULL, this );
+	addCustomBTN->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::AddCustom ), NULL, this );
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::OpenExtractedFiles ), this, OpenExtractedMI->GetId());
+	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::AddCustom ), this, addCustomMI->GetId());
 }
 
 WindowBase::~WindowBase()
 {
 	// Disconnect Events
 	ExtractedFilesBTN->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::OpenExtractedFiles ), NULL, this );
+	addCustomBTN->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::AddCustom ), NULL, this );
 
 }
