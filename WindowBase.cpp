@@ -41,7 +41,7 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	topSizer->Add( ExtractedFilesBTN, 1, wxALL|wxEXPAND, 5 );
 
 
-	rootSizer->Add( topSizer, 1, wxEXPAND|wxFIXED_MINSIZE, 5 );
+	rootSizer->Add( topSizer, 0, wxFIXED_MINSIZE|wxEXPAND, 5 );
 
 	wxBoxSizer* middleSizer;
 	middleSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -62,10 +62,12 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	bottomSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	addCustomBTN = new wxButton( this, wxID_ANY, wxT("Add Custom"), wxDefaultPosition, wxDefaultSize, 0 );
+	addCustomBTN->SetFont( wxFont( 14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
+
 	bottomSizer->Add( addCustomBTN, 2, wxALL|wxEXPAND, 5 );
 
 
-	rootSizer->Add( bottomSizer, 1, wxEXPAND, 5 );
+	rootSizer->Add( bottomSizer, 0, wxEXPAND, 5 );
 
 
 	this->SetSizer( rootSizer );

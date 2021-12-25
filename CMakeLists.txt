@@ -10,6 +10,8 @@ set(wxBUILD_SHARED OFF)
 include(CTest)
 enable_testing()
 
+configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${PROJECT_SOURCE_DIR}/config.h)
+
 add_executable(djhcpp 
     main.cpp 
     MainWindow.cpp 

@@ -3,7 +3,9 @@
 namespace fs = std::filesystem;
 using namespace tinyxml2;
 
-MainWindow::MainWindow() : WindowBase(NULL) {}
+MainWindow::MainWindow() : WindowBase(NULL) {
+    SetLabel("DJHCPP v" + DJHCPP_VERSION);
+}
 
 void MainWindow::OpenExtractedFiles( wxCommandEvent& event ){
     wxDirDialog* dialog = new wxDirDialog(this, "Open WII/PS3/X360 folder", "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
@@ -37,7 +39,7 @@ void MainWindow::OpenExtractedFiles( wxCommandEvent& event ){
             tracklisting.LoadFile(tracklistingPath.generic_string().c_str());
             UpdateTable();
         } else {
-            wxLogWarning("Tracklisting file not found (error #1)");
+            wxLogError("Tracklisting file not found (error 0x1)");
         }
     }
 }

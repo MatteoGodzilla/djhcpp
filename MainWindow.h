@@ -1,3 +1,5 @@
+#pragma once
+
 #include <map>
 #include <filesystem>
 #include <fstream>
@@ -6,6 +8,7 @@
 #include "wx/log.h"
 #include "tinyxml2/tinyxml2.h"
 #include "WindowBase.h"
+#include "config.h"
 
 class MainWindow : public WindowBase{
 public:
