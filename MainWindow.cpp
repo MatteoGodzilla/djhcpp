@@ -35,6 +35,7 @@ void MainWindow::OpenExtractedFiles( wxCommandEvent& event ){
                 std::getline(tracEStream,value,'\0');
                 textData.insert(std::make_pair(id,value));
             }
+            wxLogMessage(wxString() << textData.size());
             //load tracklisting
             tracklisting.LoadFile(tracklistingPath.generic_string().c_str());
             UpdateTable();
@@ -52,7 +53,7 @@ void MainWindow::AddCustom(wxCommandEvent& event){
 
         bool showOverwriteDialog = true;
         for(size_t i = 0; i < paths.GetCount(); i++){
-            fs::path dir = fs::path(paths[i].ToStdString());
+            fs::path dir = fs::path(paths[i].ToStdWstring());
             if(fs::exists(dir/"DJH2")) dir /= "DJH2";
             
             ProcessCustom(dir);
@@ -65,34 +66,45 @@ void MainWindow::ProcessCustom(fs::path dir){
     fs::path customTracklisting = dir / "Info for Tracklisting.xml";
     fs::path customTextData = dir / "Info for TRAC.csv";
     tinyxml2::XMLDocument doc;
+    if(!fs::exists(customTracklisting)){
+        wxLogError("'Info for Tracklisting.xml' file not found");
+        return;
+    }
+
     doc.LoadFile(customTracklisting.generic_string().c_str());
 
     XMLNode* track = doc.RootElement()->FirstChild();
 
-    wxString addingTag = track->FirstChildElement("IDTag")->GetText();
+    while(track != nullptr){
+        //identical
+        if(strcmp(track->Value(),"Track") == 0){
+            wxString addingTag = track->FirstChildElement("IDTag")->GetText();
 
-    XMLElement* tracklistingRoot = tracklisting.RootElement();
-    XMLNode* tracklistingTrack = tracklistingRoot->FirstChild();
-    XMLNode* possibleRemove = nullptr;
+            XMLElement* tracklistingRoot = tracklisting.RootElement();
+            XMLNode* tracklistingTrack = tracklistingRoot->FirstChild();
+            XMLNode* possibleRemove = nullptr;
 
-    while(tracklistingTrack != nullptr){
-        XMLElement* IDTag = tracklistingTrack->FirstChildElement("IDTag");
-        if(IDTag != nullptr){
-            wxString trackTestingID = IDTag->GetText();
-            if(trackTestingID == addingTag){
-                wxLogMessage("Replacing track node");
-                possibleRemove = tracklistingTrack;
+            while(tracklistingTrack != nullptr){
+                XMLElement* IDTag = tracklistingTrack->FirstChildElement("IDTag");
+                if(IDTag != nullptr){
+                    wxString trackTestingID = IDTag->GetText();
+                    if(trackTestingID == addingTag){
+                        wxLogMessage("Replacing track node");
+                        possibleRemove = tracklistingTrack;
+                    }
+                }
+                tracklistingTrack = tracklistingTrack->NextSibling();
             }
-        }
-        tracklistingTrack = tracklistingTrack->NextSibling();
-    }
-    //to insert a node in tracklisting that node needs to be own already by tracklisting
-    //with DeepClone we get a copy that is own by tracklisting
-    //that is safe to add to the root;
-    if(possibleRemove != nullptr) tracklistingRoot->DeleteChild(possibleRemove);
+            //to insert a node in tracklisting that node needs to be own already by tracklisting
+            //with DeepClone we get a copy that is own by tracklisting
+            //that is safe to add to the root;
+            if(possibleRemove != nullptr) tracklistingRoot->DeleteChild(possibleRemove);
 
-    XMLNode* copy = track->DeepClone(&tracklisting);
-    tracklistingRoot->InsertEndChild(copy);
+            XMLNode* copy = track->DeepClone(&tracklisting);
+            tracklistingRoot->InsertEndChild(copy);
+        }
+        track = track->NextSibling();
+    }
 
     //importing text data
     std::ifstream textDataStream = std::ifstream(customTextData.generic_string());
@@ -131,15 +143,22 @@ void MainWindow::ProcessCustom(fs::path dir){
     }
 
     //copy files to location
-    fs::path destination = basePath / "AUDIO" / "Audiotracks";
+    fs::path rootAudiotracks = basePath / "AUDIO" / "Audiotracks";
 
     for(auto& path : fs::directory_iterator(dir)){
         if(fs::is_directory(path)){
             //only copy inner subfolders and skip "info for ..." files
+            fs::path destination = rootAudiotracks;
+            destination /= path.path().filename().generic_string();
+            //wxLogMessage(destination.generic_string().c_str());
             fs::copy(path, destination, fs::copy_options::recursive | fs::copy_options::overwrite_existing);
         }
     }
     UpdateTable();
+    Export();
+}
+
+void MainWindow::ManualUpdate(wxCommandEvent& e){
     Export();
 }
 
@@ -151,8 +170,11 @@ void MainWindow::Export(){
 
     if(trackIDStream.is_open() && trackEStream.is_open()){
         for(auto& pair : textData){
-            trackIDStream << pair.first << "\n";
-            trackEStream << pair.second << '\0';
+            if(pair.first != std::string("")){
+                trackIDStream << pair.first << "\n";
+                trackEStream << pair.second << '\0';
+                //wxLogMessage(wxString() << pair.first << ":" << pair.second);
+            }
         }
 
         trackIDStream.close();

@@ -82,6 +82,10 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	addCustomMI = new wxMenuItem( fileMenu, wxID_ANY, wxString( wxT("Add Custom") ) , wxEmptyString, wxITEM_NORMAL );
 	fileMenu->Append( addCustomMI );
 
+	wxMenuItem* m_menuItem3;
+	m_menuItem3 = new wxMenuItem( fileMenu, wxID_ANY, wxString( wxT("Update Manually") ) , wxEmptyString, wxITEM_NORMAL );
+	fileMenu->Append( m_menuItem3 );
+
 	m_menubar1->Append( fileMenu, wxT("File") );
 
 	toolsMenu = new wxMenu();
@@ -97,6 +101,7 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	addCustomBTN->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::AddCustom ), NULL, this );
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::OpenExtractedFiles ), this, OpenExtractedMI->GetId());
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::AddCustom ), this, addCustomMI->GetId());
+	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ManualUpdate ), this, m_menuItem3->GetId());
 }
 
 WindowBase::~WindowBase()

@@ -54,6 +54,7 @@ class WindowBase : public wxFrame
 		// Virtual event handlers, override them in your derived class
 		virtual void OpenExtractedFiles( wxCommandEvent& event ) = 0;
 		virtual void AddCustom( wxCommandEvent& event ) = 0;
+		virtual void ManualUpdate( wxCommandEvent& event ) = 0;
 
 
 	public:

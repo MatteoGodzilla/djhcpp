@@ -15,6 +15,7 @@ public:
     MainWindow();
     void OpenExtractedFiles( wxCommandEvent& event ) override;
     void AddCustom(wxCommandEvent& event) override;
+    void ManualUpdate(wxCommandEvent& event) override;
     void UpdateTable();
     //bool CheckDuplicateID(std::string path);
     void ProcessCustom(std::filesystem::path dir);
