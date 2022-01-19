@@ -24,6 +24,8 @@
 #include <wx/dataview.h>
 #include <wx/menu.h>
 #include <wx/frame.h>
+#include <wx/textctrl.h>
+#include <wx/checkbox.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -62,6 +64,65 @@ class WindowBase : public wxFrame
 		WindowBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("DJHCPP"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,480 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~WindowBase();
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class TracklistingGen
+///////////////////////////////////////////////////////////////////////////////
+class TracklistingGen : public wxFrame
+{
+	private:
+
+	protected:
+		wxStaticText* Tag1;
+		wxStaticText* spacer1;
+		wxStaticText* m_staticText2;
+		wxTextCtrl* m_textCtrl3;
+		wxStaticText* m_staticText3;
+		wxTextCtrl* m_textCtrl4;
+		wxStaticText* m_staticText4;
+		wxTextCtrl* m_textCtrl5;
+		wxStaticText* m_staticText5;
+		wxTextCtrl* m_textCtrl6;
+		wxStaticText* m_staticText6;
+		wxTextCtrl* m_textCtrl7;
+		wxStaticText* m_staticText7;
+		wxTextCtrl* m_textCtrl8;
+		wxStaticText* m_staticText8;
+		wxTextCtrl* m_textCtrl9;
+		wxStaticText* m_staticText9;
+		wxTextCtrl* m_textCtrl10;
+		wxStaticText* tag2;
+		wxStaticText* spacer2;
+		wxStaticText* m_staticText10;
+		wxTextCtrl* m_textCtrl11;
+		wxStaticText* m_staticText11;
+		wxTextCtrl* m_textCtrl12;
+		wxStaticText* m_staticText17;
+		wxTextCtrl* m_textCtrl13;
+		wxStaticText* m_staticText18;
+		wxTextCtrl* m_textCtrl14;
+		wxStaticText* tag3;
+		wxStaticText* spacer3;
+		wxStaticText* m_staticText21;
+		wxTextCtrl* m_textCtrl17;
+		wxStaticText* m_staticText22;
+		wxTextCtrl* m_textCtrl18;
+		wxStaticText* m_staticText23;
+		wxCheckBox* m_checkBox1;
+		wxStaticText* m_staticText24;
+		wxCheckBox* m_checkBox2;
+		wxTextCtrl* xmlOutput;
+		wxTextCtrl* csvOutput;
+		wxButton* GenerateTracklisting;
+		wxButton* CreateBaseFolder;
+
+	public:
+
+		TracklistingGen( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Tracklisting Generator"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 766,693 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+
+		~TracklistingGen();
 
 };
 
