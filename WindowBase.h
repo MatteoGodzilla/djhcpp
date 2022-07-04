@@ -57,6 +57,7 @@ class WindowBase : public wxFrame
 		virtual void OpenExtractedFiles( wxCommandEvent& event ) = 0;
 		virtual void AddCustom( wxCommandEvent& event ) = 0;
 		virtual void ManualUpdate( wxCommandEvent& event ) = 0;
+		virtual void OpenTrackisting( wxCommandEvent& event ) = 0;
 
 
 	public:
@@ -78,45 +79,50 @@ class TracklistingGen : public wxFrame
 		wxStaticText* Tag1;
 		wxStaticText* spacer1;
 		wxStaticText* m_staticText2;
-		wxTextCtrl* m_textCtrl3;
+		wxTextCtrl* m_textID;
 		wxStaticText* m_staticText3;
-		wxTextCtrl* m_textCtrl4;
+		wxTextCtrl* m_textBPM;
 		wxStaticText* m_staticText4;
-		wxTextCtrl* m_textCtrl5;
+		wxTextCtrl* m_textArtist1;
 		wxStaticText* m_staticText5;
-		wxTextCtrl* m_textCtrl6;
+		wxTextCtrl* m_textSong1;
 		wxStaticText* m_staticText6;
-		wxTextCtrl* m_textCtrl7;
+		wxTextCtrl* m_textArtist2;
 		wxStaticText* m_staticText7;
-		wxTextCtrl* m_textCtrl8;
+		wxTextCtrl* m_textSong2;
 		wxStaticText* m_staticText8;
-		wxTextCtrl* m_textCtrl9;
+		wxTextCtrl* m_textMixedBy;
 		wxStaticText* m_staticText9;
-		wxTextCtrl* m_textCtrl10;
+		wxTextCtrl* m_textMixerPresents;
 		wxStaticText* tag2;
 		wxStaticText* spacer2;
 		wxStaticText* m_staticText10;
-		wxTextCtrl* m_textCtrl11;
+		wxTextCtrl* m_textDiffGeneral;
 		wxStaticText* m_staticText11;
-		wxTextCtrl* m_textCtrl12;
+		wxTextCtrl* m_textDiffTap;
 		wxStaticText* m_staticText17;
-		wxTextCtrl* m_textCtrl13;
+		wxTextCtrl* m_textDiffScratch;
 		wxStaticText* m_staticText18;
-		wxTextCtrl* m_textCtrl14;
+		wxTextCtrl* m_textDiffCrossfade;
 		wxStaticText* tag3;
 		wxStaticText* spacer3;
 		wxStaticText* m_staticText21;
-		wxTextCtrl* m_textCtrl17;
+		wxTextCtrl* m_textSpeed;
 		wxStaticText* m_staticText22;
-		wxTextCtrl* m_textCtrl18;
+		wxTextCtrl* m_textDuration;
 		wxStaticText* m_staticText23;
-		wxCheckBox* m_checkBox1;
+		wxCheckBox* m_checkBoxIsVocal;
 		wxStaticText* m_staticText24;
-		wxCheckBox* m_checkBox2;
+		wxCheckBox* m_checkBoxIsMenuMusic;
 		wxTextCtrl* xmlOutput;
 		wxTextCtrl* csvOutput;
 		wxButton* GenerateTracklisting;
 		wxButton* CreateBaseFolder;
+
+		// Virtual event handlers, override them in your derived class
+		virtual void GenTracklisting( wxCommandEvent& event ) = 0;
+		virtual void GenBaseFolder( wxCommandEvent& event ) = 0;
+
 
 	public:
 

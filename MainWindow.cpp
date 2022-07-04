@@ -252,3 +252,8 @@ void MainWindow::UpdateTable(){
         track = track->NextSibling();
     }
 }
+
+void MainWindow::OpenTrackisting(wxCommandEvent& event){
+    TracklistingWindow* twin = new TracklistingWindow(this);
+    twin->Show();
+}

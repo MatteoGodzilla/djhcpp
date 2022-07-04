@@ -17,3 +17,4 @@ Then, install cmake for your particular system by using a package manager or dow
 
 Afterwards you can use cmake-gui or cmake from the command line to generate and configure the project (defaults are fine)
 Make sure to select 'Unix Makefile' as generator
+there is a build.sh file that shows the basic commands to use to compile.

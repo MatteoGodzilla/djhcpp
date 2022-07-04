@@ -8,6 +8,7 @@
 #include "wx/log.h"
 #include "tinyxml2/tinyxml2.h"
 #include "WindowBase.h"
+#include "TracklistingWindow.h"
 #include "config.h"
 
 class MainWindow : public WindowBase{
@@ -16,6 +17,7 @@ public:
     void OpenExtractedFiles( wxCommandEvent& event ) override;
     void AddCustom(wxCommandEvent& event) override;
     void ManualUpdate(wxCommandEvent& event) override;
+    void OpenTrackisting( wxCommandEvent& event ) override;
     void UpdateTable();
     //bool CheckDuplicateID(std::string path);
     void ProcessCustom(std::filesystem::path dir);

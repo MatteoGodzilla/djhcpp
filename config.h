@@ -2,4 +2,4 @@
 #include <string>
 
 //will be replaced by cmake with the correct version string;
-const std::string DJHCPP_VERSION = "0.1.1";
+const std::string DJHCPP_VERSION = "0.1.2";

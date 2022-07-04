@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(djhcpp VERSION 0.1.1)
+project(djhcpp VERSION 0.1.2)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 set(BUILD_SHARED_LIBS OFF)
-set(CMAKE_EXE_LINKER_FLAGS "-static")
+#set(CMAKE_EXE_LINKER_FLAGS "-static")
 set(wxBUILD_SHARED OFF)
 
 include(CTest)
@@ -15,6 +15,7 @@ configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${PROJECT_SOURCE_DIR}/config.h)
 add_executable(djhcpp 
     main.cpp 
     MainWindow.cpp 
+    TracklistingWindow.cpp
     WindowBase.cpp
 )
 
