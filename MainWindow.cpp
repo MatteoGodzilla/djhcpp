@@ -5,6 +5,40 @@ using namespace tinyxml2;
 
 MainWindow::MainWindow() : WindowBase(NULL) {
     SetLabel("DJHCPP v" + DJHCPP_VERSION);
+    if(!fs::exists(SETTINGS_FILE_NAME)){
+        //create one with defaults
+        mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
+        mINI::INIStructure ini;
+        ini["Settings"]["baseFolder"] = "";
+        backupFolderPath = fs::current_path() / "djhcpp_backups";
+        fs::create_directory(backupFolderPath);
+        ini["Settings"]["backupFolderPath"] = backupFolderPath.string();
+        ini["Settings"]["automaticBackups"] = "true";
+        automaticBackups = true;
+        settings.write(ini);
+    } else {
+        mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
+        mINI::INIStructure ini;
+        settings.read(ini);
+        basePath = ini["Settings"]["baseFolder"];
+        backupFolderPath = fs::path(ini["Settings"]["backupFolderPath"]);
+        automaticBackups = ini["Settings"]["automaticBackups"] == "true";
+        
+        ParseExtracted(basePath);
+        
+        //TODO: parse backups already present
+        for(auto& dirEntry : fs::directory_iterator(backupFolderPath)){
+            if(dirEntry.is_directory()){
+                wxString text = dirEntry.path().filename().c_str();
+                wxMenuItem* entry = new wxMenuItem(backupRestoreMenu,wxID_ANY,text,wxEmptyString,wxITEM_NORMAL);
+                wxStringClientData* data = new wxStringClientData(wxString(dirEntry.path().string()));
+
+                backupRestoreMenu->Append(entry);
+                //i spent 2 hours trying to figure out how bind works. Rip me
+                backupRestoreMenu->Bind(wxEVT_MENU,MainWindow::RestoreBackup,this,entry->GetId(),-1,(wxObject*)data);
+            }
+        }
+    }
 }
 
 void MainWindow::OpenExtractedFiles( wxCommandEvent& event ){
@@ -13,35 +47,53 @@ void MainWindow::OpenExtractedFiles( wxCommandEvent& event ){
     if(dialog->ShowModal() == wxID_OK){
         //std::filesystem::path p = std::filesystem::path(dialog->GetPath());
         basePath = fs::path(dialog->GetPath().ToStdString());
+        ParseExtracted(basePath);
+    }
+}
+
+void MainWindow::ParseExtracted(fs::path path){
+    tracklistingPath = path / "AUDIO" / "Audiotracks" / "tracklisting.xml";
+    tracIDPath = path / "Text" / "TRAC" / "TRACID.txt";
+    tracEPath = path / "Text" / "TRAC" / "TRACE.txt";
+    //wxLogMessage(tracklistingPath.c_str());
+
+    if(fs::exists(tracklistingPath) && fs::exists(tracIDPath) && fs::exists(tracEPath)){
+        //wxLogMessage("Extracted Files found");
+        //load text string
+        std::ifstream tracIDStream = std::ifstream(tracIDPath);
+        std::ifstream tracEStream = std::ifstream(tracEPath);
         
-        tracklistingPath = basePath / "AUDIO" / "Audiotracks" / "tracklisting.xml";
-        tracIDPath = basePath / "Text" / "TRAC" / "TRACID.txt";
-        tracEPath = basePath / "Text" / "TRAC" / "TRACE.txt";
-        //wxLogMessage(tracklistingPath.c_str());
+        textData.clear();
+        textData.insert(std::make_pair(std::string(""), std::string(""))); //default when string is empty
 
-        if(fs::exists(tracklistingPath) && fs::exists(tracIDPath) && fs::exists(tracEPath)){
-            //wxLogMessage("Extracted Files found");
-            //load text string
-            std::ifstream tracIDStream = std::ifstream(tracIDPath);
-            std::ifstream tracEStream = std::ifstream(tracEPath);
-            
-            textData.clear();
-            textData.insert(std::make_pair(std::string(""), std::string(""))); //default when string is empty
-
-            while(!tracIDStream.eof()){
-                std::string id;
-                std::string value;
-                std::getline(tracIDStream,id);
-                std::getline(tracEStream,value,'\0');
-                textData.insert(std::make_pair(id,value));
-            }
-            wxLogMessage(wxString() << textData.size());
-            //load tracklisting
-            tracklisting.LoadFile(tracklistingPath.generic_string().c_str());
-            UpdateTable();
-        } else {
-            wxLogError("Tracklisting file not found (error 0x1)");
+        while(!tracIDStream.eof()){
+            std::string id;
+            std::string value;
+            std::getline(tracIDStream,id);
+            std::getline(tracEStream,value,'\0');
+            textData.insert(std::make_pair(id,value));
         }
+        wxLogMessage(wxString() << textData.size());
+        //load tracklisting
+        tracklisting.LoadFile(tracklistingPath.generic_string().c_str());
+        UpdateTable();
+        //add backup
+        if(automaticBackups){
+            time_t t = time(NULL);
+            tm* now = localtime(&t);
+            char dateFolder[31];
+            //format table is present here: https://cplusplus.com/reference/ctime/strftime/
+            std::strftime(dateFolder,30,"%Y-%m-%d_%H-%M-%S",now);
+            CreateBackup(backupFolderPath,dateFolder);
+        }
+        //set in the settings
+        mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
+        mINI::INIStructure ini;
+        settings.read(ini);
+        ini["Settings"]["baseFolder"] = path.string();
+        settings.write(ini);
+    } else {
+        wxLogError("Tracklisting file not found (error 0x1)");
     }
 }
 
@@ -181,6 +233,59 @@ void MainWindow::Export(){
         trackEStream.close();
     }
     wxLogMessage("Successfully updated the game's files");
+}
+
+void MainWindow::SetBackupFolder( wxCommandEvent& event){
+    wxDirDialog* dialog = new wxDirDialog(this, "Open Custom's folder", "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST );
+    if(dialog->ShowModal() == wxID_OK){
+        fs::path path = fs::path(dialog->GetPath().ToStdString());
+        mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
+        mINI::INIStructure ini;
+        settings.read(ini);
+        ini["Settings"]["backupFolderPath"] = path.string();
+        settings.write(ini);
+    }
+}
+
+void MainWindow::ManualBackup( wxCommandEvent& event ) {
+    wxString text = wxGetTextFromUser("Please enter the name of the backup:","Caption",wxEmptyString, this);
+    CreateBackup(backupFolderPath,text);
+}
+
+void MainWindow::CreateBackup(std::filesystem::path baseFolder, wxString name ){
+    if(fs::exists(baseFolder)){
+        fs::path thisBackup = baseFolder / name.ToStdString();
+        fs::create_directory(thisBackup);
+        
+        fs::copy_file(tracklistingPath, thisBackup / "tracklisting.xml");
+        fs::copy_file(tracIDPath, thisBackup / "TRACID.txt");
+        fs::copy_file(tracEPath, thisBackup / "TRACE.txt");
+
+        //add another entry to the menu
+        wxMenuItem* entry = new wxMenuItem(backupRestoreMenu,wxID_ANY,name,wxEmptyString,wxITEM_NORMAL);
+        wxStringClientData* data = new wxStringClientData(wxString(thisBackup.string()));
+
+        backupRestoreMenu->Append(entry);
+        backupRestoreMenu->Bind(wxEVT_MENU,MainWindow::RestoreBackup,this,entry->GetId(),-1,(wxObject*)data);
+    } else {
+        wxLogWarning("Backup folder path specified in the settings does not exist. Backup Aborted");
+    }
+}
+
+void MainWindow::RestoreBackup( wxCommandEvent& event){
+    //std::cout << event.GetId() << std::endl;
+    wxStringClientData* data = (wxStringClientData*)event.GetEventUserData();
+    if(!tracklistingPath.empty() && !tracIDPath.empty() && !tracEPath.empty()){
+        fs::path src(data->GetData().ToStdString());
+        fs::copy_options copyOptions;
+        copyOptions |= fs::copy_options::overwrite_existing;
+        fs::copy(src / "tracklisting.xml", tracklistingPath,copyOptions);
+        fs::copy(src / "TRACID.txt", tracIDPath,copyOptions);
+        fs::copy(src / "TRACE.txt", tracEPath,copyOptions);
+
+        //refresh extracted files and start again
+        ParseExtracted(basePath);
+    }
 }
 
 void MainWindow::UpdateTable(){

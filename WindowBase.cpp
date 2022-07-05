@@ -95,6 +95,29 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 
 	m_menubar1->Append( toolsMenu, wxT("Tools") );
 
+	backupRestoreMenu = new wxMenu();
+	wxMenuItem* m_menuItem8;
+	m_menuItem8 = new wxMenuItem( backupRestoreMenu, wxID_ANY, wxString( wxT("Backup") ) , wxEmptyString, wxITEM_NORMAL );
+	backupRestoreMenu->Append( m_menuItem8 );
+	m_menuItem8->Enable( false );
+
+	wxMenuItem* m_menuItemSetBakFolder;
+	m_menuItemSetBakFolder = new wxMenuItem( backupRestoreMenu, wxID_ANY, wxString( wxT("Set Backup Folder ") ) , wxEmptyString, wxITEM_NORMAL );
+	backupRestoreMenu->Append( m_menuItemSetBakFolder );
+
+	wxMenuItem* m_menuItemManualBak;
+	m_menuItemManualBak = new wxMenuItem( backupRestoreMenu, wxID_ANY, wxString( wxT("Manual Backup") ) , wxEmptyString, wxITEM_NORMAL );
+	backupRestoreMenu->Append( m_menuItemManualBak );
+
+	backupRestoreMenu->AppendSeparator();
+
+	wxMenuItem* m_menuItem6;
+	m_menuItem6 = new wxMenuItem( backupRestoreMenu, wxID_ANY, wxString( wxT("Restore") ) , wxEmptyString, wxITEM_NORMAL );
+	backupRestoreMenu->Append( m_menuItem6 );
+	m_menuItem6->Enable( false );
+
+	m_menubar1->Append( backupRestoreMenu, wxT("Backup/Restore") );
+
 	this->SetMenuBar( m_menubar1 );
 
 
@@ -107,6 +130,8 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::AddCustom ), this, addCustomMI->GetId());
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ManualUpdate ), this, m_menuItem3->GetId());
 	toolsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::OpenTrackisting ), this, m_menuItem4->GetId());
+	backupRestoreMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::SetBackupFolder ), this, m_menuItemSetBakFolder->GetId());
+	backupRestoreMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ManualBackup ), this, m_menuItemManualBak->GetId());
 }
 
 WindowBase::~WindowBase()

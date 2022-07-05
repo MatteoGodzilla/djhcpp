@@ -3,3 +3,4 @@
 
 //will be replaced by cmake with the correct version string;
 const std::string DJHCPP_VERSION = "@CMAKE_PROJECT_VERSION@";
+const std::string SETTINGS_FILE_NAME = "djhcpp_settings.ini";

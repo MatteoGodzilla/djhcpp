@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(djhcpp VERSION 0.1.2)
+project(djhcpp VERSION 0.1.3)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 set(BUILD_SHARED_LIBS OFF)
-#set(CMAKE_EXE_LINKER_FLAGS "-static")
+set(CMAKE_EXE_LINKER_FLAGS "-static")
 set(wxBUILD_SHARED OFF)
 
 include(CTest)
@@ -21,6 +21,8 @@ add_executable(djhcpp
 
 add_subdirectory(tinyxml2)
 add_subdirectory(wxWidgets)
+
+target_include_directories(djhcpp PUBLIC "mINI/src")
 
 target_link_libraries(djhcpp wx::core wx::base wx::xml tinyxml2 stdc++fs)
 

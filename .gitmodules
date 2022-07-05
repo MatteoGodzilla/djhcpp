@@ -4,3 +4,6 @@
 [submodule "tinyxml2"]
 	path = tinyxml2
 	url = https://github.com/leethomason/tinyxml2.git
+[submodule "mINI"]
+	path = mINI
+	url = https://github.com/pulzed/mINI

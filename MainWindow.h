@@ -3,10 +3,13 @@
 #include <map>
 #include <filesystem>
 #include <fstream>
+#include <ctime>
 #include "wx/dirdlg.h"
+#include "wx/textdlg.h"
 #include "wx/msgdlg.h"
 #include "wx/log.h"
 #include "tinyxml2/tinyxml2.h"
+#include "mini/ini.h"
 #include "WindowBase.h"
 #include "TracklistingWindow.h"
 #include "config.h"
@@ -18,8 +21,13 @@ public:
     void AddCustom(wxCommandEvent& event) override;
     void ManualUpdate(wxCommandEvent& event) override;
     void OpenTrackisting( wxCommandEvent& event ) override;
+    void SetBackupFolder( wxCommandEvent& event ) override;
+    void ManualBackup( wxCommandEvent& event ) override;
+    void RestoreBackup( wxCommandEvent& event );
+
+    void CreateBackup(std::filesystem::path baseFolder, wxString name );
+    void ParseExtracted(std::filesystem::path path);
     void UpdateTable();
-    //bool CheckDuplicateID(std::string path);
     void ProcessCustom(std::filesystem::path dir);
     void Export();
 
@@ -31,4 +39,7 @@ private:
     std::filesystem::path tracklistingPath;
     std::filesystem::path tracIDPath;
     std::filesystem::path tracEPath;
+    //backups
+    std::filesystem::path backupFolderPath;
+    bool automaticBackups = true;
 };
