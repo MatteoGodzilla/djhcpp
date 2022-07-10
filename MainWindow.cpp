@@ -73,7 +73,8 @@ void MainWindow::ParseExtracted(fs::path path){
             std::getline(tracEStream,value,'\0');
             textData.insert(std::make_pair(id,value));
         }
-        wxLogMessage(wxString() << textData.size());
+        
+        wxLogMessage(wxString() << "Successfully loaded " <<  textData.size() << " songs from tracklisting.");
         //load tracklisting
         tracklisting.LoadFile(tracklistingPath.generic_string().c_str());
         UpdateTable();
@@ -361,4 +362,28 @@ void MainWindow::UpdateTable(){
 void MainWindow::OpenTrackisting(wxCommandEvent& event){
     TracklistingWindow* twin = new TracklistingWindow(this);
     twin->Show();
+}
+
+void MainWindow::ToUpper(wxCommandEvent& event){
+    if(!basePath.empty()){
+        wxProgressDialog* dialog = new wxProgressDialog("Progress","Renaming the files. Please wait a few seconds",100,this);
+        dialog->Show();
+        dialog->Pulse();
+        
+        for(auto& item : fs::recursive_directory_iterator(basePath)){
+            fs::path rel = fs::relative(item.path(),basePath);
+
+            wxString upperPath = rel.generic_string();
+            upperPath.MakeUpper();
+            fs::path destination = fs::path(upperPath.ToStdString());
+            
+            fs::rename(basePath / rel,basePath / destination);
+
+            //show files to the user
+            dialog->Pulse();
+        }
+        dialog->Destroy();
+    } else {
+        wxLogWarning("Please load the extracted files before renaming");
+    }
 }

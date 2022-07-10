@@ -59,6 +59,7 @@ class WindowBase : public wxFrame
 		virtual void AddCustom( wxCommandEvent& event ) = 0;
 		virtual void ManualUpdate( wxCommandEvent& event ) = 0;
 		virtual void OpenTrackisting( wxCommandEvent& event ) = 0;
+		virtual void ToUpper( wxCommandEvent& event ) = 0;
 		virtual void SetBackupFolder( wxCommandEvent& event ) = 0;
 		virtual void ManualBackup( wxCommandEvent& event ) = 0;
 
