@@ -21,7 +21,6 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/dataview.h>
 #include <wx/menu.h>
 #include <wx/frame.h>
 #include <wx/textctrl.h>
@@ -41,13 +40,7 @@ class WindowBase : public wxFrame
 		wxStaticText* baseFolderLabel;
 		wxSearchCtrl* m_searchCtrl2;
 		wxButton* ExtractedFilesBTN;
-		wxDataViewListCtrl* mainTable;
-		wxDataViewColumn* colID;
-		wxDataViewColumn* colArtist1;
-		wxDataViewColumn* colName1;
-		wxDataViewColumn* colArtist2;
-		wxDataViewColumn* colName2;
-		wxDataViewColumn* colBpm;
+		wxBoxSizer* middleSizer;
 		wxButton* addCustomBTN;
 		wxMenuBar* m_menubar1;
 		wxMenu* fileMenu;
@@ -55,6 +48,7 @@ class WindowBase : public wxFrame
 		wxMenu* backupRestoreMenu;
 
 		// Virtual event handlers, override them in your derived class
+		virtual void OnSearch( wxCommandEvent& event ) = 0;
 		virtual void OpenExtractedFiles( wxCommandEvent& event ) = 0;
 		virtual void AddCustom( wxCommandEvent& event ) = 0;
 		virtual void ManualUpdate( wxCommandEvent& event ) = 0;

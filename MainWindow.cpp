@@ -4,7 +4,11 @@ namespace fs = std::filesystem;
 using namespace tinyxml2;
 
 MainWindow::MainWindow() : WindowBase(NULL) {
-    SetLabel("DJHCPP v" + DJHCPP_VERSION);
+    SetLabel("DJHCPP v" + DJHCPP_VERSION + "    [" + DJHCPP_BUILD + "]");
+    
+    mainTable = new CustomTable(this);
+    middleSizer->Add(mainTable,1,wxALL|wxEXPAND,5);
+
     if(!fs::exists(SETTINGS_FILE_NAME)){
         //create one with defaults
         mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
@@ -87,6 +91,8 @@ void MainWindow::ParseExtracted(fs::path path){
             std::strftime(dateFolder,30,"%Y-%m-%d_%H-%M-%S",now);
             CreateBackup(backupFolderPath,dateFolder);
         }
+        baseFolderLabel->SetLabelText(wxString("Base Folder:  ") << path.c_str());
+
         //set in the settings
         mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
         mINI::INIStructure ini;
@@ -290,11 +296,11 @@ void MainWindow::RestoreBackup( wxCommandEvent& event){
 }
 
 void MainWindow::UpdateTable(){
-    mainTable->DeleteAllItems();
-
+    mainTable->data.clear();
     XMLNode* track = tracklisting.RootElement()->FirstChild();
+
     while(track != nullptr){
-        wxVector<wxVariant> row;
+        TableRow row;
 
         wxString id = "";
         wxString name1 = "";
@@ -321,43 +327,50 @@ void MainWindow::UpdateTable(){
         token = track->FirstChildElement("BPM");
         if(token != nullptr) bpm = token->GetText();
 
-        row.push_back(wxVariant(id));
+        row.id = id;
         
         //if artist1 is empty -> ""
         //if artist1 is not empty
         //  if textData contains key -> textData[key]
         //  else "!MISSING!"
 
-        if(artist1.empty()) row.push_back(wxVariant(""));
+        if(artist1.empty()) row.artist1 = "";
         else {
-            if(textData.count(artist1.ToStdString()) == 1) row.push_back(wxVariant(textData[artist1.ToStdString()]));
-            else row.push_back(wxVariant("[MISSING]"));
+            if(textData.count(artist1.ToStdString()) == 1) row.artist1 = textData[artist1.ToStdString()];
+            else row.artist1 = "[MISSING]";
         }
 
-        if(name1.empty()) row.push_back(wxVariant(""));
+        if(name1.empty()) row.song1 = "";
         else {
-            if(textData.count(name1.ToStdString()) == 1) row.push_back(wxVariant(textData[name1.ToStdString()]));
-            else row.push_back(wxVariant("[MISSING]"));
+            if(textData.count(name1.ToStdString()) == 1) row.song1 = textData[name1.ToStdString()];
+            else row.song1 = "[MISSING]";
         }
 
-        if(artist2.empty()) row.push_back(wxVariant(""));
+        if(artist2.empty()) row.artist2 = "";
         else {
-            if(textData.count(artist2.ToStdString()) == 1) row.push_back(wxVariant(textData[artist2.ToStdString()]));
-            else row.push_back(wxVariant("[MISSING]"));
+            if(textData.count(artist2.ToStdString()) == 1) row.artist2 = textData[artist2.ToStdString()];
+            else row.artist2 = "[MISSING]";
         }
 
-        if(name2.empty()) row.push_back(wxVariant(""));
+        if(name2.empty()) row.song2 = "";
         else {
-            if(textData.count(name2.ToStdString()) == 1) row.push_back(wxVariant(textData[name2.ToStdString()]));
-            else row.push_back(wxVariant("[MISSING]"));
+            if(textData.count(name2.ToStdString()) == 1) row.song2 = textData[name2.ToStdString()];
+            else row.song2 = "[MISSING]";
         }
         
-        row.push_back(wxVariant(bpm));
-        mainTable->AppendItem(row);
+        row.bpm = std::stof(bpm.ToStdString());
+        mainTable->data.push_back(row);
 
         track = track->NextSibling();
     }
+    mainTable->SetItemCount(mainTable->data.size());
 }
+
+void MainWindow::OnSearch(wxCommandEvent& wxEvent){
+    mainTable->Search(wxEvent.GetString());
+}
+
+//other windows and tools
 
 void MainWindow::OpenTrackisting(wxCommandEvent& event){
     TracklistingWindow* twin = new TracklistingWindow(this);

@@ -27,7 +27,7 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	baseFolderLabel->Wrap( -1 );
 	bSizer4->Add( baseFolderLabel, 0, wxALL, 5 );
 
-	m_searchCtrl2 = new wxSearchCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_searchCtrl2 = new wxSearchCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
 	#ifndef __WXMAC__
 	m_searchCtrl2->ShowSearchButton( true );
 	#endif
@@ -43,17 +43,7 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 
 	rootSizer->Add( topSizer, 0, wxFIXED_MINSIZE|wxEXPAND, 5 );
 
-	wxBoxSizer* middleSizer;
 	middleSizer = new wxBoxSizer( wxHORIZONTAL );
-
-	mainTable = new wxDataViewListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-	colID = mainTable->AppendTextColumn( wxT("ID"), wxDATAVIEW_CELL_INERT, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE );
-	colArtist1 = mainTable->AppendTextColumn( wxT("Artist 1"), wxDATAVIEW_CELL_INERT, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE );
-	colName1 = mainTable->AppendTextColumn( wxT("Name 1"), wxDATAVIEW_CELL_INERT, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE );
-	colArtist2 = mainTable->AppendTextColumn( wxT("Artist 2"), wxDATAVIEW_CELL_INERT, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE );
-	colName2 = mainTable->AppendTextColumn( wxT("Name 2"), wxDATAVIEW_CELL_INERT, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE );
-	colBpm = mainTable->AppendTextColumn( wxT("BPM"), wxDATAVIEW_CELL_INERT, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE );
-	middleSizer->Add( mainTable, 1, wxALL|wxEXPAND, 5 );
 
 
 	rootSizer->Add( middleSizer, 5, wxEXPAND, 5 );
@@ -128,6 +118,8 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	this->Centre( wxBOTH );
 
 	// Connect Events
+	m_searchCtrl2->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( WindowBase::OnSearch ), NULL, this );
+	m_searchCtrl2->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( WindowBase::OnSearch ), NULL, this );
 	ExtractedFilesBTN->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::OpenExtractedFiles ), NULL, this );
 	addCustomBTN->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::AddCustom ), NULL, this );
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::OpenExtractedFiles ), this, OpenExtractedMI->GetId());
@@ -142,6 +134,8 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 WindowBase::~WindowBase()
 {
 	// Disconnect Events
+	m_searchCtrl2->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( WindowBase::OnSearch ), NULL, this );
+	m_searchCtrl2->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( WindowBase::OnSearch ), NULL, this );
 	ExtractedFilesBTN->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::OpenExtractedFiles ), NULL, this );
 	addCustomBTN->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::AddCustom ), NULL, this );
 
