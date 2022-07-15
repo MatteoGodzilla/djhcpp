@@ -14,6 +14,7 @@
 #include "mini/ini.h"
 #include "WindowBase.h"
 #include "TracklistingWindow.h"
+#include "CustomTable.h"
 #include "config.h"
 
 class MainWindow : public WindowBase{
@@ -27,6 +28,7 @@ public:
     void ManualBackup( wxCommandEvent& event ) override;
     void ToUpper(wxCommandEvent& event) override;
     void RestoreBackup( wxCommandEvent& event );
+    void OnSearch( wxCommandEvent& event );
 
     void CreateBackup(std::filesystem::path baseFolder, wxString name );
     void ParseExtracted(std::filesystem::path path);
@@ -36,6 +38,7 @@ public:
 
 private:
     std::map<std::string, std::string> textData;
+    CustomTable* mainTable;
     //wxXmlDocument tracklisting;
     tinyxml2::XMLDocument tracklisting;
     std::filesystem::path basePath;

@@ -1,4 +1,4 @@
 #!/bin/sh
 cd build
-cmake .. -G"Unix Makefiles" -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE="Release"
 make -j16
