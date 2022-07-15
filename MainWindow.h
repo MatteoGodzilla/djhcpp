@@ -30,7 +30,7 @@ public:
     void RestoreBackup( wxCommandEvent& event );
     void OnSearch( wxCommandEvent& event );
 
-    void CreateBackup(std::filesystem::path baseFolder, wxString name );
+    void CreateBackup(std::filesystem::path baseFolder, std::string name );
     void ParseExtracted(std::filesystem::path path);
     void UpdateTable();
     void ProcessCustom(std::filesystem::path dir);

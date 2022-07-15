@@ -62,20 +62,20 @@
                 <property name="name">rootSizer</property>
                 <property name="orient">wxVERTICAL</property>
                 <property name="permission">none</property>
-                <object class="sizeritem" expanded="0">
+                <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
                     <property name="flag">wxFIXED_MINSIZE|wxEXPAND</property>
                     <property name="proportion">0</property>
-                    <object class="wxBoxSizer" expanded="0">
+                    <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
                         <property name="name">topSizer</property>
                         <property name="orient">wxHORIZONTAL</property>
                         <property name="permission">none</property>
-                        <object class="sizeritem" expanded="0">
+                        <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
                             <property name="flag">wxFIXED_MINSIZE</property>
                             <property name="proportion">2</property>
-                            <object class="wxBoxSizer" expanded="0">
+                            <object class="wxBoxSizer" expanded="1">
                                 <property name="minimum_size"></property>
                                 <property name="name">bSizer4</property>
                                 <property name="orient">wxVERTICAL</property>
@@ -286,22 +286,115 @@
                         </object>
                     </object>
                 </object>
-                <object class="sizeritem" expanded="0">
+                <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND</property>
                     <property name="proportion">5</property>
-                    <object class="wxBoxSizer" expanded="0">
+                    <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
                         <property name="name">middleSizer</property>
                         <property name="orient">wxHORIZONTAL</property>
-                        <property name="permission">protected</property>
+                        <property name="permission">none</property>
+                        <object class="sizeritem" expanded="1">
+                            <property name="border">5</property>
+                            <property name="flag">wxALL|wxEXPAND</property>
+                            <property name="proportion">1</property>
+                            <object class="wxDataViewListCtrl" expanded="1">
+                                <property name="bg"></property>
+                                <property name="context_help"></property>
+                                <property name="context_menu">1</property>
+                                <property name="enabled">1</property>
+                                <property name="fg"></property>
+                                <property name="font"></property>
+                                <property name="hidden">0</property>
+                                <property name="id">wxID_ANY</property>
+                                <property name="maximum_size"></property>
+                                <property name="minimum_size"></property>
+                                <property name="name">mainTable</property>
+                                <property name="permission">protected</property>
+                                <property name="pos"></property>
+                                <property name="size"></property>
+                                <property name="style"></property>
+                                <property name="subclass">; ; forward_declare</property>
+                                <property name="tooltip"></property>
+                                <property name="window_extra_style"></property>
+                                <property name="window_name"></property>
+                                <property name="window_style"></property>
+                                <object class="dataViewListColumn" expanded="0">
+                                    <property name="align">wxALIGN_LEFT</property>
+                                    <property name="ellipsize"></property>
+                                    <property name="flags">wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE</property>
+                                    <property name="label">ID</property>
+                                    <property name="mode">wxDATAVIEW_CELL_INERT</property>
+                                    <property name="name">colID</property>
+                                    <property name="permission">protected</property>
+                                    <property name="type">Text</property>
+                                    <property name="width">-1</property>
+                                </object>
+                                <object class="dataViewListColumn" expanded="0">
+                                    <property name="align">wxALIGN_LEFT</property>
+                                    <property name="ellipsize"></property>
+                                    <property name="flags">wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE</property>
+                                    <property name="label">Artist 1</property>
+                                    <property name="mode">wxDATAVIEW_CELL_INERT</property>
+                                    <property name="name">colArtist1</property>
+                                    <property name="permission">protected</property>
+                                    <property name="type">Text</property>
+                                    <property name="width">-1</property>
+                                </object>
+                                <object class="dataViewListColumn" expanded="0">
+                                    <property name="align">wxALIGN_LEFT</property>
+                                    <property name="ellipsize"></property>
+                                    <property name="flags">wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE</property>
+                                    <property name="label">Name 1</property>
+                                    <property name="mode">wxDATAVIEW_CELL_INERT</property>
+                                    <property name="name">colName1</property>
+                                    <property name="permission">protected</property>
+                                    <property name="type">Text</property>
+                                    <property name="width">-1</property>
+                                </object>
+                                <object class="dataViewListColumn" expanded="0">
+                                    <property name="align">wxALIGN_LEFT</property>
+                                    <property name="ellipsize"></property>
+                                    <property name="flags">wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE</property>
+                                    <property name="label">Artist 2</property>
+                                    <property name="mode">wxDATAVIEW_CELL_INERT</property>
+                                    <property name="name">colArtist2</property>
+                                    <property name="permission">protected</property>
+                                    <property name="type">Text</property>
+                                    <property name="width">-1</property>
+                                </object>
+                                <object class="dataViewListColumn" expanded="0">
+                                    <property name="align">wxALIGN_LEFT</property>
+                                    <property name="ellipsize"></property>
+                                    <property name="flags">wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE</property>
+                                    <property name="label">Name 2</property>
+                                    <property name="mode">wxDATAVIEW_CELL_INERT</property>
+                                    <property name="name">colName2</property>
+                                    <property name="permission">protected</property>
+                                    <property name="type">Text</property>
+                                    <property name="width">-1</property>
+                                </object>
+                                <object class="dataViewListColumn" expanded="0">
+                                    <property name="align">wxALIGN_LEFT</property>
+                                    <property name="ellipsize"></property>
+                                    <property name="flags">wxDATAVIEW_COL_RESIZABLE|wxDATAVIEW_COL_SORTABLE</property>
+                                    <property name="label">BPM</property>
+                                    <property name="mode">wxDATAVIEW_CELL_INERT</property>
+                                    <property name="name">colBpm</property>
+                                    <property name="permission">protected</property>
+                                    <property name="type">Text</property>
+                                    <property name="width">-1</property>
+                                </object>
+                            </object>
+                        </object>
                     </object>
                 </object>
-                <object class="sizeritem" expanded="0">
+                <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND</property>
                     <property name="proportion">0</property>
-                    <object class="wxBoxSizer" expanded="0">
+                    <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
                         <property name="name">bottomSizer</property>
                         <property name="orient">wxHORIZONTAL</property>

@@ -33,7 +33,7 @@ MainWindow::MainWindow() : WindowBase(NULL) {
         //TODO: parse backups already present
         for(auto& dirEntry : fs::directory_iterator(backupFolderPath)){
             if(dirEntry.is_directory()){
-                wxString text = dirEntry.path().filename().c_str();
+                std::string text = dirEntry.path().filename().string();
                 wxMenuItem* entry = new wxMenuItem(backupRestoreMenu,wxID_ANY,text,wxEmptyString,wxITEM_NORMAL);
                 wxStringClientData* data = new wxStringClientData(wxString(dirEntry.path().string()));
 
@@ -78,7 +78,7 @@ void MainWindow::ParseExtracted(fs::path path){
             textData.insert(std::make_pair(id,value));
         }
         
-        wxLogMessage(wxString() << "Successfully loaded " <<  textData.size() << " songs from tracklisting.");
+        wxLogMessage(wxString("Successfully loaded ") <<  textData.size() << " songs from tracklisting.");
         //load tracklisting
         tracklisting.LoadFile(tracklistingPath.generic_string().c_str());
         UpdateTable();
@@ -137,7 +137,7 @@ void MainWindow::ProcessCustom(fs::path dir){
     while(track != nullptr){
         //identical
         if(strcmp(track->Value(),"Track") == 0){
-            wxString addingTag = track->FirstChildElement("IDTag")->GetText();
+            std::string addingTag = track->FirstChildElement("IDTag")->GetText();
 
             XMLElement* tracklistingRoot = tracklisting.RootElement();
             XMLNode* tracklistingTrack = tracklistingRoot->FirstChild();
@@ -146,7 +146,7 @@ void MainWindow::ProcessCustom(fs::path dir){
             while(tracklistingTrack != nullptr){
                 XMLElement* IDTag = tracklistingTrack->FirstChildElement("IDTag");
                 if(IDTag != nullptr){
-                    wxString trackTestingID = IDTag->GetText();
+                    std::string trackTestingID = IDTag->GetText();
                     if(trackTestingID == addingTag){
                         wxLogMessage("Replacing track node");
                         possibleRemove = tracklistingTrack;
@@ -255,13 +255,13 @@ void MainWindow::SetBackupFolder( wxCommandEvent& event){
 }
 
 void MainWindow::ManualBackup( wxCommandEvent& event ) {
-    wxString text = wxGetTextFromUser("Please enter the name of the backup:","Caption",wxEmptyString, this);
+    std::string text = wxGetTextFromUser("Please enter the name of the backup:","Caption",wxEmptyString, this).ToStdString();
     CreateBackup(backupFolderPath,text);
 }
 
-void MainWindow::CreateBackup(std::filesystem::path baseFolder, wxString name ){
+void MainWindow::CreateBackup(std::filesystem::path baseFolder, std::string name ){
     if(fs::exists(baseFolder)){
-        fs::path thisBackup = baseFolder / name.ToStdString();
+        fs::path thisBackup = baseFolder / name;
         fs::create_directory(thisBackup);
         
         fs::copy_file(tracklistingPath, thisBackup / "tracklisting.xml");
@@ -302,12 +302,12 @@ void MainWindow::UpdateTable(){
     while(track != nullptr){
         TableRow row;
 
-        wxString id = "";
-        wxString name1 = "";
-        wxString name2 = "";
-        wxString artist1 = "";
-        wxString artist2 = "";
-        wxString bpm = "";
+        std::string id = "";
+        std::string name1 = "";
+        std::string name2 = "";
+        std::string artist1 = "";
+        std::string artist2 = "";
+        std::string bpm = "";
 
         XMLElement* token = track->FirstChildElement("IDTag");
         if(token != nullptr) id = token->GetText();
@@ -336,29 +336,29 @@ void MainWindow::UpdateTable(){
 
         if(artist1.empty()) row.artist1 = "";
         else {
-            if(textData.count(artist1.ToStdString()) == 1) row.artist1 = textData[artist1.ToStdString()];
+            if(textData.count(artist1) == 1) row.artist1 = textData[artist1];
             else row.artist1 = "[MISSING]";
         }
 
         if(name1.empty()) row.song1 = "";
         else {
-            if(textData.count(name1.ToStdString()) == 1) row.song1 = textData[name1.ToStdString()];
+            if(textData.count(name1) == 1) row.song1 = textData[name1];
             else row.song1 = "[MISSING]";
         }
 
         if(artist2.empty()) row.artist2 = "";
         else {
-            if(textData.count(artist2.ToStdString()) == 1) row.artist2 = textData[artist2.ToStdString()];
+            if(textData.count(artist2) == 1) row.artist2 = textData[artist2];
             else row.artist2 = "[MISSING]";
         }
 
         if(name2.empty()) row.song2 = "";
         else {
-            if(textData.count(name2.ToStdString()) == 1) row.song2 = textData[name2.ToStdString()];
+            if(textData.count(name2) == 1) row.song2 = textData[name2];
             else row.song2 = "[MISSING]";
         }
         
-        row.bpm = std::stof(bpm.ToStdString());
+        row.bpm = std::stof(bpm);
         mainTable->data.push_back(row);
 
         track = track->NextSibling();
@@ -367,7 +367,7 @@ void MainWindow::UpdateTable(){
 }
 
 void MainWindow::OnSearch(wxCommandEvent& wxEvent){
-    mainTable->Search(wxEvent.GetString());
+    mainTable->Search(wxEvent.GetString().ToStdString());
 }
 
 //other windows and tools
@@ -386,9 +386,13 @@ void MainWindow::ToUpper(wxCommandEvent& event){
         for(auto& item : fs::recursive_directory_iterator(basePath)){
             fs::path rel = fs::relative(item.path(),basePath);
 
-            wxString upperPath = rel.generic_string();
-            upperPath.MakeUpper();
-            fs::path destination = fs::path(upperPath.ToStdString());
+            std::string upperPath = rel.generic_string();
+            
+            for(char& ch : upperPath){
+                ch = std::toupper(ch);
+            }
+
+            fs::path destination = fs::path(upperPath);
             
             fs::rename(basePath / rel,basePath / destination);
 

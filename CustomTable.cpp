@@ -1,11 +1,16 @@
 #include "CustomTable.h"
 
-int FuzzyExact(wxString query,wxString text){
+int FuzzyExact(std::string query,std::string text){
     size_t searchIndex = 0;
     size_t textIndex = 0;
 
-    query.MakeLower();
-    text.MakeLower();
+    for(char& ch : query){
+        ch = std::tolower(ch);
+    }
+
+    for(char& ch : text){
+        ch = std::tolower(ch);
+    }
 
     int score = 0;
 
@@ -33,6 +38,8 @@ CustomTable::CustomTable(wxWindow *parent)
     AppendColumn("Song 2");
     AppendColumn("BPM");
 
+    Bind(wxEVT_LIST_COL_CLICK,wxListEventHandler(CustomTable::OnColumnClick),this,wxID_ANY);
+
     data = std::vector<TableRow>();
 }
 
@@ -49,7 +56,7 @@ wxString CustomTable::OnGetItemText(long item, long column) const{
     }
 }
 
-void CustomTable::Search(wxString query){
+void CustomTable::Search(std::string query){
     //actually just sorts 
     std::sort(data.begin(),data.end(),[&](const TableRow& a, const TableRow& b){
         //calculate max score for each row
@@ -70,4 +77,42 @@ void CustomTable::Search(wxString query){
         return maxScoreA > maxScoreB;
     });
     Refresh();
+}
+
+void CustomTable::OnColumnClick(wxListEvent& event){
+    //std::cout << "Column Clicked " << event.GetColumn() << std::endl;
+    int col = event.GetColumn();
+    int newDirection = sortingDirection;
+    if(col == lastSortingColumn)
+        newDirection *= -1;
+    else 
+        newDirection = 1;
+    std::cout << "SORTING " << col << "\t" << newDirection << std::endl;
+    std::sort(data.begin(),data.end(),[col,newDirection](const TableRow& a, const TableRow& b){
+        //std::cout << "---------------------------" << std::endl;
+        //std::cout << a.id << "\t" << a.artist1 << "\t" << a.song1 << "\t" << a.artist2 << "\t" << a.song2 << "\t" << a.bpm << "\t" << std::endl;
+        //std::cout << b.id << "\t" << b.artist1 << "\t" << b.song1 << "\t" << b.artist2 << "\t" << b.song2 << "\t" << b.bpm << "\t" << std::endl;
+        return CustomTable::CompareRows(a,b,col,newDirection);
+    });
+    sortingDirection = newDirection;
+    lastSortingColumn = col;
+    Refresh();
+}
+
+bool CustomTable::CompareRows(const TableRow& a, const TableRow& b, int col, int dir){
+    switch(col){
+        case 0:
+            return (dir * a.id.compare(b.id)) < 0;
+        case 1:
+            return (dir * a.artist1.compare(b.artist1)) < 0;
+        case 2:
+            return (dir * a.song1.compare(b.song1)) < 0;
+        case 3:
+            return (dir * a.artist2.compare(b.artist2)) < 0;
+        case 4:
+            return (dir * a.song2.compare(b.song2)) < 0;
+        case 5:
+            return (dir * (a.bpm - b.bpm)) < 0;
+    }
+    return false;
 }
