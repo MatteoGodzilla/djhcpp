@@ -359,6 +359,15 @@ void MainWindow::UpdateTable(){
         }
         
         row.bpm = std::stof(bpm);
+        const char* name;
+        name = track->ToElement()->Attribute("selectableinfem");
+
+        if(name != 0){
+            if(strcmp(name,"yes") == 0 || strcmp(name,"true"))
+                row.enabled = true;
+            wxLogMessage(wxString() << id << " " << name); 
+        }
+
         mainTable->data.push_back(row);
 
         track = track->NextSibling();
