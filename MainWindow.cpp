@@ -39,7 +39,7 @@ MainWindow::MainWindow() : WindowBase(NULL) {
 
                 backupRestoreMenu->Append(entry);
                 //i spent 2 hours trying to figure out how bind works. Rip me
-                backupRestoreMenu->Bind(wxEVT_MENU,MainWindow::RestoreBackup,this,entry->GetId(),-1,(wxObject*)data);
+                backupRestoreMenu->Bind(wxEVT_MENU,&MainWindow::RestoreBackup,this,entry->GetId(),-1,(wxObject*)data);
             }
         }
     }
@@ -273,7 +273,7 @@ void MainWindow::CreateBackup(std::filesystem::path baseFolder, std::string name
         wxStringClientData* data = new wxStringClientData(wxString(thisBackup.string()));
 
         backupRestoreMenu->Append(entry);
-        backupRestoreMenu->Bind(wxEVT_MENU,MainWindow::RestoreBackup,this,entry->GetId(),-1,(wxObject*)data);
+        backupRestoreMenu->Bind(wxEVT_MENU,&MainWindow::RestoreBackup,this,entry->GetId(),-1,(wxObject*)data);
     } else {
         wxLogWarning("Backup folder path specified in the settings does not exist. Backup Aborted");
     }
