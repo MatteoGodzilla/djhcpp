@@ -1,0 +1,11 @@
+<Patch>
+
+    <Track IDTag="CUS_ASDF">
+        <LeaderboardID quickplay="2000" quickplay_difficulty="2001" />
+    </Track>
+
+    <Track IDTag="CUS_ASDF2MOREASDF">
+        <LeaderboardID quickplay="2100" quickplay_difficulty="2101" />
+    </Track>
+
+</Patch>

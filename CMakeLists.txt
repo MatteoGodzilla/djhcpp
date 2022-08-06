@@ -22,9 +22,13 @@ add_executable(djhcpp
 )
 
 add_subdirectory(tinyxml2)
-# add_subdirectory(wxWidgets)
-find_package(wxWidgets REQUIRED COMPONENTS core base xml)
-include(${wxWidgets_USE_FILE}) 
+if(MINGW OR MSYS)
+    add_subdirectory(wxWidgets)
+    set(wxWidgets_LIBRARIES wx::core wx::base wx::xml)
+elseif(UNIX)
+    find_package(wxWidgets REQUIRED COMPONENTS core base xml)
+    include(${wxWidgets_USE_FILE}) 
+endif()
 
 target_include_directories(djhcpp PUBLIC "mINI/src")
 
