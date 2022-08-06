@@ -10,6 +10,7 @@ First of all, download the repo with all of the submodules
 ```
 git clone --recurse-submodules https://github.com/MatteoGodzilla/djhcpp.git
 cd djhcpp
+mkdir build
 ```
 Then follow the instructions below depending on what OS you want to build for
 
@@ -22,3 +23,4 @@ Then follow the instructions below depending on what OS you want to build for
 * Change directory to "wxWidgets": `cd wxWidgets`
 * Follow the [Official Instructions](https://wiki.wxwidgets.org/Compiling_and_getting_started) to configure and make the library using the folder inside djhcpp.
 * Run either `build-release.sh` or `build-debug.sh` depending on what configuration you want to use
+

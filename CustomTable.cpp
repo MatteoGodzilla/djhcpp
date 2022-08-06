@@ -41,8 +41,11 @@ CustomTable::CustomTable(wxWindow *parent)
     AppendColumn("Artist 2");
     AppendColumn("Song 2");
     AppendColumn("BPM");
-    AppendColumn("Enabled");
+    
+    //used to show enabled column (disabled for now)
+    //AppendColumn("Enabled");
 
+    /*
     wxVector<wxBitmapBundle> images;
 
     wxImage enabled,disabled;
@@ -53,6 +56,7 @@ CustomTable::CustomTable(wxWindow *parent)
     images.push_back(wxBitmapBundle::FromBitmap(disabled));
     images.push_back(wxBitmapBundle::FromBitmap(enabled));
     SetSmallImages(images);
+    */
 
     Bind(wxEVT_LIST_COL_CLICK,wxListEventHandler(CustomTable::OnColumnClick),this,wxID_ANY);
 
@@ -73,6 +77,8 @@ wxString CustomTable::OnGetItemText(long item, long column) const{
 }
 
 int CustomTable::OnGetItemColumnImage(long item, long column) const {
+    return -1;
+    /*
     TableRow row = data[item];
     //std::cout << item << "\t" << column << std::endl;
     switch(column){
@@ -81,6 +87,7 @@ int CustomTable::OnGetItemColumnImage(long item, long column) const {
             else return 0;
         default: return -1;
     }
+    */
 }
 
 void CustomTable::Search(std::string query){
