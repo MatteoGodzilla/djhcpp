@@ -87,6 +87,10 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_menuItem9 = new wxMenuItem( toolsMenu, wxID_ANY, wxString( wxT("Rename to Uppercase (PS3/RPCS3 only)") ) , wxEmptyString, wxITEM_NORMAL );
 	toolsMenu->Append( m_menuItem9 );
 
+	wxMenuItem* m_menuItem10;
+	m_menuItem10 = new wxMenuItem( toolsMenu, wxID_ANY, wxString( wxT("Apply Patch File") ) , wxEmptyString, wxITEM_NORMAL );
+	toolsMenu->Append( m_menuItem10 );
+
 	m_menubar1->Append( toolsMenu, wxT("Tools") );
 
 	backupRestoreMenu = new wxMenu();
@@ -127,6 +131,7 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ManualUpdate ), this, m_menuItem3->GetId());
 	toolsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::OpenTrackisting ), this, m_menuItem4->GetId());
 	toolsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ToUpper ), this, m_menuItem9->GetId());
+	toolsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ApplyPatchFile ), this, m_menuItem10->GetId());
 	backupRestoreMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::SetBackupFolder ), this, m_menuItemSetBakFolder->GetId());
 	backupRestoreMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ManualBackup ), this, m_menuItemManualBak->GetId());
 }

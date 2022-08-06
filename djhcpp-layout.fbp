@@ -483,6 +483,20 @@
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection">ToUpper</event>
                     </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Apply Patch File</property>
+                        <property name="name">m_menuItem10</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection">ApplyPatchFile</event>
+                    </object>
                 </object>
                 <object class="wxMenu" expanded="1">
                     <property name="label">Backup/Restore</property>

@@ -83,14 +83,7 @@ void MainWindow::ParseExtracted(fs::path path){
         tracklisting.LoadFile(tracklistingPath.generic_string().c_str());
         UpdateTable();
         //add backup
-        if(automaticBackups){
-            time_t t = time(NULL);
-            tm* now = localtime(&t);
-            char dateFolder[31];
-            //format table is present here: https://cplusplus.com/reference/ctime/strftime/
-            std::strftime(dateFolder,30,"%Y-%m-%d_%H-%M-%S",now);
-            CreateBackup(backupFolderPath,dateFolder);
-        }
+        CreateAutomaticBackup();
         baseFolderLabel->SetLabelText(wxString("Base Folder:  ") << path.c_str());
 
         //set in the settings
@@ -102,6 +95,16 @@ void MainWindow::ParseExtracted(fs::path path){
     } else {
         wxLogError("Tracklisting file not found (error 0x1)");
     }
+}
+
+void MainWindow::CreateAutomaticBackup(){
+    if(!automaticBackups) return;
+    time_t t = time(NULL);
+    tm* now = localtime(&t);
+    char dateFolder[31];
+    //format table is present here: https://cplusplus.com/reference/ctime/strftime/
+    std::strftime(dateFolder,30,"%Y-%m-%d_%H-%M-%S",now);
+    CreateBackup(backupFolderPath,dateFolder);
 }
 
 void MainWindow::AddCustom(wxCommandEvent& event){
@@ -365,7 +368,7 @@ void MainWindow::UpdateTable(){
         if(name != 0){
             if(strcmp(name,"yes") == 0 || strcmp(name,"true"))
                 row.enabled = true;
-            wxLogMessage(wxString() << id << " " << name); 
+            //wxLogMessage(wxString() << id << " " << name); 
         }
 
         mainTable->data.push_back(row);
@@ -411,5 +414,62 @@ void MainWindow::ToUpper(wxCommandEvent& event){
         dialog->Destroy();
     } else {
         wxLogWarning("Please load the extracted files before renaming");
+    }
+}
+
+void MainWindow::ApplyPatchFile( wxCommandEvent& event){
+    if(basePath.empty()){
+        wxLogWarning("Please load extracted files before applying patch files");
+        return;
+    }
+    
+    wxFileDialog dlg(this,"Select Patch File","","","XML Files (*.xml)|*.xml");
+    if(dlg.ShowModal() == wxID_OK){
+        CreateAutomaticBackup();
+        //wxLogMessage(dlg.GetPath());
+        
+        XMLDocument doc;
+        doc.LoadFile(dlg.GetPath());
+
+        XMLElement* track = doc.RootElement()->FirstChildElement();
+        while(track != nullptr){
+            const char* idtag;
+            idtag = track->ToElement()->Attribute("IDTag");
+            wxLogMessage(idtag);
+
+            //find custom in loaded tracks
+            XMLElement* query = tracklisting.RootElement()->FirstChildElement();
+            while(query != nullptr){
+                const char* queryID = query->FirstChildElement("IDTag")->GetText();
+                if(strcmp(idtag,queryID) == 0){
+                    //we found the custom
+                    wxLogMessage(wxString("WE FOUND THE CUSTOM WITH ID ") << idtag);
+                    
+                    //make tracklisting the parent of trackCopy, so that we can add it later
+                    XMLNode* trackCopy = track->DeepClone(&tracklisting);
+
+                    //see if <Leaderboard> is already present in the query
+                    XMLNode* queryLeaderboard = query->FirstChildElement("LeaderboardID");
+                    XMLNode* newLeaderboard = trackCopy->FirstChildElement("LeaderboardID");
+
+                    if(newLeaderboard != nullptr){
+                        //we must patch something
+                        if(queryLeaderboard != nullptr){
+                            query->DeleteChild(queryLeaderboard);
+                        }
+                        query->InsertEndChild(newLeaderboard);
+                    }
+                    break;
+                }
+                query = query->NextSiblingElement();
+            }
+            if(query == nullptr){
+                wxLogMessage(wxString("Custom with ID ") << idtag << " was not found");
+            }
+            track = track->NextSiblingElement();
+        }
+        Export();
+        wxLogMessage("Done Patching");
+        //wxLogMessage(doc.RootElement()->FirstChild()->Value());
     }
 }

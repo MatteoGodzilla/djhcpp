@@ -6,6 +6,7 @@
 #include <ctime>
 #include <thread>
 #include "wx/dirdlg.h"
+#include "wx/filedlg.h"
 #include "wx/textdlg.h"
 #include "wx/msgdlg.h"
 #include "wx/log.h"
@@ -29,8 +30,10 @@ public:
     void ToUpper(wxCommandEvent& event) override;
     void RestoreBackup( wxCommandEvent& event );
     void OnSearch( wxCommandEvent& event );
+    void ApplyPatchFile( wxCommandEvent& event);
 
     void CreateBackup(std::filesystem::path baseFolder, std::string name );
+    void CreateAutomaticBackup();
     void ParseExtracted(std::filesystem::path path);
     void UpdateTable();
     void ProcessCustom(std::filesystem::path dir);

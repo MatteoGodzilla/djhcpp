@@ -1,11 +1,23 @@
 <Patch>
 
-    <Track IDTag="CUS_ASDF">
-        <LeaderboardID quickplay="2000" quickplay_difficulty="2001" />
+    <Track IDTag="CUS_KNELV">
+        <LeaderboardID quickplay="----------" quickplay_difficulty="++++++++++++++" />
     </Track>
 
-    <Track IDTag="CUS_ASDF2MOREASDF">
-        <LeaderboardID quickplay="2100" quickplay_difficulty="2101" />
+    <Track IDTag="CUS_KNELV2">
+        <LeaderboardID quickplay="----------" quickplay_difficulty="++++++++++++++" />
+    </Track>
+
+    <Track IDTag="CUS_KNELV3">
+        <LeaderboardID quickplay="----------" quickplay_difficulty="++++++++++++++" />
+    </Track>
+
+    <Track IDTag="CUS_KNELV4">
+        <LeaderboardID quickplay="----------" quickplay_difficulty="++++++++++++++" />
+    </Track>
+
+    <Track IDTag="CUS_KNELV5">
+        <LeaderboardID quickplay="----------" quickplay_difficulty="++++++++++++++" />
     </Track>
 
 </Patch>
