@@ -17,7 +17,8 @@ Then follow the instructions below depending on what OS you want to build for.
 
 ### MSYS2 (Windows) prerequisites 
 * Install [MSYS2](https://www.msys2.org/) by following the instruction on their site (make sure to update as well)
-* Install cmake: `pacman -S mingw-w64-x86_64-cmake`
+* Open `MSYS2 MSYS` and install cmake: `pacman -S mingw-w64-x86_64-cmake`
+* Close `MSYS2 MSYS` and open `MSYS2 MinGW x64` (Any other terminal different from MinGW x64 won't see cmake).
 * Continue to [Actually building the code](#actually-building-the-code)
 
 ### Gnu/Linux prerequisites
@@ -32,5 +33,3 @@ If otherwise you don't know how to build, there are two utility sh scripts in th
 `build-release.sh` and `build-debug.sh` will build using standard unix makefiles. 
 
 These scripts are meant to be run in the root of the project with a build folder already present (if you followed this readme you already made that folder).
-
-If you are building with MSYS2 it is important that you run the scripts with `MSYS2 MinGW x64`, NOT `MSYS2 MSYS`
