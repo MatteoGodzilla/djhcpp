@@ -22,7 +22,7 @@ TracklistingWindow::TracklistingWindow(wxWindow* parent) : TracklistingGen(paren
 void TracklistingWindow::GenTracklisting(wxCommandEvent& event){
     //set up
     XMLDocument doc;
-    doc.InsertEndChild(doc.NewElement("TrackListing"));
+    doc.InsertEndChild(doc.NewElement("Tracklist"));
     std::map<wxString,wxString> csv;
 
     XMLElement* track = doc.NewElement("Track");
@@ -36,9 +36,15 @@ void TracklistingWindow::GenTracklisting(wxCommandEvent& event){
     //general informations
 
     if(!m_textID->IsEmpty()) {
+        wxString id = m_textID->GetValue();
         XMLElement* elm = doc.NewElement("IDTag");
-        elm->InsertNewText(m_textID->GetValue());
+        elm->InsertNewText(id);
         track->InsertEndChild(elm);
+
+        XMLElement* folderLocation = doc.NewElement("FolderLocation");
+        std::string folderPath = std::string("AUDIO\\Audiotracks\\") + id.ToStdString();
+        folderLocation->InsertNewText(folderPath.c_str());
+        track->InsertEndChild(folderLocation);
     } else {
         ErrRequiredParameter("ID");
     }
@@ -72,7 +78,7 @@ void TracklistingWindow::GenTracklisting(wxCommandEvent& event){
     }
 
     if(!m_textSong1->IsEmpty()) {
-        XMLElement* elm = doc.NewElement("MixSong");
+        XMLElement* elm = doc.NewElement("MixName");
         wxString val = m_textSong1->GetValue();
         wxString id = GenerateID(val);
         csv.insert_or_assign(id,val);

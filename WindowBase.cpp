@@ -160,122 +160,123 @@ TracklistingGen::TracklistingGen( wxWindow* parent, wxWindowID id, const wxStrin
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
 
+	m_panel2 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxGridSizer* inputData;
 	inputData = new wxGridSizer( 0, 2, 0, 0 );
 
-	Tag1 = new wxStaticText( this, wxID_ANY, wxT("General Info"), wxDefaultPosition, wxDefaultSize, 0 );
+	Tag1 = new wxStaticText( m_panel2, wxID_ANY, wxT("General Info"), wxDefaultPosition, wxDefaultSize, 0 );
 	Tag1->Wrap( -1 );
 	inputData->Add( Tag1, 0, wxALL, 5 );
 
-	spacer1 = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	spacer1 = new wxStaticText( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	spacer1->Wrap( -1 );
 	inputData->Add( spacer1, 0, wxALL, 5 );
 
-	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("ID (string) *"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, wxT("ID (string) *"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	inputData->Add( m_staticText2, 1, wxALL, 5 );
 
-	m_textID = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textID = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_textID, 1, wxALL|wxEXPAND, 5 );
 
-	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("BPM (number) *"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( m_panel2, wxID_ANY, wxT("BPM (number) *"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	inputData->Add( m_staticText3, 0, wxALL, 5 );
 
-	m_textBPM = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textBPM = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_textBPM, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Artist 1 (string) *"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( m_panel2, wxID_ANY, wxT("Artist 1 (string) *"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	inputData->Add( m_staticText4, 0, wxALL, 5 );
 
-	m_textArtist1 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textArtist1 = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_textArtist1, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText5 = new wxStaticText( this, wxID_ANY, wxT("Song 1 (string) *"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5 = new wxStaticText( m_panel2, wxID_ANY, wxT("Song 1 (string) *"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
 	inputData->Add( m_staticText5, 0, wxALL, 5 );
 
-	m_textSong1 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textSong1 = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_textSong1, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText6 = new wxStaticText( this, wxID_ANY, wxT("Artist 2 (string)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6 = new wxStaticText( m_panel2, wxID_ANY, wxT("Artist 2 (string)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
 	inputData->Add( m_staticText6, 0, wxALL, 5 );
 
-	m_textArtist2 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textArtist2 = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_textArtist2, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText7 = new wxStaticText( this, wxID_ANY, wxT("Song 2 (string)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7 = new wxStaticText( m_panel2, wxID_ANY, wxT("Song 2 (string)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText7->Wrap( -1 );
 	inputData->Add( m_staticText7, 0, wxALL, 5 );
 
-	m_textSong2 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textSong2 = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_textSong2, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText8 = new wxStaticText( this, wxID_ANY, wxT("Mixed By (string)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText8 = new wxStaticText( m_panel2, wxID_ANY, wxT("Mixed By (string)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText8->Wrap( -1 );
 	inputData->Add( m_staticText8, 0, wxALL, 5 );
 
-	m_textMixedBy = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textMixedBy = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_textMixedBy, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText9 = new wxStaticText( this, wxID_ANY, wxT("Mixer Presents (string)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText9 = new wxStaticText( m_panel2, wxID_ANY, wxT("Mixer Presents (string)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText9->Wrap( -1 );
 	inputData->Add( m_staticText9, 0, wxALL, 5 );
 
-	m_textMixerPresents = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textMixerPresents = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_textMixerPresents, 0, wxALL|wxEXPAND, 5 );
 
-	tag2 = new wxStaticText( this, wxID_ANY, wxT("Difficulties"), wxDefaultPosition, wxDefaultSize, 0 );
+	tag2 = new wxStaticText( m_panel2, wxID_ANY, wxT("Difficulties"), wxDefaultPosition, wxDefaultSize, 0 );
 	tag2->Wrap( -1 );
 	inputData->Add( tag2, 1, wxALL, 5 );
 
-	spacer2 = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	spacer2 = new wxStaticText( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	spacer2->Wrap( -1 );
 	inputData->Add( spacer2, 0, wxALL, 5 );
 
-	m_staticText10 = new wxStaticText( this, wxID_ANY, wxT("General Difficulty (number) *"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText10 = new wxStaticText( m_panel2, wxID_ANY, wxT("General Difficulty (number) *"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText10->Wrap( -1 );
 	inputData->Add( m_staticText10, 0, wxALL, 5 );
 
-	m_textDiffGeneral = new wxTextCtrl( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textDiffGeneral = new wxTextCtrl( m_panel2, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_textDiffGeneral, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText11 = new wxStaticText( this, wxID_ANY, wxT("Tap Difficulty (number) *"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText11 = new wxStaticText( m_panel2, wxID_ANY, wxT("Tap Difficulty (number) *"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText11->Wrap( -1 );
 	inputData->Add( m_staticText11, 0, wxALL, 5 );
 
-	m_textDiffTap = new wxTextCtrl( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textDiffTap = new wxTextCtrl( m_panel2, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_textDiffTap, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText17 = new wxStaticText( this, wxID_ANY, wxT("Scratch Difficulty (number) *"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText17 = new wxStaticText( m_panel2, wxID_ANY, wxT("Scratch Difficulty (number) *"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText17->Wrap( -1 );
 	inputData->Add( m_staticText17, 0, wxALL, 5 );
 
-	m_textDiffScratch = new wxTextCtrl( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textDiffScratch = new wxTextCtrl( m_panel2, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_textDiffScratch, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText18 = new wxStaticText( this, wxID_ANY, wxT("Crossfade Difficulty (number) *"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText18 = new wxStaticText( m_panel2, wxID_ANY, wxT("Crossfade Difficulty (number) *"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText18->Wrap( -1 );
 	inputData->Add( m_staticText18, 0, wxALL, 5 );
 
-	m_textDiffCrossfade = new wxTextCtrl( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textDiffCrossfade = new wxTextCtrl( m_panel2, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_textDiffCrossfade, 0, wxALL|wxEXPAND, 5 );
 
-	tag3 = new wxStaticText( this, wxID_ANY, wxT("Extra"), wxDefaultPosition, wxDefaultSize, 0 );
+	tag3 = new wxStaticText( m_panel2, wxID_ANY, wxT("Extra"), wxDefaultPosition, wxDefaultSize, 0 );
 	tag3->Wrap( -1 );
 	inputData->Add( tag3, 0, wxALL, 5 );
 
-	spacer3 = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	spacer3 = new wxStaticText( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	spacer3->Wrap( -1 );
 	inputData->Add( spacer3, 0, wxALL, 5 );
 
-	m_staticText21 = new wxStaticText( this, wxID_ANY, wxT("Deck Speed (number) (absolute)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText21 = new wxStaticText( m_panel2, wxID_ANY, wxT("Deck Speed (number) (absolute)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText21->Wrap( -1 );
 	inputData->Add( m_staticText21, 0, wxALL, 5 );
 
-	m_textSpeed = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textSpeed = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	#ifdef __WXGTK__
 	if ( !m_textSpeed->HasFlag( wxTE_MULTILINE ) )
 	{
@@ -286,11 +287,11 @@ TracklistingGen::TracklistingGen( wxWindow* parent, wxWindowID id, const wxStrin
 	#endif
 	inputData->Add( m_textSpeed, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText22 = new wxStaticText( this, wxID_ANY, wxT("Song Duration (number)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText22 = new wxStaticText( m_panel2, wxID_ANY, wxT("Song Duration (number)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText22->Wrap( -1 );
 	inputData->Add( m_staticText22, 0, wxALL, 5 );
 
-	m_textDuration = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textDuration = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	#ifdef __WXGTK__
 	if ( !m_textDuration->HasFlag( wxTE_MULTILINE ) )
 	{
@@ -301,22 +302,25 @@ TracklistingGen::TracklistingGen( wxWindow* parent, wxWindowID id, const wxStrin
 	#endif
 	inputData->Add( m_textDuration, 0, wxALL|wxEXPAND, 5 );
 
-	m_staticText23 = new wxStaticText( this, wxID_ANY, wxT("Is Vocal Mix ?"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText23 = new wxStaticText( m_panel2, wxID_ANY, wxT("Is Vocal Mix ?"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText23->Wrap( -1 );
 	inputData->Add( m_staticText23, 0, wxALL, 5 );
 
-	m_checkBoxIsVocal = new wxCheckBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxIsVocal = new wxCheckBox( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_checkBoxIsVocal, 0, wxALL, 5 );
 
-	m_staticText24 = new wxStaticText( this, wxID_ANY, wxT("Include Music in Menu?"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText24 = new wxStaticText( m_panel2, wxID_ANY, wxT("Include Music in Menu?"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText24->Wrap( -1 );
 	inputData->Add( m_staticText24, 0, wxALL, 5 );
 
-	m_checkBoxIsMenuMusic = new wxCheckBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxIsMenuMusic = new wxCheckBox( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	inputData->Add( m_checkBoxIsMenuMusic, 0, wxALL, 5 );
 
 
-	bSizer7->Add( inputData, 1, 0, 5 );
+	m_panel2->SetSizer( inputData );
+	m_panel2->Layout();
+	inputData->Fit( m_panel2 );
+	bSizer7->Add( m_panel2, 1, wxEXPAND | wxALL, 5 );
 
 	wxBoxSizer* outputData;
 	outputData = new wxBoxSizer( wxVERTICAL );

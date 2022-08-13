@@ -25,6 +25,7 @@
 #include <wx/frame.h>
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
+#include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -75,6 +76,7 @@ class TracklistingGen : public wxFrame
 	private:
 
 	protected:
+		wxPanel* m_panel2;
 		wxStaticText* Tag1;
 		wxStaticText* spacer1;
 		wxStaticText* m_staticText2;
@@ -125,7 +127,7 @@ class TracklistingGen : public wxFrame
 
 	public:
 
-		TracklistingGen( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Tracklisting Generator"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 766,693 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		TracklistingGen( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Tracklisting Generator"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 766,723 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~TracklistingGen();
 
