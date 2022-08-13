@@ -28,6 +28,8 @@ MainWindow::MainWindow() : WindowBase(NULL) {
         backupFolderPath = fs::path(ini["Settings"]["backupFolderPath"]);
         automaticBackups = ini["Settings"]["automaticBackups"] == "true";
         
+        if(basePath.empty()) return;
+
         ParseExtracted(basePath);
         
         //TODO: parse backups already present
