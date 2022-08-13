@@ -133,3 +133,29 @@ class TracklistingGen : public wxFrame
 
 };
 
+///////////////////////////////////////////////////////////////////////////////
+/// Class TrackInfoBase
+///////////////////////////////////////////////////////////////////////////////
+class TrackInfoBase : public wxFrame
+{
+	private:
+
+	protected:
+		wxStaticText* m_staticText24;
+		wxTextCtrl* xmlInfo;
+		wxButton* deleteButton;
+		wxButton* updateTrack;
+
+		// Virtual event handlers, override them in your derived class
+		virtual void onDeleteTrack( wxCommandEvent& event ) = 0;
+		virtual void onUpdateTrack( wxCommandEvent& event ) = 0;
+
+
+	public:
+
+		TrackInfoBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Track Info Viewer"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+
+		~TrackInfoBase();
+
+};
+

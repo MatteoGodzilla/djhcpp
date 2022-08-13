@@ -5,7 +5,9 @@ using namespace tinyxml2;
 
 MainWindow::MainWindow() : WindowBase(NULL) {
     SetLabel("DJHCPP v" + DJHCPP_VERSION + "    [" + DJHCPP_BUILD + "]");
-    
+
+    Bind(DJHCPP_EVT_FORCE_LIST_UPDATE,&MainWindow::ManualUpdate,this);
+
     mainTable = new CustomTable(this);
     middleSizer->Add(mainTable,1,wxALL|wxEXPAND,5);
 
@@ -80,9 +82,18 @@ void MainWindow::ParseExtracted(fs::path path){
             textData.insert(std::make_pair(id,value));
         }
         
-        wxLogMessage(wxString("Successfully loaded ") <<  textData.size() << " songs from tracklisting.");
         //load tracklisting
         tracklisting.LoadFile(tracklistingPath.generic_string().c_str());
+        //count how many songs were loaded
+        size_t count = 0;
+        XMLElement* track = tracklisting.RootElement()->FirstChildElement();
+        do {
+            count++;
+            track = track->NextSiblingElement();
+        } while(track != nullptr);
+        
+        wxLogMessage(wxString("Successfully loaded ") << count << " songs from tracklisting.");
+
         UpdateTable();
         //add backup
         CreateAutomaticBackup();
@@ -223,6 +234,7 @@ void MainWindow::ProcessCustom(fs::path dir){
 }
 
 void MainWindow::ManualUpdate(wxCommandEvent& e){
+    UpdateTable();
     Export();
 }
 
@@ -302,7 +314,7 @@ void MainWindow::RestoreBackup( wxCommandEvent& event){
 
 void MainWindow::UpdateTable(){
     mainTable->data.clear();
-    XMLNode* track = tracklisting.RootElement()->FirstChild();
+    XMLElement* track = tracklisting.RootElement()->FirstChildElement();
 
     while(track != nullptr){
         TableRow row;
@@ -373,9 +385,12 @@ void MainWindow::UpdateTable(){
             //wxLogMessage(wxString() << id << " " << name); 
         }
 
+        //not shown in the table, but set anyway
+        row.trackRef = track;
+
         mainTable->data.push_back(row);
 
-        track = track->NextSibling();
+        track = track->NextSiblingElement();
     }
     mainTable->SetItemCount(mainTable->data.size());
 }

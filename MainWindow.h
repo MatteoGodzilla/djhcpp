@@ -5,17 +5,18 @@
 #include <fstream>
 #include <ctime>
 #include <thread>
-#include "wx/dirdlg.h"
-#include "wx/filedlg.h"
-#include "wx/textdlg.h"
-#include "wx/msgdlg.h"
-#include "wx/log.h"
-#include "wx/progdlg.h"
+#include <wx/dirdlg.h>
+#include <wx/filedlg.h>
+#include <wx/textdlg.h>
+#include <wx/msgdlg.h>
+#include <wx/log.h>
+#include <wx/progdlg.h>
 #include "tinyxml2/tinyxml2.h"
 #include "mini/ini.h"
 #include "WindowBase.h"
 #include "TracklistingWindow.h"
 #include "CustomTable.h"
+#include "CustomEvents.h"
 #include "config.h"
 
 class MainWindow : public WindowBase{

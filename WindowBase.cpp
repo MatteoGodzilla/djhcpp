@@ -370,3 +370,50 @@ TracklistingGen::~TracklistingGen()
 	CreateBaseFolder->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TracklistingGen::GenBaseFolder ), NULL, this );
 
 }
+
+TrackInfoBase::TrackInfoBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ) );
+	this->SetBackgroundColour( wxColour( 255, 255, 255 ) );
+
+	wxBoxSizer* bSizer11;
+	bSizer11 = new wxBoxSizer( wxVERTICAL );
+
+	m_staticText24 = new wxStaticText( this, wxID_ANY, wxT("Track XML Info"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText24->Wrap( -1 );
+	bSizer11->Add( m_staticText24, 0, wxALL, 5 );
+
+	xmlInfo = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB );
+	bSizer11->Add( xmlInfo, 10, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer* bSizer12;
+	bSizer12 = new wxBoxSizer( wxHORIZONTAL );
+
+	deleteButton = new wxButton( this, wxID_ANY, wxT("Delete Track"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer12->Add( deleteButton, 1, wxALL, 5 );
+
+	updateTrack = new wxButton( this, wxID_ANY, wxT("Update Track"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer12->Add( updateTrack, 1, wxALL, 5 );
+
+
+	bSizer11->Add( bSizer12, 0, wxEXPAND, 5 );
+
+
+	this->SetSizer( bSizer11 );
+	this->Layout();
+
+	this->Centre( wxBOTH );
+
+	// Connect Events
+	deleteButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TrackInfoBase::onDeleteTrack ), NULL, this );
+	updateTrack->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TrackInfoBase::onUpdateTrack ), NULL, this );
+}
+
+TrackInfoBase::~TrackInfoBase()
+{
+	// Disconnect Events
+	deleteButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TrackInfoBase::onDeleteTrack ), NULL, this );
+	updateTrack->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TrackInfoBase::onUpdateTrack ), NULL, this );
+
+}

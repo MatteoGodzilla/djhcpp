@@ -4,8 +4,11 @@
 #include <wx/bmpbndl.h>
 #include <wx/dcmemory.h>
 #include <wx/renderer.h>
+#include <wx/log.h>
 #include <vector>
 #include <string>
+#include "tinyxml2.h"
+#include "TrackInfoViewer.h"
 
 struct TableRow{
     std::string id;
@@ -14,8 +17,9 @@ struct TableRow{
     std::string artist2;
     std::string song2;
     float bpm;
+    //not shown
     bool enabled = false;
-    //TODO: add reference to actual xml entry
+    tinyxml2::XMLElement* trackRef;
 };
 
 class CustomTable : public wxListCtrl{
@@ -26,6 +30,8 @@ public:
     std::vector<TableRow> data;
     void Search(std::string query);
     void OnColumnClick(wxListEvent& event);
+    void OnKeyDown(wxListEvent& event);
+    void OnActivate(wxListEvent& event);
     static bool CompareRows(const TableRow& a, const TableRow& b, int col, int dir);
 private:
     int lastSortingColumn = -1;

@@ -29,7 +29,7 @@ int FuzzyExact(std::string query,std::string text){
 }
 
 CustomTable::CustomTable(wxWindow *parent)
-    : wxListCtrl(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxLC_VIRTUAL|wxLC_REPORT)
+    : wxListCtrl(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxLC_VIRTUAL|wxLC_REPORT|wxLC_HRULES)
 {
     //this first column is a hack because apparently wxwidgets adds an extra image on the first column 
     //even if you dont want one there
@@ -59,6 +59,8 @@ CustomTable::CustomTable(wxWindow *parent)
     */
 
     Bind(wxEVT_LIST_COL_CLICK,wxListEventHandler(CustomTable::OnColumnClick),this,wxID_ANY);
+    Bind(wxEVT_LIST_KEY_DOWN,wxListEventHandler(CustomTable::OnKeyDown),this,wxID_ANY);
+    Bind(wxEVT_LIST_ITEM_ACTIVATED,wxListEventHandler(CustomTable::OnActivate),this,wxID_ANY);
 
     data = std::vector<TableRow>();
 }
@@ -132,6 +134,19 @@ void CustomTable::OnColumnClick(wxListEvent& event){
     lastSortingColumn = col;
     Refresh();
 }
+
+void CustomTable::OnKeyDown(wxListEvent& event){
+    wxLogMessage(wxString() << "KEY DOWN" << " " << event.GetKeyCode());
+}
+
+void CustomTable::OnActivate(wxListEvent& event){
+    //get xmlref from currently selected row
+    tinyxml2::XMLElement* ref = data[event.GetIndex()].trackRef;
+
+    TrackInfoViewer* viewer = new TrackInfoViewer(this,ref);
+    viewer->Show();
+}
+
 
 bool CustomTable::CompareRows(const TableRow& a, const TableRow& b, int col, int dir){
     switch(col){

@@ -18,6 +18,8 @@ add_executable(djhcpp
     MainWindow.cpp 
     CustomTable.cpp
     TracklistingWindow.cpp
+    TrackInfoViewer.cpp
+    CustomEvents.cpp
     WindowBase.cpp
 )
 
