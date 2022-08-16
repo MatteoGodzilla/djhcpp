@@ -34,7 +34,7 @@ endif()
 
 target_include_directories(djhcpp PUBLIC "mINI/src")
 
-target_link_libraries(djhcpp ${wxWidgets_LIBRARIES} tinyxml2 stdc++fs)
+target_link_libraries(djhcpp ${wxWidgets_LIBRARIES} tinyxml2 stdc++fs libsigsegv)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

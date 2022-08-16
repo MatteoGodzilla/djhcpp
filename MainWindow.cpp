@@ -450,38 +450,45 @@ void MainWindow::ApplyPatchFile( wxCommandEvent& event){
 
         XMLElement* track = doc.RootElement()->FirstChildElement();
         while(track != nullptr){
-            const char* idtag;
-            idtag = track->ToElement()->Attribute("IDTag");
-            wxLogMessage(idtag);
+            if(strcmp(track->Value(),"Track") == 0){
 
-            //find custom in loaded tracks
-            XMLElement* query = tracklisting.RootElement()->FirstChildElement();
-            while(query != nullptr){
-                const char* queryID = query->FirstChildElement("IDTag")->GetText();
-                if(strcmp(idtag,queryID) == 0){
-                    //we found the custom
-                    wxLogMessage(wxString("WE FOUND THE CUSTOM WITH ID ") << idtag);
-                    
-                    //make tracklisting the parent of trackCopy, so that we can add it later
-                    XMLNode* trackCopy = track->DeepClone(&tracklisting);
+                const char* idtag = nullptr;
+                idtag = track->ToElement()->Attribute("IDTag");
+                //wxLogMessage(idtag);
 
-                    //see if <Leaderboard> is already present in the query
-                    XMLNode* queryLeaderboard = query->FirstChildElement("LeaderboardID");
-                    XMLNode* newLeaderboard = trackCopy->FirstChildElement("LeaderboardID");
+                if(idtag != nullptr){
+                    //find custom in loaded tracks
+                    XMLElement* query = tracklisting.RootElement()->FirstChildElement();
+                    while(query != nullptr){
+                        const char* queryID = query->FirstChildElement("IDTag")->GetText();
+                        if(strcmp(idtag,queryID) == 0){
+                            //we found the custom
+                            wxLogMessage(wxString("Updated Track with id ") << idtag);
+                            
+                            //make tracklisting the parent of trackCopy, so that we can add it later
+                            XMLNode* trackCopy = track->DeepClone(&tracklisting);
 
-                    if(newLeaderboard != nullptr){
-                        //we must patch something
-                        if(queryLeaderboard != nullptr){
-                            query->DeleteChild(queryLeaderboard);
+                            //see if <Leaderboard> is already present in the query
+                            XMLNode* queryLeaderboard = query->FirstChildElement("LeaderboardID");
+                            XMLNode* newLeaderboard = trackCopy->FirstChildElement("LeaderboardID");
+
+                            if(newLeaderboard != nullptr){
+                                //we must patch something
+                                if(queryLeaderboard != nullptr){
+                                    query->DeleteChild(queryLeaderboard);
+                                }
+                                query->InsertEndChild(newLeaderboard);
+                            }
+                            break;
                         }
-                        query->InsertEndChild(newLeaderboard);
+                        query = query->NextSiblingElement();
                     }
-                    break;
+                    /*
+                    if(query == nullptr){
+                        wxLogMessage(wxString("Custom with ID ") << idtag << " was not found");
+                    }
+                    */
                 }
-                query = query->NextSiblingElement();
-            }
-            if(query == nullptr){
-                wxLogMessage(wxString("Custom with ID ") << idtag << " was not found");
             }
             track = track->NextSiblingElement();
         }
