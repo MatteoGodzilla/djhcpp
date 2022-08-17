@@ -136,7 +136,7 @@ void CustomTable::OnColumnClick(wxListEvent& event){
 }
 
 void CustomTable::OnKeyDown(wxListEvent& event){
-    wxLogMessage(wxString() << "KEY DOWN" << " " << event.GetKeyCode());
+    //wxLogMessage(wxString() << "KEY DOWN" << " " << event.GetKeyCode());
 }
 
 void CustomTable::OnActivate(wxListEvent& event){

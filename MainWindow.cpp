@@ -330,16 +330,20 @@ void MainWindow::UpdateTable(){
         if(token != nullptr) id = token->GetText();
         
         token = track->FirstChildElement("MixName");
-        if(token != nullptr) name1 = token->GetText();
+        if(token != nullptr) {
+            name1 = token->GetText();
 
-        token = token->NextSiblingElement("MixName");
-        if(token != nullptr) name2 = token->GetText();
+            token = token->NextSiblingElement("MixName");
+            if(token != nullptr) name2 = token->GetText();
+        }
 
         token = track->FirstChildElement("MixArtist");
-        if(token != nullptr) artist1 = token->GetText();
-
-        token = token->NextSiblingElement("MixArtist");
-        if(token != nullptr) artist2 = token->GetText();
+        if(token != nullptr){
+            artist1 = token->GetText();
+            
+            token = token->NextSiblingElement("MixArtist");
+            if(token != nullptr) artist2 = token->GetText();
+        } 
 
         token = track->FirstChildElement("BPM");
         if(token != nullptr) bpm = token->GetText();
