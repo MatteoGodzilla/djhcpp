@@ -136,6 +136,16 @@ void CustomTable::OnColumnClick(wxListEvent& event){
 }
 
 void CustomTable::OnKeyDown(wxListEvent& event){
+    tinyxml2::XMLElement* ref = data[event.GetIndex()].trackRef;
+    wxCommandEvent ev = wxCommandEvent();
+    TrackInfoViewer* viewer;
+    switch(event.GetKeyCode()){
+        case 127:
+            viewer = new TrackInfoViewer(this,ref);
+            viewer->onDeleteTrack(ev);
+            break;
+        default: break;
+    }
     //wxLogMessage(wxString() << "KEY DOWN" << " " << event.GetKeyCode());
 }
 

@@ -397,6 +397,7 @@ void MainWindow::UpdateTable(){
         track = track->NextSiblingElement();
     }
     mainTable->SetItemCount(mainTable->data.size());
+    mainTable->Refresh();
 }
 
 void MainWindow::OnSearch(wxCommandEvent& wxEvent){
