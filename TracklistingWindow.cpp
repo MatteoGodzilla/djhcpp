@@ -1,4 +1,5 @@
 #include "TracklistingWindow.h"
+namespace fs = std::filesystem;
 using namespace tinyxml2;
 
 void TracklistingWindow::ErrRequiredParameter(wxString paramenter){
@@ -262,6 +263,7 @@ void TracklistingWindow::GenTracklisting(wxCommandEvent& event){
     }
 
     //output to user
+    generatedOnce = true;
     doc.RootElement()->InsertEndChild(track);
     xmlOutput->Clear();
     XMLPrinter printer;
@@ -280,7 +282,37 @@ void TracklistingWindow::GenTracklisting(wxCommandEvent& event){
 }
 
 void TracklistingWindow::GenBaseFolder(wxCommandEvent& event){
-    wxLogWarning("Not done yet, sorry :(");
+    if(!generatedOnce) {
+        wxLogError("Please generate the tracklisting before creating the folders");
+        return;
+    }
+    wxDirDialog* dialog = new wxDirDialog(this,"Select a folder",wxEmptyString);
+    if(dialog->ShowModal() == wxID_OK){
+        if(m_textID->IsEmpty()) return;
+        fs::path base = fs::path(dialog->GetPath().ToStdString());
+        wxString id = m_textID->GetValue();
+
+        fs::path folder = base / id.ToStdString();
+        fs::path xmlFile = base / "Info For Tracklisting.xml";
+        fs::path csvFile = base / "info For TRAC.csv";
+
+        fs::create_directory(folder);
+        
+        std::ofstream xml(xmlFile.c_str());
+        if(xml.is_open()){
+            xml << xmlOutput->GetValue();
+            xml.close();
+        }
+
+        std::ofstream csv(csvFile.c_str());
+        if(csv.is_open()){
+            csv << csvOutput->GetValue();
+            csv.close();
+        }
+
+        wxLogMessage("Successfully created folder structure for the custom");
+    }
+
 }
 
 wxString TracklistingWindow::GenerateID(wxString source){

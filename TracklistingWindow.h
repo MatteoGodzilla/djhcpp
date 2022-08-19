@@ -1,9 +1,12 @@
 #pragma once
 #include <iostream>
+#include <fstream>
 #include <map>
+#include <filesystem>
+#include <wx/log.h>
+#include <wx/dirdlg.h>
 #include "WindowBase.h"
 #include "tinyxml2.h"
-#include "wx/log.h"
 
 class TracklistingWindow : public TracklistingGen{
 public:
@@ -19,4 +22,5 @@ public:
 private:
     bool notEnoughParameters = false;
     bool invalidFormatParameters = false;
+    bool generatedOnce = false;
 };
