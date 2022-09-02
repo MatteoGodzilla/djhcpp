@@ -1,7 +1,48 @@
 #include "MainWindow.h"
 
 namespace fs = std::filesystem;
-using namespace tinyxml2;
+
+//copied from stack overflow: https://stackoverflow.com/questions/1636333/download-file-using-libcurl-in-c-c
+size_t downloadPatchFile(void* buffer, size_t size, size_t nmemb, FILE* userp){
+    size_t written = fwrite(buffer, size, nmemb, userp);
+    return written;
+}
+
+//this would probably fail if the packet size is not 64 chars, but less
+size_t checkSHA(void* buffer, size_t size, size_t nmemb, void* userp){
+    std::string remoteSHA;
+    //0xff is a byte, but it has 2 chars written in it
+    remoteSHA.resize(SHA256_DIGEST_LENGTH*2);
+    memcpy(remoteSHA.data(),buffer,SHA256_DIGEST_LENGTH*2);
+
+    //open patch file
+    std::ifstream patchFile(PATCH_FILE_NAME);
+    if(patchFile.is_open()){
+        std::stringstream sstr;
+        sstr << patchFile.rdbuf();
+        std::string data = sstr.str();
+
+        unsigned char dataSHABuffer[SHA256_DIGEST_LENGTH];
+        SHA256_CTX context;
+        SHA256_Init(&context);
+        SHA256_Update(&context,(unsigned char*)data.data(),data.length());
+        SHA256_Final(dataSHABuffer,&context);
+
+        std::stringstream dataSHA;
+        dataSHA << std::hex;
+        for(int i = 0; i < SHA256_DIGEST_LENGTH; i++){
+            dataSHA << std::setw(2) << std::setfill('0') << (int)dataSHABuffer[i];
+        }
+
+        if(remoteSHA == dataSHA.str()){
+            wxLogMessage("SHA256 is Valid! Yay!");
+            return nmemb;
+        }
+        return 1;
+    }
+
+    return 0;
+}
 
 MainWindow::MainWindow() : WindowBase(NULL) {
     SetLabel("DJHCPP v" + DJHCPP_VERSION + "    [" + DJHCPP_BUILD + "]");
@@ -11,41 +52,94 @@ MainWindow::MainWindow() : WindowBase(NULL) {
     mainTable = new CustomTable(this);
     middleSizer->Add(mainTable,1,wxALL|wxEXPAND,5);
 
-    if(!fs::exists(SETTINGS_FILE_NAME)){
-        //create one with defaults
-        mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
-        mINI::INIStructure ini;
+    mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
+    mINI::INIStructure ini;
+
+    if(fs::exists(SETTINGS_FILE_NAME))
+        settings.read(ini);
+
+    //write the settings file
+    if(!ini["Settings"].has("baseFolder")) {
         ini["Settings"]["baseFolder"] = "";
+        basePath = "";
+    } else {
+        basePath = fs::path(ini["Settings"]["baseFolder"]);
+    }
+
+    if(!ini["Settings"].has("backupFolderPath")){
         backupFolderPath = fs::current_path() / "djhcpp_backups";
         fs::create_directory(backupFolderPath);
         ini["Settings"]["backupFolderPath"] = backupFolderPath.string();
+    } else {
+        backupFolderPath = fs::path(ini["Settings"]["backupFolderPath"]);
+    }
+
+    if(!ini["Settings"].has("automaticBackups")) {
         ini["Settings"]["automaticBackups"] = "true";
         automaticBackups = true;
-        settings.write(ini);
     } else {
-        mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
-        mINI::INIStructure ini;
-        settings.read(ini);
-        basePath = ini["Settings"]["baseFolder"];
-        backupFolderPath = fs::path(ini["Settings"]["backupFolderPath"]);
         automaticBackups = ini["Settings"]["automaticBackups"] == "true";
-        
-        if(basePath.empty()) return;
+    }
 
-        ParseExtracted(basePath);
-        
-        //TODO: parse backups already present
-        for(auto& dirEntry : fs::directory_iterator(backupFolderPath)){
-            if(dirEntry.is_directory()){
-                std::string text = dirEntry.path().filename().string();
-                wxMenuItem* entry = new wxMenuItem(backupRestoreMenu,wxID_ANY,text,wxEmptyString,wxITEM_NORMAL);
-                wxStringClientData* data = new wxStringClientData(wxString(dirEntry.path().string()));
+    if(!ini["Settings"].has("patchFileSourceURL")) {
+        ini["Settings"]["patchFileSourceURL"] = "";
+        patchFileSourceURL = "";
+    } else {
+        patchFileSourceURL = ini["Settings"]["patchFileSourceURL"];
+    }
 
-                backupRestoreMenu->Append(entry);
-                //i spent 2 hours trying to figure out how bind works. Rip me
-                backupRestoreMenu->Bind(wxEVT_MENU,&MainWindow::RestoreBackup,this,entry->GetId(),-1,(wxObject*)data);
-            }
+    if(!ini["Settings"].has("patchFileCRCURL")) {
+        ini["Settings"]["patchFileCRCURL"] = "";
+        patchFileCRCURL = "";
+    } else {
+        patchFileCRCURL = ini["Settings"]["patchFileCRCURL"];
+    }
+
+    if(!ini["Settings"].has("automaticPatching")) {
+        ini["Settings"]["automaticPatching"] = "false";
+        automaticPatching = false;
+    } else {
+        automaticPatching = ini["Settings"]["automaticPatching"] == "true";
+    }
+
+    settings.write(ini);
+
+    //program start
+
+    if(basePath.empty()) return;
+
+    ParseExtracted(basePath);
+
+    //TODO: parse backups already present
+    for(auto& dirEntry : fs::directory_iterator(backupFolderPath)){
+        if(dirEntry.is_directory()){
+            std::string text = dirEntry.path().filename().string();
+            wxMenuItem* entry = new wxMenuItem(backupRestoreMenu,wxID_ANY,text,wxEmptyString,wxITEM_NORMAL);
+            wxStringClientData* data = new wxStringClientData(wxString(dirEntry.path().string()));
+
+            backupRestoreMenu->Append(entry);
+            //i spent 2 hours trying to figure out how bind works. Rip me
+            backupRestoreMenu->Bind(wxEVT_MENU,&MainWindow::RestoreBackup,this,entry->GetId(),-1,(wxObject*)data);
         }
+    }
+
+    if(patchFileSourceURL.empty() || patchFileCRCURL.empty()) return;
+
+    //initialize curl
+    curlSession = curl_easy_init();
+    //wxLogMessage(wxString() << (uint64_t)curlSession);
+    if(curlSession){
+        FILE* fp = fopen(PATCH_FILE_NAME.c_str(),"wb");
+        curl_easy_setopt(curlSession, CURLOPT_URL, patchFileSourceURL.c_str());
+        curl_easy_setopt(curlSession, CURLOPT_WRITEFUNCTION, downloadPatchFile);
+        curl_easy_setopt(curlSession,CURLOPT_WRITEDATA,fp);
+        CURLcode success = curl_easy_perform(curlSession);
+        fclose(fp);
+        //check CRC
+        curl_easy_setopt(curlSession, CURLOPT_URL, patchFileCRCURL.c_str());
+        curl_easy_setopt(curlSession, CURLOPT_WRITEFUNCTION, checkSHA);
+        success = curl_easy_perform(curlSession);
+        //wxLogMessage(wxString() << success);
     }
 }
 
@@ -70,7 +164,7 @@ void MainWindow::ParseExtracted(fs::path path){
         //load text string
         std::ifstream tracIDStream = std::ifstream(tracIDPath);
         std::ifstream tracEStream = std::ifstream(tracEPath);
-        
+
         textData.clear();
         textData.insert(std::make_pair(std::string(""), std::string(""))); //default when string is empty
 
@@ -81,17 +175,17 @@ void MainWindow::ParseExtracted(fs::path path){
             std::getline(tracEStream,value,'\0');
             textData.insert(std::make_pair(id,value));
         }
-        
+
         //load tracklisting
         tracklisting.LoadFile(tracklistingPath.generic_string().c_str());
         //count how many songs were loaded
         size_t count = 0;
-        XMLElement* track = tracklisting.RootElement()->FirstChildElement();
+        tinyxml2::XMLElement* track = tracklisting.RootElement()->FirstChildElement();
         do {
             count++;
             track = track->NextSiblingElement();
         } while(track != nullptr);
-        
+
         wxLogMessage(wxString("Successfully loaded ") << count << " songs from tracklisting.");
 
         UpdateTable();
@@ -130,7 +224,7 @@ void MainWindow::AddCustom(wxCommandEvent& event){
         for(size_t i = 0; i < paths.GetCount(); i++){
             fs::path dir = fs::path(paths[i].ToStdWstring());
             if(fs::exists(dir/"DJH2")) dir /= "DJH2";
-            
+
             ProcessCustom(dir);
         }
     }
@@ -148,19 +242,19 @@ void MainWindow::ProcessCustom(fs::path dir){
 
     doc.LoadFile(customTracklisting.generic_string().c_str());
 
-    XMLNode* track = doc.RootElement()->FirstChild();
+    tinyxml2::XMLNode* track = doc.RootElement()->FirstChild();
 
     while(track != nullptr){
         //identical
         if(strcmp(track->Value(),"Track") == 0){
             std::string addingTag = track->FirstChildElement("IDTag")->GetText();
 
-            XMLElement* tracklistingRoot = tracklisting.RootElement();
-            XMLNode* tracklistingTrack = tracklistingRoot->FirstChild();
-            XMLNode* possibleRemove = nullptr;
+            tinyxml2::XMLElement* tracklistingRoot = tracklisting.RootElement();
+            tinyxml2::XMLNode* tracklistingTrack = tracklistingRoot->FirstChild();
+            tinyxml2::XMLNode* possibleRemove = nullptr;
 
             while(tracklistingTrack != nullptr){
-                XMLElement* IDTag = tracklistingTrack->FirstChildElement("IDTag");
+                tinyxml2::XMLElement* IDTag = tracklistingTrack->FirstChildElement("IDTag");
                 if(IDTag != nullptr){
                     std::string trackTestingID = IDTag->GetText();
                     if(trackTestingID == addingTag){
@@ -175,7 +269,7 @@ void MainWindow::ProcessCustom(fs::path dir){
             //that is safe to add to the root;
             if(possibleRemove != nullptr) tracklistingRoot->DeleteChild(possibleRemove);
 
-            XMLNode* copy = track->DeepClone(&tracklisting);
+            tinyxml2::XMLNode* copy = track->DeepClone(&tracklisting);
             tracklistingRoot->InsertEndChild(copy);
         }
         track = track->NextSibling();
@@ -200,10 +294,10 @@ void MainWindow::ProcessCustom(fs::path dir){
                 if(previousChar == '"'){
                     //in the csv standard, if there are two "" that is considered as the " literal
                     tokens.back() += '"';
-                    previousChar = '\0';                    
+                    previousChar = '\0';
                 } else previousChar = c;
             } else if(c == ',' && !insideQuotes){
-                //we found the comma separator and we're not in something in quotes, 
+                //we found the comma separator and we're not in something in quotes,
                 //so we're good to go to parse the next token (by pushing an empty string)
                 tokens.emplace_back("");
                 previousChar = c;
@@ -280,7 +374,7 @@ void MainWindow::CreateBackup(std::filesystem::path baseFolder, std::string name
     if(fs::exists(baseFolder)){
         fs::path thisBackup = baseFolder / name;
         fs::create_directory(thisBackup);
-        
+
         fs::copy_file(tracklistingPath, thisBackup / "tracklisting.xml");
         fs::copy_file(tracIDPath, thisBackup / "TRACID.txt");
         fs::copy_file(tracEPath, thisBackup / "TRACE.txt");
@@ -314,7 +408,7 @@ void MainWindow::RestoreBackup( wxCommandEvent& event){
 
 void MainWindow::UpdateTable(){
     mainTable->data.clear();
-    XMLElement* track = tracklisting.RootElement()->FirstChildElement();
+    tinyxml2::XMLElement* track = tracklisting.RootElement()->FirstChildElement();
 
     while(track != nullptr){
         TableRow row;
@@ -326,9 +420,9 @@ void MainWindow::UpdateTable(){
         std::string artist2 = "";
         std::string bpm = "";
 
-        XMLElement* token = track->FirstChildElement("IDTag");
+        tinyxml2::XMLElement* token = track->FirstChildElement("IDTag");
         if(token != nullptr) id = token->GetText();
-        
+
         token = track->FirstChildElement("MixName");
         if(token != nullptr) {
             name1 = token->GetText();
@@ -340,16 +434,16 @@ void MainWindow::UpdateTable(){
         token = track->FirstChildElement("MixArtist");
         if(token != nullptr){
             artist1 = token->GetText();
-            
+
             token = token->NextSiblingElement("MixArtist");
             if(token != nullptr) artist2 = token->GetText();
-        } 
+        }
 
         token = track->FirstChildElement("BPM");
         if(token != nullptr) bpm = token->GetText();
 
         row.id = id;
-        
+
         //if artist1 is empty -> ""
         //if artist1 is not empty
         //  if textData contains key -> textData[key]
@@ -378,7 +472,7 @@ void MainWindow::UpdateTable(){
             if(textData.count(name2) == 1) row.song2 = textData[name2];
             else row.song2 = "[MISSING]";
         }
-        
+
         row.bpm = std::stof(bpm);
         const char* name;
         name = track->ToElement()->Attribute("selectableinfem");
@@ -386,7 +480,7 @@ void MainWindow::UpdateTable(){
         if(name != 0){
             if(strcmp(name,"yes") == 0 || strcmp(name,"true"))
                 row.enabled = true;
-            //wxLogMessage(wxString() << id << " " << name); 
+            //wxLogMessage(wxString() << id << " " << name);
         }
 
         //not shown in the table, but set anyway
@@ -416,18 +510,18 @@ void MainWindow::ToUpper(wxCommandEvent& event){
         wxProgressDialog* dialog = new wxProgressDialog("Progress","Renaming the files. Please wait a few seconds",100,this);
         dialog->Show();
         dialog->Pulse();
-        
+
         for(auto& item : fs::recursive_directory_iterator(basePath)){
             fs::path rel = fs::relative(item.path(),basePath);
 
             std::string upperPath = rel.generic_string();
-            
+
             for(char& ch : upperPath){
                 ch = std::toupper(ch);
             }
 
             fs::path destination = fs::path(upperPath);
-            
+
             fs::rename(basePath / rel,basePath / destination);
 
             //show files to the user
@@ -444,16 +538,16 @@ void MainWindow::ApplyPatchFile( wxCommandEvent& event){
         wxLogWarning("Please load extracted files before applying patch files");
         return;
     }
-    
+
     wxFileDialog dlg(this,"Select Patch File","","","XML Files (*.xml)|*.xml");
     if(dlg.ShowModal() == wxID_OK){
         CreateAutomaticBackup();
         //wxLogMessage(dlg.GetPath());
-        
-        XMLDocument doc;
+
+        tinyxml2::XMLDocument doc;
         doc.LoadFile(dlg.GetPath());
 
-        XMLElement* track = doc.RootElement()->FirstChildElement();
+        tinyxml2::XMLElement* track = doc.RootElement()->FirstChildElement();
         while(track != nullptr){
             if(strcmp(track->Value(),"Track") == 0){
 
@@ -463,19 +557,19 @@ void MainWindow::ApplyPatchFile( wxCommandEvent& event){
 
                 if(idtag != nullptr){
                     //find custom in loaded tracks
-                    XMLElement* query = tracklisting.RootElement()->FirstChildElement();
+                    tinyxml2::XMLElement* query = tracklisting.RootElement()->FirstChildElement();
                     while(query != nullptr){
                         const char* queryID = query->FirstChildElement("IDTag")->GetText();
                         if(strcmp(idtag,queryID) == 0){
                             //we found the custom
                             wxLogMessage(wxString("Updated Track with id ") << idtag);
-                            
+
                             //make tracklisting the parent of trackCopy, so that we can add it later
-                            XMLNode* trackCopy = track->DeepClone(&tracklisting);
+                            tinyxml2::XMLNode* trackCopy = track->DeepClone(&tracklisting);
 
                             //see if <Leaderboard> is already present in the query
-                            XMLNode* queryLeaderboard = query->FirstChildElement("LeaderboardID");
-                            XMLNode* newLeaderboard = trackCopy->FirstChildElement("LeaderboardID");
+                            tinyxml2::XMLNode* queryLeaderboard = query->FirstChildElement("LeaderboardID");
+                            tinyxml2::XMLNode* newLeaderboard = trackCopy->FirstChildElement("LeaderboardID");
 
                             if(newLeaderboard != nullptr){
                                 //we must patch something
@@ -501,4 +595,8 @@ void MainWindow::ApplyPatchFile( wxCommandEvent& event){
         wxLogMessage("Done Patching");
         //wxLogMessage(doc.RootElement()->FirstChild()->Value());
     }
+}
+
+MainWindow::~MainWindow(){
+    curl_easy_cleanup(curlSession);
 }

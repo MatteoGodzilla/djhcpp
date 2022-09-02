@@ -5,14 +5,19 @@
 #include <fstream>
 #include <ctime>
 #include <thread>
+//wxWidgets
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include <wx/textdlg.h>
 #include <wx/msgdlg.h>
 #include <wx/log.h>
 #include <wx/progdlg.h>
-#include "tinyxml2/tinyxml2.h"
+//external libs
+#include <curl/curl.h>
+#include "tinyxml2.h"
 #include "mini/ini.h"
+#include <openssl/sha.h>
+//DJHCPP includes
 #include "WindowBase.h"
 #include "TracklistingWindow.h"
 #include "CustomTable.h"
@@ -22,6 +27,7 @@
 class MainWindow : public WindowBase{
 public:
     MainWindow();
+    ~MainWindow();
     void OpenExtractedFiles( wxCommandEvent& event ) override;
     void AddCustom(wxCommandEvent& event) override;
     void ManualUpdate(wxCommandEvent& event) override;
@@ -40,6 +46,8 @@ public:
     void ProcessCustom(std::filesystem::path dir);
     void Export();
 
+    CURL* curlSession;
+
 private:
     std::map<std::string, std::string> textData;
     CustomTable* mainTable;
@@ -52,4 +60,8 @@ private:
     //backups
     std::filesystem::path backupFolderPath;
     bool automaticBackups = true;
+    //patch files
+    std::string patchFileSourceURL;
+    std::string patchFileCRCURL;
+    bool automaticPatching = false;
 };

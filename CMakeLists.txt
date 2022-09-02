@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(djhcpp VERSION 0.1.8)
+project(djhcpp VERSION 0.2)
 
 set(CMAKE_CXX_STANDARD 17)
 # set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
@@ -13,9 +13,9 @@ enable_testing()
 
 configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${PROJECT_SOURCE_DIR}/config.h)
 
-add_executable(djhcpp 
-    main.cpp 
-    MainWindow.cpp 
+add_executable(djhcpp
+    main.cpp
+    MainWindow.cpp
     CustomTable.cpp
     TracklistingWindow.cpp
     TrackInfoViewer.cpp
@@ -34,7 +34,7 @@ endif()
 
 target_include_directories(djhcpp PUBLIC "mINI/src")
 
-target_link_libraries(djhcpp ${wxWidgets_LIBRARIES} tinyxml2 stdc++fs)
+target_link_libraries(djhcpp ${wxWidgets_LIBRARIES} tinyxml2 stdc++fs libcurl crypto ssl)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
