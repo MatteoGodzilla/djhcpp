@@ -5,6 +5,7 @@ namespace fs = std::filesystem;
 //copied from stack overflow: https://stackoverflow.com/questions/1636333/download-file-using-libcurl-in-c-c
 size_t downloadPatchFile(void* buffer, size_t size, size_t nmemb, FILE* userp){
     size_t written = fwrite(buffer, size, nmemb, userp);
+    //wxLogMessage(wxString()<<nmemb);
     return written;
 }
 
@@ -15,28 +16,40 @@ size_t checkSHA(void* buffer, size_t size, size_t nmemb, void* userp){
     remoteSHA.resize(SHA256_DIGEST_LENGTH*2);
     memcpy(remoteSHA.data(),buffer,SHA256_DIGEST_LENGTH*2);
 
+    //wxLogMessage(wxString() << nmemb);
+
     //open patch file
-    std::ifstream patchFile(PATCH_FILE_NAME);
+    std::ifstream patchFile(PATCH_FILE_NAME,std::ios::binary);
     if(patchFile.is_open()){
         std::stringstream sstr;
         sstr << patchFile.rdbuf();
         std::string data = sstr.str();
 
+        std::cout << data.length() << std::endl;
+
         unsigned char dataSHABuffer[SHA256_DIGEST_LENGTH];
         SHA256_CTX context;
         SHA256_Init(&context);
-        SHA256_Update(&context,(unsigned char*)data.data(),data.length());
+        SHA256_Update(&context,data.data(),data.length());
         SHA256_Final(dataSHABuffer,&context);
 
-        std::stringstream dataSHA;
-        dataSHA << std::hex;
+        std::stringstream dataSHAstream;
+        dataSHAstream << std::hex;
         for(int i = 0; i < SHA256_DIGEST_LENGTH; i++){
-            dataSHA << std::setw(2) << std::setfill('0') << (int)dataSHABuffer[i];
+            dataSHAstream << std::setw(2) << std::setfill('0') << (int)dataSHABuffer[i];
         }
 
-        if(remoteSHA == dataSHA.str()){
+        std::string dataSHA = dataSHAstream.str();
+
+        if(remoteSHA == dataSHA){
             wxLogMessage("SHA256 is Valid! Yay!");
             return nmemb;
+        } else {
+            wxLogError("There was a conflict between the SHA256 codes");
+            wxLogMessage("Remote");
+            wxLogMessage(wxString(remoteSHA));
+            wxLogMessage("DownloadedFile");
+            wxLogMessage(wxString(dataSHAstream.str()));
         }
         return 1;
     }
