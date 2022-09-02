@@ -7,3 +7,6 @@
 [submodule "mINI"]
 	path = mINI
 	url = https://github.com/pulzed/mINI
+[submodule "CRCpp"]
+	path = CRCpp
+	url = https://github.com/d-bahr/CRCpp
