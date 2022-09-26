@@ -20,7 +20,7 @@ int FuzzyExact(std::string query,std::string text){
             searchIndex++;
             score += 100;
         } else {
-            //penalize different letters 
+            //penalize different letters
             score -= 10;
         }
         textIndex++;
@@ -31,7 +31,7 @@ int FuzzyExact(std::string query,std::string text){
 CustomTable::CustomTable(wxWindow *parent)
     : wxListCtrl(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxLC_VIRTUAL|wxLC_REPORT|wxLC_HRULES)
 {
-    //this first column is a hack because apparently wxwidgets adds an extra image on the first column 
+    //this first column is a hack because apparently wxwidgets adds an extra image on the first column
     //even if you dont want one there
 
     AppendColumn("",wxLIST_FORMAT_LEFT,0);
@@ -41,7 +41,7 @@ CustomTable::CustomTable(wxWindow *parent)
     AppendColumn("Artist 2");
     AppendColumn("Song 2");
     AppendColumn("BPM");
-    
+
     //used to show enabled column (disabled for now)
     //AppendColumn("Enabled");
 
@@ -68,11 +68,11 @@ CustomTable::CustomTable(wxWindow *parent)
 wxString CustomTable::OnGetItemText(long item, long column) const{
     TableRow row = data[item];
     switch(column){
-        case 1: return row.id;
-        case 2: return row.artist1;
-        case 3: return row.song1;
-        case 4: return row.artist2;
-        case 5: return row.song2;
+        case 1: return wxString::FromUTF8(row.id);
+        case 2: return wxString::FromUTF8(row.artist1);
+        case 3: return wxString::FromUTF8(row.song1);
+        case 4: return wxString::FromUTF8(row.artist2);
+        case 5: return wxString::FromUTF8(row.song2);
         case 6: return wxString() << row.bpm;
         default: return wxString();
     }
@@ -84,7 +84,7 @@ int CustomTable::OnGetItemColumnImage(long item, long column) const {
     TableRow row = data[item];
     //std::cout << item << "\t" << column << std::endl;
     switch(column){
-        case 7: 
+        case 7:
             if(row.enabled) return 1;
             else return 0;
         default: return -1;
@@ -93,7 +93,7 @@ int CustomTable::OnGetItemColumnImage(long item, long column) const {
 }
 
 void CustomTable::Search(std::string query){
-    //actually just sorts 
+    //actually just sorts
     std::sort(data.begin(),data.end(),[&](const TableRow& a, const TableRow& b){
         //calculate max score for each row
         int maxScoreA = FuzzyExact(query,a.id);
@@ -121,7 +121,7 @@ void CustomTable::OnColumnClick(wxListEvent& event){
     int newDirection = sortingDirection;
     if(col == lastSortingColumn)
         newDirection *= -1;
-    else 
+    else
         newDirection = 1;
     std::cout << "SORTING " << col << "\t" << newDirection << std::endl;
     std::sort(data.begin(),data.end(),[col,newDirection](const TableRow& a, const TableRow& b){
@@ -175,7 +175,7 @@ bool CustomTable::CompareRows(const TableRow& a, const TableRow& b, int col, int
         case 7:
             if(dir > 0)
                 return a.enabled && !b.enabled;
-            else 
+            else
                 return b.enabled && !a.enabled;
     }
     return false;
