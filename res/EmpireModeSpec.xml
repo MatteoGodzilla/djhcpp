@@ -1,0 +1,47 @@
+<Empire>
+    <!-- 1+, 6 in the original game -->
+    <Club>
+        <Venue>VENUE_ID</Venue>
+        <!-- For the entire club? -->
+        <LeaderboardID>###</LeaderboardID>
+        <!-- unlockthreshold is the amount in stars -->
+        <!-- they seem to all have the attributes defined -->
+        <!-- Can be not defined at all-->
+        <InitiallyLocked unlockcriteria="empire_stars" unlockthreshold="###"/>
+        <!-- 0+ of the following tags: Megamix, Headphone, EmpDJSkin, Deck, Track, DJ, Skin -->
+        <Unlocks></Unlocks>
+        <Setlists>
+            <!-- Multiple-->
+            <!-- either the attribute megamix is set to "yes" or it is undefined -->
+            <Setlist>
+                <IDTag>SETLIST_ID</IDTag>
+                <!-- Just for the single setlist i presume-->
+                <LeaderboardID>###</LeaderboardID>
+                <Name>STRING_ID</Name>
+                <!-- Used for battles -->
+                <!-- Text Inside is either 'Checkpoint' or 'CustomBattle' -->
+                <Type></Type>
+                <OpponentDJ>DJ_ID</OpponentDJ>
+
+                <!-- Id of image shown ingame? -->
+                <Cover></Cover>
+                <Tracks>
+                    <!-- 1+ -->
+                    <Track>TRACK_ID</Track>
+                </Tracks>
+                <!-- unlockthreshold is the amount in stars -->
+                <!-- they seem to all have the attributes defined -->
+                <!-- Can be undefined -->
+                <InitiallyLocked unlockcriteria="empire_stars" unlockthreshold="###"/>
+                <!-- I have no clue-->
+                <Challenge>
+                    <!-- type can be: 'stars', 'win', 'completesetlist'-->
+                    <!-- if type is stars, 'param1' can be defined for the amount-->
+                    <Criteria type=""/>
+                    <!-- 0+ of the following tags: Megamix, Headphone, EmpDJSkin, Deck, Track, DJ, Skin-->
+                    <Unlocks></Unlocks>
+                </Challenge>
+            </Setlist>
+        </Setlists>
+    </Club>
+</Empire>

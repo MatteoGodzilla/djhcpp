@@ -11,16 +11,23 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 include(CTest)
 enable_testing()
 
-configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${PROJECT_SOURCE_DIR}/config.h)
+configure_file(${PROJECT_SOURCE_DIR}/include/config.h.in ${PROJECT_SOURCE_DIR}/include/config.h)
 
 add_executable(djhcpp
-    main.cpp
-    MainWindow.cpp
-    CustomTable.cpp
-    TracklistingWindow.cpp
-    TrackInfoViewer.cpp
-    CustomEvents.cpp
-    WindowBase.cpp
+    "include/config.h"
+    "include/CustomEvents.h"
+    "include/CustomTable.h"
+    "include/MainWindow.h"
+    "include/TrackInfoViewer.h"
+    "include/TracklistingWindow.h"
+    "include/WindowBase.h"
+    src/main.cpp
+    src/MainWindow.cpp
+    src/CustomTable.cpp
+    src/TracklistingWindow.cpp
+    src/TrackInfoViewer.cpp
+    src/CustomEvents.cpp
+    src/WindowBase.cpp
 )
 
 add_subdirectory(tinyxml2)
@@ -31,6 +38,8 @@ elseif(UNIX)
     find_package(wxWidgets REQUIRED COMPONENTS core base )
     include(${wxWidgets_USE_FILE})
 endif()
+
+target_include_directories(djhcpp PRIVATE include)
 
 target_include_directories(djhcpp PUBLIC "mINI/src")
 

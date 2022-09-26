@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/wxWidgets/include",
-                "${workspaceFolder}/tinyxml2"
+                "${workspaceFolder}/tinyxml2",
+                "${workspaceFolder}/include"
             ],
             "defines": [
                 "_DEBUG",
