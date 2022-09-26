@@ -83,13 +83,21 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_menuItem4 = new wxMenuItem( toolsMenu, wxID_ANY, wxString( wxT("Open Tracklisting Generator") ) , wxEmptyString, wxITEM_NORMAL );
 	toolsMenu->Append( m_menuItem4 );
 
+	wxMenuItem* m_menuItem10;
+	m_menuItem10 = new wxMenuItem( toolsMenu, wxID_ANY, wxString( wxT("Apply Patch File") ) , wxEmptyString, wxITEM_NORMAL );
+	toolsMenu->Append( m_menuItem10 );
+
+	toolsMenu->AppendSeparator();
+
 	wxMenuItem* m_menuItem9;
 	m_menuItem9 = new wxMenuItem( toolsMenu, wxID_ANY, wxString( wxT("Rename to Uppercase (PS3/RPCS3 only)") ) , wxEmptyString, wxITEM_NORMAL );
 	toolsMenu->Append( m_menuItem9 );
 
-	wxMenuItem* m_menuItem10;
-	m_menuItem10 = new wxMenuItem( toolsMenu, wxID_ANY, wxString( wxT("Apply Patch File") ) , wxEmptyString, wxITEM_NORMAL );
-	toolsMenu->Append( m_menuItem10 );
+	m_menuItemAutomaticRenaming = new wxMenuItem( toolsMenu, wxID_ANY, wxString( wxT("Automatic renaming when closing") ) , wxEmptyString, wxITEM_CHECK );
+	#ifdef __WXMSW__
+	m_menuItemAutomaticRenaming->SetBitmaps( wxNullBitmap, wxNullBitmap );
+	#endif
+	toolsMenu->Append( m_menuItemAutomaticRenaming );
 
 	m_menubar1->Append( toolsMenu, wxT("Tools") );
 
@@ -122,6 +130,7 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	this->Centre( wxBOTH );
 
 	// Connect Events
+	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( WindowBase::OnCloseEvent ) );
 	m_searchCtrl2->Connect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( WindowBase::OnSearch ), NULL, this );
 	m_searchCtrl2->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( WindowBase::OnSearch ), NULL, this );
 	ExtractedFilesBTN->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::OpenExtractedFiles ), NULL, this );
@@ -130,8 +139,9 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::AddCustom ), this, addCustomMI->GetId());
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ManualUpdate ), this, m_menuItem3->GetId());
 	toolsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::OpenTrackisting ), this, m_menuItem4->GetId());
-	toolsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ToUpper ), this, m_menuItem9->GetId());
 	toolsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ApplyPatchFile ), this, m_menuItem10->GetId());
+	toolsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ToUpper ), this, m_menuItem9->GetId());
+	toolsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ToggleAutomaticRenaming ), this, m_menuItemAutomaticRenaming->GetId());
 	backupRestoreMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::SetBackupFolder ), this, m_menuItemSetBakFolder->GetId());
 	backupRestoreMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ManualBackup ), this, m_menuItemManualBak->GetId());
 }
@@ -139,6 +149,7 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 WindowBase::~WindowBase()
 {
 	// Disconnect Events
+	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( WindowBase::OnCloseEvent ) );
 	m_searchCtrl2->Disconnect( wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEventHandler( WindowBase::OnSearch ), NULL, this );
 	m_searchCtrl2->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( WindowBase::OnSearch ), NULL, this );
 	ExtractedFilesBTN->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::OpenExtractedFiles ), NULL, this );

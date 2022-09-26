@@ -1,7 +1,7 @@
 #pragma once
 #include <wx/log.h>
 #include <wx/msgdlg.h>
-#include "WindowBase.h"
+#include "../WindowBase.h"
 #include "CustomEvents.h"
 #include "tinyxml2.h"
 

@@ -18,7 +18,7 @@
 #include "mini/ini.h"
 #include <openssl/sha.h>
 //DJHCPP includes
-#include "WindowBase.h"
+#include "../WindowBase.h"
 #include "TracklistingWindow.h"
 #include "CustomTable.h"
 #include "CustomEvents.h"
@@ -28,16 +28,25 @@ class MainWindow : public WindowBase{
 public:
     MainWindow();
     ~MainWindow();
+    //File Menu items
     void OpenExtractedFiles( wxCommandEvent& event ) override;
     void AddCustom(wxCommandEvent& event) override;
     void ManualUpdate(wxCommandEvent& event) override;
+
+    //Tools Menu items
     void OpenTrackisting( wxCommandEvent& event ) override;
+    void ApplyPatchFile( wxCommandEvent& event) override;
+    void ToUpper(wxCommandEvent& event) override;
+    void ToggleAutomaticRenaming(wxCommandEvent& event) override;
+
+    //Backup Menu items
     void SetBackupFolder( wxCommandEvent& event ) override;
     void ManualBackup( wxCommandEvent& event ) override;
-    void ToUpper(wxCommandEvent& event) override;
-    void RestoreBackup( wxCommandEvent& event );
-    void OnSearch( wxCommandEvent& event );
-    void ApplyPatchFile( wxCommandEvent& event);
+    void RestoreBackup( wxCommandEvent& event ); //this is binded programmatically
+
+    //ui events
+    void OnSearch( wxCommandEvent& event ) override;
+    void OnCloseEvent(wxCloseEvent& event) override;
 
     void CreateBackup(std::filesystem::path baseFolder, std::string name );
     void CreateAutomaticBackup();
@@ -64,4 +73,5 @@ private:
     std::string patchFileSourceURL;
     std::string patchFileCRCURL;
     bool automaticPatching = false;
+    bool automaticRenaming = false;
 };

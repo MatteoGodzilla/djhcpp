@@ -46,16 +46,19 @@ class WindowBase : public wxFrame
 		wxMenuBar* m_menubar1;
 		wxMenu* fileMenu;
 		wxMenu* toolsMenu;
+		wxMenuItem* m_menuItemAutomaticRenaming;
 		wxMenu* backupRestoreMenu;
 
 		// Virtual event handlers, override them in your derived class
+		virtual void OnCloseEvent( wxCloseEvent& event ) = 0;
 		virtual void OnSearch( wxCommandEvent& event ) = 0;
 		virtual void OpenExtractedFiles( wxCommandEvent& event ) = 0;
 		virtual void AddCustom( wxCommandEvent& event ) = 0;
 		virtual void ManualUpdate( wxCommandEvent& event ) = 0;
 		virtual void OpenTrackisting( wxCommandEvent& event ) = 0;
-		virtual void ToUpper( wxCommandEvent& event ) = 0;
 		virtual void ApplyPatchFile( wxCommandEvent& event ) = 0;
+		virtual void ToUpper( wxCommandEvent& event ) = 0;
+		virtual void ToggleAutomaticRenaming( wxCommandEvent& event ) = 0;
 		virtual void SetBackupFolder( wxCommandEvent& event ) = 0;
 		virtual void ManualBackup( wxCommandEvent& event ) = 0;
 

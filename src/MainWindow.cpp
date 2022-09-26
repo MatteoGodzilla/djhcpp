@@ -42,13 +42,13 @@ size_t checkSHA(void* buffer, size_t size, size_t nmemb, void* userp){
         std::string dataSHA = dataSHAstream.str();
 
         if(remoteSHA == dataSHA){
-            wxLogMessage("SHA256 is Valid! Yay!");
+            //wxLogMessage("SHA256 is Valid! Yay!");
             return nmemb;
         } else {
-            wxLogError("There was a conflict between the SHA256 codes");
+            wxLogError("There was a conflict between the SHA256 codes of the remote and local patch files.");
             wxLogMessage("Remote");
             wxLogMessage(wxString(remoteSHA));
-            wxLogMessage("DownloadedFile");
+            wxLogMessage("Downloaded File");
             wxLogMessage(wxString(dataSHAstream.str()));
         }
         return 1;
@@ -115,6 +115,13 @@ MainWindow::MainWindow() : WindowBase(NULL) {
         automaticPatching = ini["Settings"]["automaticPatching"] == "true";
     }
 
+    if(!ini["Settings"].has("automaticRenaming")) {
+        ini["Settings"]["automaticRenaming"] = "false";
+        automaticRenaming= false;
+    } else {
+        automaticRenaming = ini["Settings"]["automaticRenaming"] == "true";
+    }
+
     settings.write(ini);
 
     //program start
@@ -123,7 +130,6 @@ MainWindow::MainWindow() : WindowBase(NULL) {
 
     ParseExtracted(basePath);
 
-    //TODO: parse backups already present
     for(auto& dirEntry : fs::directory_iterator(backupFolderPath)){
         if(dirEntry.is_directory()){
             std::string text = dirEntry.path().filename().string();
@@ -136,6 +142,9 @@ MainWindow::MainWindow() : WindowBase(NULL) {
         }
     }
 
+    m_menuItemAutomaticRenaming->Check(automaticRenaming);
+
+    //patch file stuff
     if(patchFileSourceURL.empty() || patchFileCRCURL.empty()) return;
 
     //initialize curl
@@ -509,6 +518,70 @@ void MainWindow::UpdateTable(){
 
 void MainWindow::OnSearch(wxCommandEvent& wxEvent){
     mainTable->Search(wxEvent.GetString().ToStdString());
+}
+
+void MainWindow::OnCloseEvent(wxCloseEvent& event){
+    //check if the base folder ends with PS3
+    if(!basePath.empty()){
+        //wxLogMessage(wxString() << basePath.filename().generic_string());
+        std::string a = basePath.filename().generic_string(); // in this case, last folder
+        std::string b = "PS3";
+
+        //make the path all caps for this comparison
+        for (auto & c: a) c = toupper(c);
+
+        if(a.compare(b) == 0){
+            //they are equal
+            if(!automaticRenaming){
+                //then ask if the user wants to run to upper
+
+                wxMessageDialog dialog = wxMessageDialog(this,"PS3 folder detected.\nDo you want to make all files uppercase before closing DJHCPP?",
+                    "run to_upper?",wxYES_NO|wxCANCEL|wxICON_QUESTION);
+
+                //original buttons
+                //YES                       | NO    | CANCEL
+                //renamed buttons
+                //YES, don't ask me again   | YES   | NO
+                dialog.SetYesNoCancelLabels("Yes, don't ask me again","Yes","No");
+
+                int choice = dialog.ShowModal();
+
+                if(choice == wxID_CANCEL) {
+                    event.Skip();
+                    return;
+                }
+
+                if(choice == wxID_YES){
+                    //set automatic renaming to true in the settings
+
+                    mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
+                    mINI::INIStructure ini;
+                    settings.read(ini);
+                    ini["Settings"]["automaticRenaming"] = "true";
+                    settings.write(ini);
+                }
+            }
+
+            //run to upper
+            wxCommandEvent fakeEvent = wxCommandEvent(wxEVT_MENU);
+            ToUpper(fakeEvent);
+        }
+    }
+    event.Skip();
+}
+
+void MainWindow::ToggleAutomaticRenaming(wxCommandEvent& event){
+    automaticRenaming = !automaticRenaming;
+
+    //update settings
+    mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
+    mINI::INIStructure ini;
+    settings.read(ini);
+    ini["Settings"]["automaticRenaming"] = (automaticRenaming ? "true" : "false");
+    settings.write(ini);
+
+    //update menu entry
+    m_menuItemAutomaticRenaming->Check(automaticRenaming);
 }
 
 //other windows and tools

@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <wx/log.h>
 #include <wx/dirdlg.h>
-#include "WindowBase.h"
+#include "../WindowBase.h"
 #include "tinyxml2.h"
 
 class TracklistingWindow : public TracklistingGen{

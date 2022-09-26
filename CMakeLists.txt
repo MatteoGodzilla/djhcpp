@@ -20,14 +20,14 @@ add_executable(djhcpp
     "include/MainWindow.h"
     "include/TrackInfoViewer.h"
     "include/TracklistingWindow.h"
-    "include/WindowBase.h"
+    "WindowBase.h"
     src/main.cpp
     src/MainWindow.cpp
     src/CustomTable.cpp
     src/TracklistingWindow.cpp
     src/TrackInfoViewer.cpp
     src/CustomEvents.cpp
-    src/WindowBase.cpp
+    WindowBase.cpp
 )
 
 add_subdirectory(tinyxml2)
