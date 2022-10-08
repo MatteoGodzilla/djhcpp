@@ -43,10 +43,10 @@ class WindowBase : public wxFrame
 		wxButton* ExtractedFilesBTN;
 		wxBoxSizer* middleSizer;
 		wxButton* addCustomBTN;
-		wxMenuBar* m_menubar1;
+		wxMenuBar* menuBar;
 		wxMenu* fileMenu;
 		wxMenu* toolsMenu;
-		wxMenuItem* m_menuItemAutomaticRenaming;
+		wxMenuItem* automaticRenamingToggleMI;
 		wxMenu* backupRestoreMenu;
 
 		// Virtual event handlers, override them in your derived class
@@ -57,6 +57,7 @@ class WindowBase : public wxFrame
 		virtual void ManualUpdate( wxCommandEvent& event ) = 0;
 		virtual void OpenTrackisting( wxCommandEvent& event ) = 0;
 		virtual void ApplyPatchFile( wxCommandEvent& event ) = 0;
+		virtual void TracksToCustoms( wxCommandEvent& event ) = 0;
 		virtual void ToUpper( wxCommandEvent& event ) = 0;
 		virtual void ToggleAutomaticRenaming( wxCommandEvent& event ) = 0;
 		virtual void SetBackupFolder( wxCommandEvent& event ) = 0;
@@ -79,44 +80,44 @@ class TracklistingGen : public wxFrame
 	private:
 
 	protected:
-		wxPanel* m_panel2;
-		wxStaticText* Tag1;
+		wxPanel* songInfoPanel;
+		wxStaticText* GeneralInfoTag;
 		wxStaticText* spacer1;
-		wxStaticText* m_staticText2;
+		wxStaticText* idLabel;
 		wxTextCtrl* m_textID;
-		wxStaticText* m_staticText3;
+		wxStaticText* bpmLabel;
 		wxTextCtrl* m_textBPM;
-		wxStaticText* m_staticText4;
+		wxStaticText* artist1Label;
 		wxTextCtrl* m_textArtist1;
-		wxStaticText* m_staticText5;
+		wxStaticText* song1Label;
 		wxTextCtrl* m_textSong1;
-		wxStaticText* m_staticText6;
+		wxStaticText* artist2Label;
 		wxTextCtrl* m_textArtist2;
-		wxStaticText* m_staticText7;
+		wxStaticText* song2Label;
 		wxTextCtrl* m_textSong2;
-		wxStaticText* m_staticText8;
+		wxStaticText* mixedByLabel;
 		wxTextCtrl* m_textMixedBy;
-		wxStaticText* m_staticText9;
+		wxStaticText* mixerPresentsLabel;
 		wxTextCtrl* m_textMixerPresents;
-		wxStaticText* tag2;
+		wxStaticText* DifficultiesTag;
 		wxStaticText* spacer2;
-		wxStaticText* m_staticText10;
+		wxStaticText* generalDiffLabel;
 		wxTextCtrl* m_textDiffGeneral;
-		wxStaticText* m_staticText11;
+		wxStaticText* tapDifficultyLabel;
 		wxTextCtrl* m_textDiffTap;
-		wxStaticText* m_staticText17;
+		wxStaticText* scratchDifficultyLAbel;
 		wxTextCtrl* m_textDiffScratch;
-		wxStaticText* m_staticText18;
+		wxStaticText* crossfadeDifficultyLabel;
 		wxTextCtrl* m_textDiffCrossfade;
-		wxStaticText* tag3;
+		wxStaticText* ExtraTag;
 		wxStaticText* spacer3;
-		wxStaticText* m_staticText21;
+		wxStaticText* deckSpeedLabel;
 		wxTextCtrl* m_textSpeed;
-		wxStaticText* m_staticText22;
+		wxStaticText* songDurationLabel;
 		wxTextCtrl* m_textDuration;
-		wxStaticText* m_staticText23;
+		wxStaticText* isVocalMixLabel;
 		wxCheckBox* m_checkBoxIsVocal;
-		wxStaticText* m_staticText24;
+		wxStaticText* includeMixInMenuLabel;
 		wxCheckBox* m_checkBoxIsMenuMusic;
 		wxTextCtrl* xmlOutput;
 		wxTextCtrl* csvOutput;
@@ -144,10 +145,10 @@ class TrackInfoBase : public wxFrame
 	private:
 
 	protected:
-		wxStaticText* m_staticText24;
+		wxStaticText* label;
 		wxTextCtrl* xmlInfo;
 		wxButton* deleteButton;
-		wxButton* updateTrack;
+		wxButton* updateTrackButton;
 
 		// Virtual event handlers, override them in your derived class
 		virtual void onDeleteTrack( wxCommandEvent& event ) = 0;

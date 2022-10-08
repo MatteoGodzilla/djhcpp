@@ -62,7 +62,11 @@ CustomTable::CustomTable(wxWindow *parent)
     Bind(wxEVT_LIST_KEY_DOWN,wxListEventHandler(CustomTable::OnKeyDown),this,wxID_ANY);
     Bind(wxEVT_LIST_ITEM_ACTIVATED,wxListEventHandler(CustomTable::OnActivate),this,wxID_ANY);
 
+    Bind(wxEVT_LIST_ITEM_SELECTED,wxListEventHandler(CustomTable::SelectRow),this,wxID_ANY);
+    Bind(wxEVT_LIST_ITEM_DESELECTED,wxListEventHandler(CustomTable::DeselectRow),this,wxID_ANY);
+
     data = std::vector<TableRow>();
+    selectedRows = std::list<long>();
 }
 
 wxString CustomTable::OnGetItemText(long item, long column) const{
@@ -140,7 +144,8 @@ void CustomTable::OnKeyDown(wxListEvent& event){
     wxCommandEvent ev = wxCommandEvent();
     TrackInfoViewer* viewer;
     switch(event.GetKeyCode()){
-        case 127:
+        case WXK_NUMPAD_DELETE:
+        case WXK_DELETE:
             viewer = new TrackInfoViewer(this,ref);
             viewer->onDeleteTrack(ev);
             break;
@@ -157,6 +162,31 @@ void CustomTable::OnActivate(wxListEvent& event){
     viewer->Show();
 }
 
+void CustomTable::SelectRow(wxListEvent& event){
+    long row = event.GetIndex();
+    selectedRows.push_back(row);
+
+    for(auto& dataRow : selectedRows){
+        std::cout << dataRow << " ";
+    }
+    std::cout << std::endl;
+}
+
+void CustomTable::DeselectRow(wxListEvent& event){
+    long row = event.GetIndex();
+    if(row == -1){
+        //clear everything
+        selectedRows.clear();
+    } else {
+        //remove only the deselected row
+        selectedRows.remove(row);
+    }
+
+    for(auto& dataRow : selectedRows){
+        std::cout << dataRow << " ";
+    }
+    std::cout << std::endl;
+}
 
 bool CustomTable::CompareRows(const TableRow& a, const TableRow& b, int col, int dir){
     switch(col){

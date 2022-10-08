@@ -7,6 +7,7 @@
 #include <wx/log.h>
 #include <vector>
 #include <string>
+#include <list>
 #include "tinyxml2.h"
 #include "TrackInfoViewer.h"
 
@@ -27,14 +28,19 @@ public:
     CustomTable(wxWindow *parent);
     wxString OnGetItemText(long item, long column) const override;
     int OnGetItemColumnImage(long item, long column) const override;
-    std::vector<TableRow> data;
     void Search(std::string query);
     void OnColumnClick(wxListEvent& event);
     void OnKeyDown(wxListEvent& event);
     void OnActivate(wxListEvent& event);
+
+    void SelectRow(wxListEvent& event);
+    void DeselectRow(wxListEvent& event);
     static bool CompareRows(const TableRow& a, const TableRow& b, int col, int dir);
+
+    std::vector<TableRow> data;
+    std::list<long> selectedRows;
 private:
     int lastSortingColumn = -1;
     //true -> a to z (increasing for bpm)
-    int sortingDirection = 1; 
+    int sortingDirection = 1;
 };

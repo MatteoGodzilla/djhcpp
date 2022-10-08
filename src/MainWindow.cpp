@@ -142,7 +142,7 @@ MainWindow::MainWindow() : WindowBase(NULL) {
         }
     }
 
-    m_menuItemAutomaticRenaming->Check(automaticRenaming);
+    automaticRenamingToggleMI->Check(automaticRenaming);
 
     //patch file stuff
     if(patchFileSourceURL.empty() || patchFileCRCURL.empty()) return;
@@ -383,6 +383,83 @@ void MainWindow::Export(){
     wxLogMessage("Successfully updated the game's files");
 }
 
+void MainWindow::TracksToCustoms(wxCommandEvent& event){
+    wxDirDialog* dialog = new wxDirDialog(this, "Select a folder to export the customs to", "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST );
+    if(dialog->ShowModal() == wxID_OK){
+        //get all of the selected tracks in the table
+        fs::path containingFolder = fs::path(dialog->GetPath().ToStdString());
+        for(int row : mainTable->selectedRows){
+            //for each one
+            TableRow dataRow = mainTable->data[row];
+            //  get the id from track
+            std::string id = dataRow.id;
+            //  create root id with that name
+            fs::create_directory(containingFolder / id);
+            //  create DJH2 folder inside it
+            fs::path djh2Folder = containingFolder / id / "DJH2";
+            fs::create_directory(djh2Folder);
+            //  get folderLocation from track
+
+            std::string folderLocation = dataRow.trackRef->FirstChildElement("FolderLocation")->GetText();
+            fs::path customFullFolderLocation = basePath / fs::path(folderLocation);
+            //std::cout << customFullFolderLocation << std::endl;
+            //  copy that folder inside DJH2
+            fs::copy(customFullFolderLocation,djh2Folder / id);
+
+            //  print xml node into "Info for Tracklisting.xml"
+            tinyxml2::XMLDocument infoForTracklisting = tinyxml2::XMLDocument();
+            auto clone = dataRow.trackRef->DeepClone(&infoForTracklisting);
+            infoForTracklisting.InsertEndChild(clone);
+
+            fs::path foo = djh2Folder / "Info for Tracklisting.xml";
+            infoForTracklisting.SaveFile(foo.generic_string().c_str());
+
+            //  handle TRAC strings
+            fs::path bar = djh2Folder / "Info for TRAC.csv";
+            std::ofstream csv = std::ofstream(bar.generic_string());
+
+            tinyxml2::XMLElement* element;
+
+            //MixName
+            element = dataRow.trackRef->FirstChildElement("MixName");
+            if(element != nullptr){
+                csv << element->GetText() << "," << textData[element->GetText()] << std::endl;
+
+                element = element->NextSiblingElement("MixName");
+                if(element != nullptr){
+                    csv << element->GetText() << "," << textData[element->GetText()] << std::endl;
+                }
+            }
+
+            //MixArtist
+            element = dataRow.trackRef->FirstChildElement("MixArtist");
+            if(element != nullptr){
+                csv << element->GetText() << "," << textData[element->GetText()] << std::endl;
+
+                element = element->NextSiblingElement("MixArtist");
+                if(element != nullptr){
+                    csv << element->GetText() << "," << textData[element->GetText()] << std::endl;
+                }
+            }
+
+            //MixHeadline
+            element = dataRow.trackRef->FirstChildElement("MixHeadline");
+            if(element != nullptr){
+                csv << element->GetText() << "," << textData[element->GetText()] << std::endl;
+            }
+
+            //MixHeadlineDJName
+            element = dataRow.trackRef->FirstChildElement("MixHeadlineDJName");
+            if(element != nullptr){
+                csv << element->GetText() << "," << textData[element->GetText()] << std::endl;
+            }
+
+            csv.close();
+            wxLogMessage(wxString("Exported Track with id:") << id);
+        }
+    }
+}
+
 void MainWindow::SetBackupFolder( wxCommandEvent& event){
     wxDirDialog* dialog = new wxDirDialog(this, "Open Custom's folder", "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST );
     if(dialog->ShowModal() == wxID_OK){
@@ -589,7 +666,7 @@ void MainWindow::ToggleAutomaticRenaming(wxCommandEvent& event){
     settings.write(ini);
 
     //update menu entry
-    m_menuItemAutomaticRenaming->Check(automaticRenaming);
+    automaticRenamingToggleMI->Check(automaticRenaming);
 }
 
 //other windows and tools

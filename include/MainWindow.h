@@ -36,6 +36,7 @@ public:
     //Tools Menu items
     void OpenTrackisting( wxCommandEvent& event ) override;
     void ApplyPatchFile( wxCommandEvent& event) override;
+    void TracksToCustoms(wxCommandEvent& event) override;
     void ToUpper(wxCommandEvent& event) override;
     void ToggleAutomaticRenaming(wxCommandEvent& event) override;
 
