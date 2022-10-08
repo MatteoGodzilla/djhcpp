@@ -262,7 +262,14 @@ void MainWindow::ProcessCustom(fs::path dir){
         return;
     }
 
-    doc.LoadFile(customTracklisting.generic_string().c_str());
+    tinyxml2::XMLError errorID = doc.LoadFile(customTracklisting.generic_string().c_str());
+    if(errorID != tinyxml2::XML_SUCCESS){
+        wxLogError(wxString("XML Error: ") << errorID);
+        if(errorID == tinyxml2::XML_ERROR_FILE_NOT_FOUND){
+            wxLogError("There was a problem loading 'Info for Tracklisting.xml'. Make sure that the path to the file contains only standard characters.");
+        }
+        return;
+    }
 
     tinyxml2::XMLNode* track = doc.RootElement()->FirstChild();
 
