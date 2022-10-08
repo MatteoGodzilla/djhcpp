@@ -280,7 +280,7 @@ void MainWindow::ProcessCustom(fs::path dir){
                 if(IDTag != nullptr){
                     std::string trackTestingID = IDTag->GetText();
                     if(trackTestingID == addingTag){
-                        wxLogMessage("Replacing track node");
+                        wxLogMessage(wxString("Replacing track node: ") << addingTag);
                         possibleRemove = tracklistingTrack;
                     }
                 }
@@ -293,6 +293,7 @@ void MainWindow::ProcessCustom(fs::path dir){
 
             tinyxml2::XMLNode* copy = track->DeepClone(&tracklisting);
             tracklistingRoot->InsertEndChild(copy);
+            wxLogMessage(wxString("Added track node: ") << addingTag);
         }
         track = track->NextSibling();
     }
