@@ -408,8 +408,10 @@ void MainWindow::TracksToCustoms(wxCommandEvent& event){
 
             //  print xml node into "Info for Tracklisting.xml"
             tinyxml2::XMLDocument infoForTracklisting = tinyxml2::XMLDocument();
+            tinyxml2::XMLElement* tl = infoForTracklisting.NewElement("TrackList");
+            infoForTracklisting.InsertEndChild(tl);
             auto clone = dataRow.trackRef->DeepClone(&infoForTracklisting);
-            infoForTracklisting.InsertEndChild(clone);
+            tl->InsertEndChild(clone);
 
             fs::path foo = djh2Folder / "Info for Tracklisting.xml";
             infoForTracklisting.SaveFile(foo.generic_string().c_str());
