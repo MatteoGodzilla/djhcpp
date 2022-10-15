@@ -2,7 +2,7 @@
 #include <wx/log.h>
 #include <wx/msgdlg.h>
 #include "../WindowBase.h"
-#include "CustomEvents.h"
+#include "Utils.h"
 #include "tinyxml2.h"
 
 class TrackInfoViewer : public TrackInfoBase{

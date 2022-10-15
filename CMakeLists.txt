@@ -15,22 +15,22 @@ configure_file(${PROJECT_SOURCE_DIR}/include/config.h.in ${PROJECT_SOURCE_DIR}/i
 
 add_executable(djhcpp
     "include/config.h"
-    "include/CustomEvents.h"
     "include/CustomTable.h"
+    "include/DirectoryDropTarget.h"
     "include/MainWindow.h"
     "include/TrackInfoViewer.h"
     "include/TracklistingWindow.h"
-    "include/DirectoryDropTarget.h"
+    "include/Utils.h"
     "WindowBase.h"
+    src/CustomTable.cpp
+    src/DirectoryDropTarget.cpp
     src/main.cpp
     src/MainWindow.cpp
-    src/CustomTable.cpp
     src/TracklistingWindow.cpp
     src/TrackInfoViewer.cpp
-    src/CustomEvents.cpp
-    src/DirectoryDropTarget.cpp
+    src/Utils.cpp
     WindowBase.cpp
-)
+    )
 
 add_subdirectory(tinyxml2)
 if(MINGW OR MSYS)
