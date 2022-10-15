@@ -174,6 +174,7 @@ void MainWindow::OpenExtractedFiles( wxCommandEvent& event ){
     if(dialog->ShowModal() == wxID_OK){
         //std::filesystem::path p = std::filesystem::path(dialog->GetPath());
         basePath = fs::path(dialog->GetPath().ToStdString());
+        wxLogMessage(wxString(basePath));
         ParseExtracted(basePath);
     }
 }
@@ -182,7 +183,10 @@ void MainWindow::ParseExtracted(fs::path path){
     tracklistingPath = path / "AUDIO" / "Audiotracks" / "tracklisting.xml";
     tracIDPath = path / "Text" / "TRAC" / "TRACID.txt";
     tracEPath = path / "Text" / "TRAC" / "TRACE.txt";
-    //wxLogMessage(tracklistingPath.c_str());
+    //fix these paths if it's under linux
+    tracklistingPath = FindFileCaseInsensitive(path,tracklistingPath);
+    tracIDPath = FindFileCaseInsensitive(path,tracIDPath);
+    tracEPath = FindFileCaseInsensitive(path,tracEPath);
 
     if(fs::exists(tracklistingPath) && fs::exists(tracIDPath) && fs::exists(tracEPath)){
         //wxLogMessage("Extracted Files found");
@@ -198,6 +202,9 @@ void MainWindow::ParseExtracted(fs::path path){
             std::string value;
             std::getline(tracIDStream,id);
             std::getline(tracEStream,value,'\0');
+            if(id.back() == '\r') id = id.substr(0,id.size()-1);
+            if(value.back() == '\r') value = value.substr(0,value.size()-1);
+
             textData.insert(std::make_pair(id,value));
         }
 
@@ -259,6 +266,9 @@ void MainWindow::ProcessCustom(fs::path dir){
     //importing tracklisting info
     fs::path customTracklisting = dir / "Info for Tracklisting.xml";
     fs::path customTextData = dir / "Info for TRAC.csv";
+    customTracklisting = FindFileCaseInsensitive(dir,customTracklisting);
+    customTextData = FindFileCaseInsensitive(dir,customTextData);
+
     tinyxml2::XMLDocument doc;
     if(!fs::exists(customTracklisting)){
         wxLogError("'Info for Tracklisting.xml' file not found");
@@ -346,6 +356,7 @@ void MainWindow::ProcessCustom(fs::path dir){
 
     //copy files to location
     fs::path rootAudiotracks = basePath / "AUDIO" / "Audiotracks";
+    rootAudiotracks = FindFileCaseInsensitive(basePath,rootAudiotracks);
 
     for(auto& path : fs::directory_iterator(dir)){
         if(fs::is_directory(path)){
@@ -509,9 +520,17 @@ void MainWindow::RestoreBackup( wxCommandEvent& event){
         fs::path src(data->GetData().ToStdString());
         fs::copy_options copyOptions;
         copyOptions |= fs::copy_options::overwrite_existing;
-        fs::copy(src / "tracklisting.xml", tracklistingPath,copyOptions);
-        fs::copy(src / "TRACID.txt", tracIDPath,copyOptions);
-        fs::copy(src / "TRACE.txt", tracEPath,copyOptions);
+        fs::path backupTracklisting = src / "tracklisting.xml";
+        fs::path backupTrackID = src / "TRACID.txt";
+        fs::path backupTrackE = src / "TRACE.txt";
+        //fix file names if necessary (probably overkill)
+        backupTracklisting = FindFileCaseInsensitive(src,backupTracklisting);
+        backupTrackID = FindFileCaseInsensitive(src,backupTrackID);
+        backupTrackE = FindFileCaseInsensitive(src,backupTrackE);
+
+        fs::copy(backupTracklisting, tracklistingPath,copyOptions);
+        fs::copy(backupTrackID, tracIDPath,copyOptions);
+        fs::copy(backupTrackE, tracEPath,copyOptions);
 
         //refresh extracted files and start again
         ParseExtracted(basePath);
@@ -559,30 +578,30 @@ void MainWindow::UpdateTable(){
         //if artist1 is empty -> ""
         //if artist1 is not empty
         //  if textData contains key -> textData[key]
-        //  else "!MISSING!"
+        //  else "[key]"
 
         if(artist1.empty()) row.artist1 = "";
         else {
             if(textData.count(artist1) == 1) row.artist1 = textData[artist1];
-            else row.artist1 = "[MISSING]";
+            else row.artist1 = "[" + artist1 + "]";
         }
 
         if(name1.empty()) row.song1 = "";
         else {
             if(textData.count(name1) == 1) row.song1 = textData[name1];
-            else row.song1 = "[MISSING]";
+            else row.song1 = "[" + name1 + "]";
         }
 
         if(artist2.empty()) row.artist2 = "";
         else {
             if(textData.count(artist2) == 1) row.artist2 = textData[artist2];
-            else row.artist2 = "[MISSING]";
+            else row.artist2 = "[" + artist2 + "]";
         }
 
         if(name2.empty()) row.song2 = "";
         else {
             if(textData.count(name2) == 1) row.song2 = textData[name2];
-            else row.song2 = "[MISSING]";
+            else row.song2 = "[" + name2 + "]";
         }
 
         row.bpm = std::stof(bpm);
@@ -590,7 +609,7 @@ void MainWindow::UpdateTable(){
         name = track->ToElement()->Attribute("selectableinfem");
 
         if(name != 0){
-            if(strcmp(name,"yes") == 0 || strcmp(name,"true"))
+            if(strcmp(name,"yes") == 0 || strcmp(name,"true") == 0)
                 row.enabled = true;
             //wxLogMessage(wxString() << id << " " << name);
         }
