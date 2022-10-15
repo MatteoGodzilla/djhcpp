@@ -65,6 +65,9 @@ MainWindow::MainWindow() : WindowBase(NULL) {
     mainTable = new CustomTable(this);
     middleSizer->Add(mainTable,1,wxALL|wxEXPAND,5);
 
+    DirectoryDropTarget* dropTarget = new DirectoryDropTarget(this);
+    SetDropTarget(dropTarget);
+
     mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
     mINI::INIStructure ini;
 

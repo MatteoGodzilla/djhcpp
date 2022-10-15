@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(djhcpp VERSION 0.2.1)
+project(djhcpp VERSION 0.2.2)
 
 set(CMAKE_CXX_STANDARD 17)
 # set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
@@ -20,6 +20,7 @@ add_executable(djhcpp
     "include/MainWindow.h"
     "include/TrackInfoViewer.h"
     "include/TracklistingWindow.h"
+    "include/DirectoryDropTarget.h"
     "WindowBase.h"
     src/main.cpp
     src/MainWindow.cpp
@@ -27,6 +28,7 @@ add_executable(djhcpp
     src/TracklistingWindow.cpp
     src/TrackInfoViewer.cpp
     src/CustomEvents.cpp
+    src/DirectoryDropTarget.cpp
     WindowBase.cpp
 )
 

@@ -5,6 +5,11 @@
 #include <fstream>
 #include <ctime>
 #include <thread>
+//external libs
+#include <curl/curl.h>
+#include "tinyxml2.h"
+#include "mini/ini.h"
+#include <openssl/sha.h>
 //wxWidgets
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
@@ -12,16 +17,12 @@
 #include <wx/msgdlg.h>
 #include <wx/log.h>
 #include <wx/progdlg.h>
-//external libs
-#include <curl/curl.h>
-#include "tinyxml2.h"
-#include "mini/ini.h"
-#include <openssl/sha.h>
 //DJHCPP includes
 #include "../WindowBase.h"
 #include "TracklistingWindow.h"
 #include "CustomTable.h"
 #include "CustomEvents.h"
+#include "DirectoryDropTarget.h"
 #include "config.h"
 
 class MainWindow : public WindowBase{
