@@ -58,7 +58,7 @@ public:
     void Export();
 
     CURL* curlSession;
-
+    bool dirty = false;
 private:
     std::map<std::string, std::string> textData;
     CustomTable* mainTable;

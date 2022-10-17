@@ -1,4 +1,5 @@
 #include "CustomTable.h"
+#include "MainWindow.h"
 
 int FuzzyExact(std::string query,std::string text){
     size_t searchIndex = 0;
@@ -28,8 +29,8 @@ int FuzzyExact(std::string query,std::string text){
     return score;
 }
 
-CustomTable::CustomTable(wxWindow *parent)
-    : wxListCtrl(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxLC_VIRTUAL|wxLC_REPORT|wxLC_HRULES)
+CustomTable::CustomTable(MainWindow *parent)
+    : wxListCtrl((wxWindow*)parent,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxLC_VIRTUAL|wxLC_REPORT|wxLC_HRULES)
 {
     //this first column is a hack because apparently wxwidgets adds an extra image on the first column
     //even if you dont want one there
@@ -67,6 +68,8 @@ CustomTable::CustomTable(wxWindow *parent)
 
     data = std::vector<TableRow>();
     selectedRows = std::list<long>();
+
+    mainWindow = parent;
 }
 
 wxString CustomTable::OnGetItemText(long item, long column) const{
@@ -148,6 +151,7 @@ void CustomTable::OnKeyDown(wxListEvent& event){
         case WXK_DELETE:
             viewer = new TrackInfoViewer(this,ref);
             viewer->onDeleteTrack(ev);
+            mainWindow->dirty = true;
             break;
         default: break;
     }

@@ -373,6 +373,7 @@ void MainWindow::ProcessCustom(fs::path dir){
             fs::copy(path, destination, fs::copy_options::recursive | fs::copy_options::overwrite_existing);
         }
     }
+    dirty = true;
     UpdateTable();
     Export();
 }
@@ -637,7 +638,7 @@ void MainWindow::OnSearch(wxCommandEvent& wxEvent){
 
 void MainWindow::OnCloseEvent(wxCloseEvent& event){
     //check if the base folder ends with PS3
-    if(!basePath.empty()){
+    if(!basePath.empty() && dirty){
         //wxLogMessage(wxString() << basePath.filename().generic_string());
         std::string a = basePath.filename().generic_string(); // in this case, last folder
         std::string b = "PS3";

@@ -23,9 +23,11 @@ struct TableRow{
     tinyxml2::XMLElement* trackRef;
 };
 
+class MainWindow;
+
 class CustomTable : public wxListCtrl{
 public:
-    CustomTable(wxWindow *parent);
+    CustomTable(MainWindow *parent);
     wxString OnGetItemText(long item, long column) const override;
     int OnGetItemColumnImage(long item, long column) const override;
     void Search(std::string query);
@@ -43,4 +45,5 @@ private:
     int lastSortingColumn = -1;
     //true -> a to z (increasing for bpm)
     int sortingDirection = 1;
+    MainWindow* mainWindow;
 };
