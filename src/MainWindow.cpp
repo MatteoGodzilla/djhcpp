@@ -68,6 +68,12 @@ MainWindow::MainWindow() : WindowBase(NULL) {
     DirectoryDropTarget* dropTarget = new DirectoryDropTarget(this);
     SetDropTarget(dropTarget);
 
+    //set icon
+    //wxImage icon;
+    wxImage::AddHandler(new wxPNGHandler());
+    //icon.LoadFile("icon.png");
+    SetIcon(wxIcon("icon.png",wxBitmapType::wxBITMAP_TYPE_PNG));
+
     mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
     mINI::INIStructure ini;
 
