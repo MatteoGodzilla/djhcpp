@@ -68,16 +68,22 @@ MainWindow::MainWindow() : WindowBase(NULL) {
     DirectoryDropTarget* dropTarget = new DirectoryDropTarget(this);
     SetDropTarget(dropTarget);
 
+    //get absolute path of where the exe is running
+    fs::path exePath = GetRunningPathOfExecutable();
+
     //set icon
-    //wxImage icon;
+    fs::path imageFile = exePath.parent_path() / "icon.png";
     wxImage::AddHandler(new wxPNGHandler());
     //icon.LoadFile("icon.png");
-    SetIcon(wxIcon("icon.png",wxBitmapType::wxBITMAP_TYPE_PNG));
+    SetIcon(wxIcon(imageFile.c_str(),wxBitmapType::wxBITMAP_TYPE_PNG));
 
-    mINI::INIFile settings = mINI::INIFile(SETTINGS_FILE_NAME);
+    //wxLogMessage(exePath.c_str());
+    fs::path settingsFile = exePath.parent_path() / SETTINGS_FILE_NAME;
+
+    mINI::INIFile settings = mINI::INIFile(settingsFile.generic_string());
     mINI::INIStructure ini;
 
-    if(fs::exists(SETTINGS_FILE_NAME))
+    if(fs::exists(settingsFile))
         settings.read(ini);
 
     //write the settings file

@@ -20,9 +20,9 @@ std::filesystem::path FindFileCaseInsensitive(std::filesystem::path startDirecto
 
     //iterate over the parent directory of original
     std::string lowercaseOriginal = ToLower(original.generic_string());
-    
+
     for(auto const& dir_entry : std::filesystem::recursive_directory_iterator(startDirectory)){
-        //wxLogMessage(wxString(dir_entry.path().filename().generic_string()));  
+        //wxLogMessage(wxString(dir_entry.path().filename().generic_string()));
         std::string lowercaseDirEntry = ToLower(dir_entry.path().generic_string());
         if(lowercaseDirEntry.compare(lowercaseOriginal) == 0){
             result = dir_entry.path();
@@ -36,5 +36,16 @@ std::filesystem::path FindFileCaseInsensitive(std::filesystem::path startDirecto
     //windows
     //the fs is already case insensitive, so we don't need to do anything
     return original;
+#endif
+}
+
+//https://stackoverflow.com/questions/1528298/get-path-of-executable
+std::filesystem::path GetRunningPathOfExecutable(){
+#if defined(__linux__) || defined(__gnu_linux__) || defined(unix) || defined(__unix) || defined(__unix__) || ( defined(__APPLE__) && defined(__MACH__) )
+    return std::filesystem::canonical("/proc/self/exe");
+#elif defined(_WIN32) || defined(_WIN64)
+    wchar_t buffer[256];
+    GetModuleFileName(NULL, buffer, 256);
+    return std::filesystem::path(buffer);
 #endif
 }

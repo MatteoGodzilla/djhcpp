@@ -130,7 +130,7 @@ void CustomTable::OnColumnClick(wxListEvent& event){
         newDirection *= -1;
     else
         newDirection = 1;
-    std::cout << "SORTING " << col << "\t" << newDirection << std::endl;
+    //std::cout << "SORTING " << col << "\t" << newDirection << std::endl;
     std::sort(data.begin(),data.end(),[col,newDirection](const TableRow& a, const TableRow& b){
         //std::cout << "---------------------------" << std::endl;
         //std::cout << a.id << "\t" << a.artist1 << "\t" << a.song1 << "\t" << a.artist2 << "\t" << a.song2 << "\t" << a.bpm << "\t" << std::endl;
@@ -170,10 +170,12 @@ void CustomTable::SelectRow(wxListEvent& event){
     long row = event.GetIndex();
     selectedRows.push_back(row);
 
+    /*
     for(auto& dataRow : selectedRows){
-        std::cout << dataRow << " ";
+        //std::cout << dataRow << " ";
     }
     std::cout << std::endl;
+    */
 }
 
 void CustomTable::DeselectRow(wxListEvent& event){
