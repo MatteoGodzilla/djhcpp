@@ -7,3 +7,6 @@
 [submodule "mINI"]
 	path = mINI
 	url = https://github.com/pulzed/mINI
+[submodule "djhtools"]
+	path = djhtools
+	url = https://github.com/shockdude/djhtools
