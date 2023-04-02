@@ -235,7 +235,7 @@
                                 <property name="context_help"></property>
                                 <property name="context_menu">1</property>
                                 <property name="current"></property>
-                                <property name="default">0</property>
+                                <property name="default">1</property>
                                 <property name="default_pane">0</property>
                                 <property name="disabled"></property>
                                 <property name="dock">Dock</property>
@@ -298,11 +298,11 @@
                         <property name="permission">protected</property>
                     </object>
                 </object>
-                <object class="sizeritem" expanded="0">
+                <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND</property>
                     <property name="proportion">0</property>
-                    <object class="wxBoxSizer" expanded="0">
+                    <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
                         <property name="name">bottomSizer</property>
                         <property name="orient">wxHORIZONTAL</property>
@@ -383,6 +383,18 @@
                         </object>
                     </object>
                 </object>
+            </object>
+            <object class="CustomCode" expanded="1">
+                <property name="code_cpp">addCustomBTN-&gt;Enable(false);</property>
+                <property name="code_lua"></property>
+                <property name="code_php"></property>
+                <property name="code_python"></property>
+                <property name="import_python"></property>
+                <property name="include_cpp"></property>
+                <property name="name">MyCode2</property>
+                <property name="permission">protected</property>
+                <property name="require_lua"></property>
+                <property name="require_php"></property>
             </object>
             <object class="wxMenuBar" expanded="1">
                 <property name="bg"></property>

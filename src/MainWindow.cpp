@@ -73,9 +73,11 @@ MainWindow::MainWindow() : WindowBase(NULL) {
 
     //set icon
     fs::path imageFile = exePath.parent_path() / "icon.png";
-    wxImage::AddHandler(new wxPNGHandler());
-    //icon.LoadFile("icon.png");
-    SetIcon(wxIcon(imageFile.c_str(),wxBitmapType::wxBITMAP_TYPE_PNG));
+    if(fs::exists(imageFile)){
+        wxImage::AddHandler(new wxPNGHandler());
+        //icon.LoadFile("icon.png");
+        SetIcon(wxIcon(imageFile.c_str(),wxBitmapType::wxBITMAP_TYPE_PNG));
+    }
 
     //wxLogMessage(exePath.c_str());
     fs::path settingsFile = exePath.parent_path() / SETTINGS_FILE_NAME;
@@ -233,6 +235,8 @@ void MainWindow::ParseExtracted(fs::path path){
         } while(track != nullptr);
 
         wxLogMessage(wxString("Successfully loaded ") << count << " songs from tracklisting.");
+
+        addCustomBTN->Enable(true);
 
         UpdateTable();
         //add backup

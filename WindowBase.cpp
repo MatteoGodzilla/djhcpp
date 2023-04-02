@@ -38,6 +38,8 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	topSizer->Add( bSizer4, 2, wxFIXED_MINSIZE, 5 );
 
 	ExtractedFilesBTN = new wxButton( this, wxID_ANY, wxT("Open Extracted Files"), wxDefaultPosition, wxDefaultSize, 0 );
+
+	ExtractedFilesBTN->SetDefault();
 	topSizer->Add( ExtractedFilesBTN, 1, wxALL|wxEXPAND, 5 );
 
 
@@ -62,6 +64,7 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 
 	this->SetSizer( rootSizer );
 	this->Layout();
+	addCustomBTN->Enable(false);
 	menuBar = new wxMenuBar( 0 );
 	fileMenu = new wxMenu();
 	wxMenuItem* openExtractedMI;
