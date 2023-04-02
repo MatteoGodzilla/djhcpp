@@ -26,6 +26,7 @@
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/panel.h>
+#include <wx/dataview.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -45,6 +46,7 @@ class WindowBase : public wxFrame
 		wxButton* addCustomBTN;
 		wxMenuBar* menuBar;
 		wxMenu* fileMenu;
+		wxMenu* windowsMenu;
 		wxMenu* toolsMenu;
 		wxMenuItem* automaticRenamingToggleMI;
 		wxMenu* backupRestoreMenu;
@@ -56,6 +58,7 @@ class WindowBase : public wxFrame
 		virtual void AddCustom( wxCommandEvent& event ) = 0;
 		virtual void ManualUpdate( wxCommandEvent& event ) = 0;
 		virtual void OpenTrackisting( wxCommandEvent& event ) = 0;
+		virtual void OpenTrackText( wxCommandEvent& event ) = 0;
 		virtual void ApplyPatchFile( wxCommandEvent& event ) = 0;
 		virtual void TracksToCustoms( wxCommandEvent& event ) = 0;
 		virtual void ToUpper( wxCommandEvent& event ) = 0;
@@ -160,6 +163,31 @@ class TrackInfoBase : public wxFrame
 		TrackInfoBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Track Info Viewer"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~TrackInfoBase();
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class TrackTextViewer
+///////////////////////////////////////////////////////////////////////////////
+class TrackTextViewer : public wxFrame
+{
+	private:
+
+	protected:
+		wxSearchCtrl* m_searchCtrl2;
+		wxDataViewListCtrl* table;
+		wxDataViewColumn* m_dataViewListColumn1;
+		wxDataViewColumn* m_dataViewListColumn2;
+
+		// Virtual event handlers, override them in your derived class
+		virtual void OnTextChange( wxCommandEvent& event ) { event.Skip(); }
+
+
+	public:
+
+		TrackTextViewer( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Track Text Viewer"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+
+		~TrackTextViewer();
 
 };
 

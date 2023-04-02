@@ -20,6 +20,7 @@
 //DJHCPP includes
 #include "../WindowBase.h"
 #include "TracklistingWindow.h"
+#include "StringsViewer.h"
 #include "CustomTable.h"
 #include "Utils.h"
 #include "DirectoryDropTarget.h"
@@ -36,6 +37,7 @@ public:
 
     //Tools Menu items
     void OpenTrackisting( wxCommandEvent& event ) override;
+    void OpenTrackText( wxCommandEvent& event ) override;
     void ApplyPatchFile( wxCommandEvent& event) override;
     void TracksToCustoms(wxCommandEvent& event) override;
     void ToUpper(wxCommandEvent& event) override;
@@ -59,8 +61,8 @@ public:
 
     CURL* curlSession;
     bool dirty = false;
-private:
     std::map<std::string, std::string> textData;
+private:
     CustomTable* mainTable;
     //wxXmlDocument tracklisting;
     tinyxml2::XMLDocument tracklisting;

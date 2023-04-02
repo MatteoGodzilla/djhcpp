@@ -81,11 +81,18 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 
 	menuBar->Append( fileMenu, wxT("File") );
 
-	toolsMenu = new wxMenu();
+	windowsMenu = new wxMenu();
 	wxMenuItem* openTracklistingGeneratorMI;
-	openTracklistingGeneratorMI = new wxMenuItem( toolsMenu, wxID_ANY, wxString( wxT("Open Tracklisting Generator") ) , wxEmptyString, wxITEM_NORMAL );
-	toolsMenu->Append( openTracklistingGeneratorMI );
+	openTracklistingGeneratorMI = new wxMenuItem( windowsMenu, wxID_ANY, wxString( wxT("Tracklisting Generator") ) , wxEmptyString, wxITEM_NORMAL );
+	windowsMenu->Append( openTracklistingGeneratorMI );
 
+	wxMenuItem* openTrackTextViewer;
+	openTrackTextViewer = new wxMenuItem( windowsMenu, wxID_ANY, wxString( wxT("Track Text Viewer") ) , wxEmptyString, wxITEM_NORMAL );
+	windowsMenu->Append( openTrackTextViewer );
+
+	menuBar->Append( windowsMenu, wxT("Windows") );
+
+	toolsMenu = new wxMenu();
 	wxMenuItem* applyPatchFileMI;
 	applyPatchFileMI = new wxMenuItem( toolsMenu, wxID_ANY, wxString( wxT("Apply Patch File") ) , wxEmptyString, wxITEM_NORMAL );
 	toolsMenu->Append( applyPatchFileMI );
@@ -145,7 +152,8 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::OpenExtractedFiles ), this, openExtractedMI->GetId());
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::AddCustom ), this, addCustomMI->GetId());
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ManualUpdate ), this, updateManuallyMI->GetId());
-	toolsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::OpenTrackisting ), this, openTracklistingGeneratorMI->GetId());
+	windowsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::OpenTrackisting ), this, openTracklistingGeneratorMI->GetId());
+	windowsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::OpenTrackText ), this, openTrackTextViewer->GetId());
 	toolsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ApplyPatchFile ), this, applyPatchFileMI->GetId());
 	toolsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::TracksToCustoms ), this, exportSelectedTracksMI->GetId());
 	toolsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ToUpper ), this, renameToUppercaseMI->GetId());
@@ -434,5 +442,42 @@ TrackInfoBase::~TrackInfoBase()
 	// Disconnect Events
 	deleteButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TrackInfoBase::onDeleteTrack ), NULL, this );
 	updateTrackButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TrackInfoBase::onUpdateTrack ), NULL, this );
+
+}
+
+TrackTextViewer::TrackTextViewer( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetBackgroundColour( wxColour( 255, 255, 255 ) );
+
+	wxBoxSizer* bSizer13;
+	bSizer13 = new wxBoxSizer( wxVERTICAL );
+
+	m_searchCtrl2 = new wxSearchCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	#ifndef __WXMAC__
+	m_searchCtrl2->ShowSearchButton( true );
+	#endif
+	m_searchCtrl2->ShowCancelButton( false );
+	bSizer13->Add( m_searchCtrl2, 0, wxALL|wxEXPAND, 5 );
+
+	table = new wxDataViewListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_SINGLE );
+	m_dataViewListColumn1 = table->AppendTextColumn( wxT("ID"), wxDATAVIEW_CELL_EDITABLE, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE );
+	m_dataViewListColumn2 = table->AppendTextColumn( wxT("Value"), wxDATAVIEW_CELL_EDITABLE, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE );
+	bSizer13->Add( table, 1, wxALL|wxEXPAND, 5 );
+
+
+	this->SetSizer( bSizer13 );
+	this->Layout();
+
+	this->Centre( wxBOTH );
+
+	// Connect Events
+	m_searchCtrl2->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TrackTextViewer::OnTextChange ), NULL, this );
+}
+
+TrackTextViewer::~TrackTextViewer()
+{
+	// Disconnect Events
+	m_searchCtrl2->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TrackTextViewer::OnTextChange ), NULL, this );
 
 }

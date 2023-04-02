@@ -18,6 +18,7 @@ add_executable(djhcpp
     "include/CustomTable.h"
     "include/DirectoryDropTarget.h"
     "include/MainWindow.h"
+    "include/StringsViewer.h"
     "include/TrackInfoViewer.h"
     "include/TracklistingWindow.h"
     "include/Utils.h"
@@ -26,6 +27,7 @@ add_executable(djhcpp
     src/DirectoryDropTarget.cpp
     src/main.cpp
     src/MainWindow.cpp
+    src/StringsViewer.cpp
     src/TracklistingWindow.cpp
     src/TrackInfoViewer.cpp
     src/Utils.cpp

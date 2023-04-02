@@ -741,6 +741,11 @@ void MainWindow::OpenTrackisting(wxCommandEvent& event){
     twin->Show();
 }
 
+void MainWindow::OpenTrackText( wxCommandEvent& event ) {
+    StringsViewer* text = new StringsViewer(this);
+    text->Show();
+};
+
 void MainWindow::ToUpper(wxCommandEvent& event){
     if(!basePath.empty()){
         wxProgressDialog* dialog = new wxProgressDialog("Progress","Renaming the files. Please wait a few seconds",100,this);
