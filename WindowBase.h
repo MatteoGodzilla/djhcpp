@@ -180,7 +180,9 @@ class TrackTextViewer : public wxFrame
 		wxDataViewColumn* m_dataViewListColumn2;
 
 		// Virtual event handlers, override them in your derived class
+		virtual void OnClose( wxCloseEvent& event ) { event.Skip(); }
 		virtual void OnTextChange( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnEditingDone( wxDataViewEvent& event ) { event.Skip(); }
 
 
 	public:

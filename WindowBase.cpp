@@ -472,12 +472,16 @@ TrackTextViewer::TrackTextViewer( wxWindow* parent, wxWindowID id, const wxStrin
 	this->Centre( wxBOTH );
 
 	// Connect Events
+	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( TrackTextViewer::OnClose ) );
 	m_searchCtrl2->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TrackTextViewer::OnTextChange ), NULL, this );
+	table->Connect( wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE, wxDataViewEventHandler( TrackTextViewer::OnEditingDone ), NULL, this );
 }
 
 TrackTextViewer::~TrackTextViewer()
 {
 	// Disconnect Events
+	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( TrackTextViewer::OnClose ) );
 	m_searchCtrl2->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TrackTextViewer::OnTextChange ), NULL, this );
+	table->Disconnect( wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE, wxDataViewEventHandler( TrackTextViewer::OnEditingDone ), NULL, this );
 
 }

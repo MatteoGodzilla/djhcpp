@@ -3761,6 +3761,7 @@
             <property name="window_name"></property>
             <property name="window_style">wxTAB_TRAVERSAL</property>
             <property name="xrc_skip_sizer">1</property>
+            <event name="OnClose">OnClose</event>
             <object class="wxBoxSizer" expanded="1">
                 <property name="minimum_size"></property>
                 <property name="name">bSizer13</property>
@@ -3857,6 +3858,7 @@
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
                         <property name="window_style"></property>
+                        <event name="OnDataViewListCtrlItemEditingDone">OnEditingDone</event>
                         <object class="dataViewListColumn" expanded="1">
                             <property name="align">wxALIGN_LEFT</property>
                             <property name="ellipsize"></property>

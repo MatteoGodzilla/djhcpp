@@ -6,14 +6,32 @@ StringsViewer::StringsViewer(MainWindow* parent) : TrackTextViewer(parent){
     RebuildTable(std::string());
 }
 
-void StringsViewer::OnTextChange( wxCommandEvent& event ){
+void StringsViewer::OnTextChange( wxCommandEvent& event ) {
     //table->DeleteAllItems();
     RebuildTable(event.GetString().ToStdString());
 }
 
+void StringsViewer::OnEditingDone( wxDataViewEvent& event ) {
+    std::string update = event.GetValue().GetString().ToStdString();
+    int row = table->GetSelectedRow();
+    int col = event.GetColumn();
+
+    wxVariant oldID;
+    table->GetStore()->GetValueByRow(oldID, row, 0);
+
+    if(col == 1){
+        // the value changed
+        mainWindowRef->textData[oldID] = update;
+    } else {
+        //the id changed -> bit more complicated
+        std::string oldValue = mainWindowRef->textData[oldID];
+        mainWindowRef->textData.erase(oldID);
+        mainWindowRef->textData[update]=oldValue;
+    }
+}
+
 void StringsViewer::RebuildTable(std::string query){
     table->DeleteAllItems();
-    std::cout << query.size() << std::endl;
     for(auto& pair : mainWindowRef->textData){
         bool allowed = false;
 
@@ -59,4 +77,10 @@ void StringsViewer::RebuildTable(std::string query){
             table->AppendItem(row);
         }
     }
+}
+
+void StringsViewer::OnClose( wxCloseEvent& event ) {
+    mainWindowRef->CreateAutomaticBackup();
+    mainWindowRef->Export();
+    event.Skip();
 }
