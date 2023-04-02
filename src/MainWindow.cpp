@@ -194,11 +194,13 @@ void MainWindow::OpenExtractedFiles( wxCommandEvent& event ){
 void MainWindow::ParseExtracted(fs::path path){
     tracklistingPath = path / "AUDIO" / "Audiotracks" / "tracklisting.xml";
     tracIDPath = path / "Text" / "TRAC" / "TRACID.txt";
-    tracEPath = path / "Text" / "TRAC" / "TRACE.txt";
+    fs::path tracEPath = path / "Text" / "TRAC" / "TRACE.txt";
     //fix these paths if it's under linux
     tracklistingPath = FindFileCaseInsensitive(path,tracklistingPath);
     tracIDPath = FindFileCaseInsensitive(path,tracIDPath);
     tracEPath = FindFileCaseInsensitive(path,tracEPath);
+
+    //std::cout << tracklistingPath << " : " << tracIDPath << ": " << tracEPath << std::endl;
 
     if(fs::exists(tracklistingPath) && fs::exists(tracIDPath) && fs::exists(tracEPath)){
         //wxLogMessage("Extracted Files found");
@@ -393,19 +395,30 @@ void MainWindow::Export(){
     tracklisting.SaveFile(tracklistingPath.generic_string().c_str());
 
     std::ofstream trackIDStream(tracIDPath);
-    std::ofstream trackEStream(tracEPath);
-
-    if(trackIDStream.is_open() && trackEStream.is_open()){
+    if(trackIDStream.is_open()){
         for(auto& pair : textData){
             if(pair.first != std::string("")){
                 trackIDStream << pair.first << "\n";
-                trackEStream << pair.second << '\0';
-                //wxLogMessage(wxString() << pair.first << ":" << pair.second);
             }
         }
-
         trackIDStream.close();
-        trackEStream.close();
+
+        for(int i = 0; i < LANG_COUNT; i++){
+            std::filesystem::path p = basePath / "Text" / "TRAC" / tracLangFiles[i];
+
+            if(!fs::exists(p)) continue;
+
+            std::ofstream trackLangStream(p);
+            if(trackLangStream.is_open()){
+                for(auto& pair : textData){
+                    if(pair.first != std::string("")){
+                        trackLangStream << pair.second << '\0';
+                    }
+                }
+
+                trackLangStream.close();
+            }
+        }
     }
     wxLogMessage("Successfully updated the game's files");
 }
@@ -513,7 +526,12 @@ void MainWindow::CreateBackup(std::filesystem::path baseFolder, std::string name
 
         fs::copy_file(tracklistingPath, thisBackup / "tracklisting.xml");
         fs::copy_file(tracIDPath, thisBackup / "TRACID.txt");
-        fs::copy_file(tracEPath, thisBackup / "TRACE.txt");
+        for(int i = 0; i < LANG_COUNT; i++){
+            std::filesystem::path p = basePath / "Text" / "TRAC" / tracLangFiles[i];
+
+            if(fs::exists(p))
+                fs::copy_file(p, thisBackup / tracLangFiles[i]);
+        }
 
         //add another entry to the menu
         wxMenuItem* entry = new wxMenuItem(backupRestoreMenu,wxID_ANY,name,wxEmptyString,wxITEM_NORMAL);
@@ -529,21 +547,27 @@ void MainWindow::CreateBackup(std::filesystem::path baseFolder, std::string name
 void MainWindow::RestoreBackup( wxCommandEvent& event){
     //std::cout << event.GetId() << std::endl;
     wxStringClientData* data = (wxStringClientData*)event.GetEventUserData();
-    if(!tracklistingPath.empty() && !tracIDPath.empty() && !tracEPath.empty()){
+    if(!tracklistingPath.empty() && !tracIDPath.empty()){
         fs::path src(data->GetData().ToStdString());
         fs::copy_options copyOptions;
         copyOptions |= fs::copy_options::overwrite_existing;
         fs::path backupTracklisting = src / "tracklisting.xml";
         fs::path backupTrackID = src / "TRACID.txt";
-        fs::path backupTrackE = src / "TRACE.txt";
         //fix file names if necessary (probably overkill)
         backupTracklisting = FindFileCaseInsensitive(src,backupTracklisting);
         backupTrackID = FindFileCaseInsensitive(src,backupTrackID);
-        backupTrackE = FindFileCaseInsensitive(src,backupTrackE);
 
         fs::copy(backupTracklisting, tracklistingPath,copyOptions);
         fs::copy(backupTrackID, tracIDPath,copyOptions);
-        fs::copy(backupTrackE, tracEPath,copyOptions);
+
+        for(int i = 0; i < LANG_COUNT; i++){
+            fs::path backupTrackLang = src / tracLangFiles[i];
+            backupTrackLang = FindFileCaseInsensitive(src,backupTrackLang);
+            std::filesystem::path p = basePath / "Text" / "TRAC" / tracLangFiles[i];
+
+            if(fs::exists(p))
+                fs::copy(backupTrackLang, p,copyOptions);
+        }
 
         //refresh extracted files and start again
         ParseExtracted(basePath);

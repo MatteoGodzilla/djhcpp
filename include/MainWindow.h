@@ -67,7 +67,9 @@ private:
     std::filesystem::path basePath;
     std::filesystem::path tracklistingPath;
     std::filesystem::path tracIDPath;
-    std::filesystem::path tracEPath;
+    static const int LANG_COUNT = 6;
+    std::string tracLangFiles[LANG_COUNT] = {"TRACE.txt", "TRACF.txt", "TRACSNA", "TRACS.txt", "TRACG.txt", "TRACI.txt"};
+    //std::filesystem::path tracEPath;
     //backups
     std::filesystem::path backupFolderPath;
     bool automaticBackups = true;
