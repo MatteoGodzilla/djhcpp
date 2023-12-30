@@ -1,14 +1,16 @@
 #include "StringsViewer.h"
+
 #include "MainWindow.h"
 
-StringsViewer::StringsViewer(MainWindow* parent) : TrackTextViewer(parent){
+StringsViewer::StringsViewer( MainWindow* parent ) :
+    TrackTextViewer( parent ) {
     mainWindowRef = parent;
-    RebuildTable(std::string());
+    RebuildTable( std::string() );
 }
 
 void StringsViewer::OnTextChange( wxCommandEvent& event ) {
     //table->DeleteAllItems();
-    RebuildTable(event.GetString().ToStdString());
+    RebuildTable( event.GetString().ToStdString() );
 }
 
 void StringsViewer::OnEditingDone( wxDataViewEvent& event ) {
@@ -17,35 +19,35 @@ void StringsViewer::OnEditingDone( wxDataViewEvent& event ) {
     int col = event.GetColumn();
 
     wxVariant oldID;
-    table->GetStore()->GetValueByRow(oldID, row, 0);
+    table->GetStore()->GetValueByRow( oldID, row, 0 );
 
-    if(col == 1){
+    if ( col == 1 ) {
         // the value changed
         mainWindowRef->textData[oldID] = update;
     } else {
         //the id changed -> bit more complicated
         std::string oldValue = mainWindowRef->textData[oldID];
-        mainWindowRef->textData.erase(oldID);
-        mainWindowRef->textData[update]=oldValue;
+        mainWindowRef->textData.erase( oldID );
+        mainWindowRef->textData[update] = oldValue;
     }
 }
 
-void StringsViewer::RebuildTable(std::string query){
+void StringsViewer::RebuildTable( std::string query ) {
     table->DeleteAllItems();
-    for(auto& pair : mainWindowRef->textData){
+    for ( auto& pair : mainWindowRef->textData ) {
         bool allowed = false;
 
         // check if the query is somewhat inside the current string
         // the query must be shorter than the text
 
-        allowed = pair.first.find(query) != std::string::npos;
-        allowed = allowed || pair.second.find(query) != std::string::npos;
+        allowed = pair.first.find( query ) != std::string::npos;
+        allowed = allowed || pair.second.find( query ) != std::string::npos;
 
         int idCharIndex = 0;
-        for(size_t i = 0 ; i < pair.first.size(); i++){
-            if(idCharIndex < query.size()){
+        for ( size_t i = 0; i < pair.first.size(); i++ ) {
+            if ( idCharIndex < query.size() ) {
                 //check character
-                if(tolower(pair.first[i]) == tolower(query[idCharIndex]))
+                if ( tolower( pair.first[i] ) == tolower( query[idCharIndex] ) )
                     idCharIndex++;
             } else {
                 //we ran out of the query string
@@ -54,13 +56,13 @@ void StringsViewer::RebuildTable(std::string query){
             }
         }
 
-        if(!allowed){
+        if ( !allowed ) {
             //check for the value
             int valueCharIndex = 0;
-            for(size_t i = 0; i < pair.second.size(); i++){
-                if(valueCharIndex < query.size()){
+            for ( size_t i = 0; i < pair.second.size(); i++ ) {
+                if ( valueCharIndex < query.size() ) {
                     //check character
-                    if(tolower(pair.second[i]) == tolower(query[valueCharIndex]))
+                    if ( tolower( pair.second[i] ) == tolower( query[valueCharIndex] ) )
                         valueCharIndex++;
                 } else {
                     //we ran out of the query string
@@ -70,11 +72,11 @@ void StringsViewer::RebuildTable(std::string query){
             }
         }
 
-        if(allowed){
+        if ( allowed ) {
             wxVector<wxVariant> row = wxVector<wxVariant>();
-            row.push_back(wxString::FromUTF8(pair.first));
-            row.push_back(wxString::FromUTF8(pair.second));
-            table->AppendItem(row);
+            row.push_back( wxString::FromUTF8( pair.first ) );
+            row.push_back( wxString::FromUTF8( pair.second ) );
+            table->AppendItem( row );
         }
     }
 }

@@ -1,22 +1,23 @@
-#include "wx/wx.h"
 #include "MainWindow.h"
+#include "wx/wx.h"
+
 #include <iostream>
 
-class App : public wxApp{
+class App : public wxApp {
 public:
-    virtual bool OnInit(){
+    virtual bool OnInit() {
         MainWindow* mainwindow = new MainWindow();
         mainwindow->Show();
         return true;
     }
     virtual bool OnExceptionInMainLoop() override {
-        try{
+        try {
             throw; //Rethrow the current Exception
-        } catch(std::exception& e){
-            wxLogError(wxString("EXCEPTION:") << e.what());
+        } catch ( std::exception& e ) {
+            wxLogError( wxString( "EXCEPTION:" ) << e.what() );
         }
         return true;
     }
 };
 
-wxIMPLEMENT_APP(App);
+wxIMPLEMENT_APP( App );
