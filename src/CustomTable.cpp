@@ -2,15 +2,15 @@
 
 #include "MainWindow.h"
 
-int FuzzyExact( std::string query, std::string text ) {
+int FuzzyExact( std::wstring query, std::wstring text ) {
     size_t searchIndex = 0;
     size_t textIndex = 0;
 
-    for ( char& ch : query ) {
+    for ( wchar_t& ch : query ) {
         ch = std::tolower( ch );
     }
 
-    for ( char& ch : text ) {
+    for ( wchar_t& ch : text ) {
         ch = std::tolower( ch );
     }
 
@@ -46,19 +46,6 @@ CustomTable::CustomTable( MainWindow* parent ) :
     //used to show enabled column (disabled for now)
     //AppendColumn("Enabled");
 
-    /*
-    wxVector<wxBitmapBundle> images;
-
-    wxImage enabled,disabled;
-    wxImage::AddHandler(new wxPNGHandler());
-    disabled.LoadFile("checkbox-disabled.png",wxBitmapType::wxBITMAP_TYPE_PNG);
-    enabled.LoadFile("checkbox-enabled.png",wxBitmapType::wxBITMAP_TYPE_PNG);
-
-    images.push_back(wxBitmapBundle::FromBitmap(disabled));
-    images.push_back(wxBitmapBundle::FromBitmap(enabled));
-    SetSmallImages(images);
-    */
-
     Bind( wxEVT_LIST_COL_CLICK, wxListEventHandler( CustomTable::OnColumnClick ), this, wxID_ANY );
     Bind( wxEVT_LIST_KEY_DOWN, wxListEventHandler( CustomTable::OnKeyDown ), this, wxID_ANY );
     Bind( wxEVT_LIST_ITEM_ACTIVATED, wxListEventHandler( CustomTable::OnActivate ), this, wxID_ANY );
@@ -76,15 +63,15 @@ wxString CustomTable::OnGetItemText( long item, long column ) const {
     TableRow row = data[item];
     switch ( column ) {
     case 1:
-        return wxString::FromUTF8( row.id );
+        return wxString(row.id);
     case 2:
-        return wxString::FromUTF8( row.artist1 );
+        return wxString(row.artist1);
     case 3:
-        return wxString::FromUTF8( row.song1 );
+        return wxString(row.song1);
     case 4:
-        return wxString::FromUTF8( row.artist2 );
+        return wxString(row.artist2);
     case 5:
-        return wxString::FromUTF8( row.song2 );
+        return wxString(row.song2);
     case 6:
         return wxString() << row.bpm;
     default:
@@ -94,19 +81,9 @@ wxString CustomTable::OnGetItemText( long item, long column ) const {
 
 int CustomTable::OnGetItemColumnImage( long item, long column ) const {
     return -1;
-    /*
-    TableRow row = data[item];
-    //std::cout << item << "\t" << column << std::endl;
-    switch(column){
-        case 7:
-            if(row.enabled) return 1;
-            else return 0;
-        default: return -1;
-    }
-    */
 }
 
-void CustomTable::Search( std::string query ) {
+void CustomTable::Search( std::wstring query ) {
     //actually just sorts
     std::sort( data.begin(), data.end(), [&]( const TableRow& a, const TableRow& b ) {
         //calculate max score for each row
@@ -177,13 +154,6 @@ void CustomTable::OnActivate( wxListEvent& event ) {
 void CustomTable::SelectRow( wxListEvent& event ) {
     long row = event.GetIndex();
     selectedRows.push_back( row );
-
-    /*
-    for(auto& dataRow : selectedRows){
-        //std::cout << dataRow << " ";
-    }
-    std::cout << std::endl;
-    */
 }
 
 void CustomTable::DeselectRow( wxListEvent& event ) {
@@ -195,11 +165,6 @@ void CustomTable::DeselectRow( wxListEvent& event ) {
         //remove only the deselected row
         selectedRows.remove( row );
     }
-
-    for ( auto& dataRow : selectedRows ) {
-        std::cout << dataRow << " ";
-    }
-    std::cout << std::endl;
 }
 
 bool CustomTable::CompareRows( const TableRow& a, const TableRow& b, int col, int dir ) {

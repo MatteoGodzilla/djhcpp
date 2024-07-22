@@ -12,11 +12,11 @@
 #include "TrackInfoViewer.h"
 
 struct TableRow{
-    std::string id;
-    std::string artist1;
-    std::string song1;
-    std::string artist2;
-    std::string song2;
+    std::wstring id;
+    std::wstring artist1;
+    std::wstring song1;
+    std::wstring artist2;
+    std::wstring song2;
     float bpm;
     //not shown
     bool enabled = false;
@@ -30,7 +30,7 @@ public:
     CustomTable(MainWindow *parent);
     wxString OnGetItemText(long item, long column) const override;
     int OnGetItemColumnImage(long item, long column) const override;
-    void Search(std::string query);
+    void Search(std::wstring query);
     void OnColumnClick(wxListEvent& event);
     void OnKeyDown(wxListEvent& event);
     void OnActivate(wxListEvent& event);

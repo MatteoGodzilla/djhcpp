@@ -61,8 +61,7 @@ size_t checkSHA( void* buffer, size_t size, size_t nmemb, void* userp ) {
     return 0;
 }
 
-MainWindow::MainWindow() :
-    WindowBase( NULL ) {
+MainWindow::MainWindow() : WindowBase( NULL ) {
     SetLabel( "DJHCPP v" + DJHCPP_VERSION + "    [" + DJHCPP_BUILD + "]" );
 
     Bind( DJHCPP_EVT_FORCE_LIST_UPDATE, &MainWindow::ManualUpdate, this );
@@ -155,7 +154,7 @@ MainWindow::MainWindow() :
 
     for ( auto& dirEntry : fs::directory_iterator( backupFolderPath ) ) {
         if ( dirEntry.is_directory() ) {
-            std::string text = dirEntry.path().filename().string();
+            std::wstring text = dirEntry.path().filename().wstring();
             wxMenuItem* entry =
             new wxMenuItem( backupRestoreMenu, wxID_ANY, text, wxEmptyString, wxITEM_NORMAL );
             wxStringClientData* data =
@@ -168,10 +167,6 @@ MainWindow::MainWindow() :
     }
 
     automaticRenamingToggleMI->Check( automaticRenaming );
-
-    std::wstring fileformat = GetFileSystemTypeFromPath( basePath );
-
-    wxLogMessage( wxString() << fileformat );
 
     // patch file stuff
     if ( patchFileSourceURL.empty() || patchFileCRCURL.empty() )
@@ -201,7 +196,7 @@ void MainWindow::OpenExtractedFiles( wxCommandEvent& event ) {
 
     if ( dialog->ShowModal() == wxID_OK ) {
         // std::filesystem::path p = std::filesystem::path(dialog->GetPath());
-        basePath = fs::path( dialog->GetPath().ToStdString() );
+        basePath = fs::path( dialog->GetPath().ToStdWstring() );
         wxLogMessage( wxString( basePath ) );
         ParseExtracted( basePath );
     }
@@ -222,22 +217,22 @@ void MainWindow::ParseExtracted( fs::path path ) {
     if ( fs::exists( tracklistingPath ) && fs::exists( tracIDPath ) && fs::exists( tracEPath ) ) {
         // wxLogMessage("Extracted Files found");
         // load text string
-        std::ifstream tracIDStream = std::ifstream( tracIDPath );
-        std::ifstream tracEStream = std::ifstream( tracEPath );
+        std::wifstream tracIDStream = std::wifstream( tracIDPath );
+        std::wifstream tracEStream = std::wifstream( tracEPath );
 
         textData.clear();
         textData.insert(
-        std::make_pair( std::string( "" ),
-                        std::string( "" ) ) ); // default when string is empty
+        std::make_pair( std::wstring( L"" ),
+                        std::wstring( L"" ) ) ); // default when string is empty
 
         while ( !tracIDStream.eof() ) {
-            std::string id;
-            std::string value;
+            std::wstring id;
+            std::wstring value;
             std::getline( tracIDStream, id );
-            std::getline( tracEStream, value, '\0' );
-            if ( id.back() == '\r' )
+            std::getline( tracEStream, value, L'\0' );
+            if ( id.back() == L'\r' )
                 id = id.substr( 0, id.size() - 1 );
-            if ( value.back() == '\r' )
+            if ( value.back() == L'\r' )
                 value = value.substr( 0, value.size() - 1 );
 
             textData.insert( std::make_pair( id, value ) );
@@ -279,10 +274,10 @@ void MainWindow::CreateAutomaticBackup() {
         return;
     time_t t = time( NULL );
     tm* now = localtime( &t );
-    char dateFolder[31];
+    wchar_t dateFolder[31];
     // format table is present here:
     // https://cplusplus.com/reference/ctime/strftime/
-    std::strftime( dateFolder, 30, "%Y-%m-%d_%H-%M-%S", now );
+    std::wcsftime( dateFolder, 30, L"%Y-%m-%d_%H-%M-%S", now );
     CreateBackup( backupFolderPath, dateFolder );
 }
 
@@ -334,11 +329,12 @@ void MainWindow::ProcessCustom( fs::path dir ) {
 
     tinyxml2::XMLNode* track = doc.RootElement()->FirstChild();
 
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+
     while ( track != nullptr ) {
         // identical
         if ( strcmp( track->Value(), "Track" ) == 0 ) {
-            std::string addingTag =
-            track->FirstChildElement( "IDTag" )->GetText();
+            std::wstring addingTag = converter.from_bytes(track->FirstChildElement( "IDTag" )->GetText());
 
             tinyxml2::XMLElement* tracklistingRoot = tracklisting.RootElement();
             tinyxml2::XMLNode* tracklistingTrack =
@@ -349,7 +345,7 @@ void MainWindow::ProcessCustom( fs::path dir ) {
                 tinyxml2::XMLElement* IDTag =
                 tracklistingTrack->FirstChildElement( "IDTag" );
                 if ( IDTag != nullptr ) {
-                    std::string trackTestingID = IDTag->GetText();
+                    std::wstring trackTestingID = converter.from_bytes(IDTag->GetText());
                     if ( trackTestingID == addingTag ) {
                         wxLogMessage( wxString( "Replacing track node: " ) << addingTag );
                         possibleRemove = tracklistingTrack;
@@ -371,8 +367,7 @@ void MainWindow::ProcessCustom( fs::path dir ) {
     }
 
     // importing text data
-    std::ifstream textDataStream =
-    std::ifstream( customTextData.generic_string() );
+    std::ifstream textDataStream = std::ifstream( customTextData.generic_string() );
     std::string line;
     while ( std::getline( textDataStream, line ) ) {
         if ( line.find( "//" ) != std::string::npos )
@@ -381,8 +376,8 @@ void MainWindow::ProcessCustom( fs::path dir ) {
             continue;
 
         bool insideQuotes = false;
-        std::vector<std::string> tokens;
-        tokens.emplace_back( "" );
+        std::vector<std::wstring> tokens;
+        tokens.emplace_back( L"" );
         char previousChar = '\0';
 
         for ( size_t i = 0; i < line.length(); i++ ) {
@@ -400,7 +395,7 @@ void MainWindow::ProcessCustom( fs::path dir ) {
                 // we found the comma separator and we're not in something in
                 // quotes, so we're good to go to parse the next token (by
                 // pushing an empty string)
-                tokens.emplace_back( "" );
+                tokens.emplace_back( L"" );
                 previousChar = c;
             } else {
                 tokens.back() += c;
@@ -438,11 +433,11 @@ void MainWindow::ManualUpdate( wxCommandEvent& e ) {
 void MainWindow::Export() {
     tracklisting.SaveFile( tracklistingPath.generic_string().c_str() );
 
-    std::ofstream trackIDStream( tracIDPath );
+    std::wofstream trackIDStream( tracIDPath );
     if ( trackIDStream.is_open() ) {
         for ( auto& pair : textData ) {
-            if ( pair.first != std::string( "" ) ) {
-                trackIDStream << pair.first << "\n";
+            if ( pair.first != std::wstring( L"" ) ) {
+                trackIDStream << pair.first << L"\n";
             }
         }
         trackIDStream.close();
@@ -457,8 +452,8 @@ void MainWindow::Export() {
             std::ofstream trackLangStream( p );
             if ( trackLangStream.is_open() ) {
                 for ( auto& pair : textData ) {
-                    if ( pair.first != std::string( "" ) ) {
-                        trackLangStream << pair.second << '\0';
+                    if ( pair.first != std::wstring( L"" ) ) {
+                        trackLangStream << pair.second << L'\0';
                     }
                 }
 
@@ -474,12 +469,13 @@ void MainWindow::TracksToCustoms( wxCommandEvent& event ) {
     new wxDirDialog( this, "Select a folder to export the customs to", "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST );
     if ( dialog->ShowModal() == wxID_OK ) {
         // get all of the selected tracks in the table
-        fs::path containingFolder = fs::path( dialog->GetPath().ToStdString() );
+        fs::path containingFolder = fs::path( dialog->GetPath().ToStdWstring() );
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
         for ( int row : mainTable->selectedRows ) {
             // for each one
             TableRow dataRow = mainTable->data[row];
             //  get the id from track
-            std::string id = dataRow.id;
+            std::wstring id = dataRow.id;
             //  create root id with that name
             fs::create_directory( containingFolder / id );
             //  create DJH2 folder inside it
@@ -487,9 +483,7 @@ void MainWindow::TracksToCustoms( wxCommandEvent& event ) {
             fs::create_directory( djh2Folder );
             //  get folderLocation from track
 
-            std::string folderLocation =
-            dataRow.trackRef->FirstChildElement( "FolderLocation" )
-            ->GetText();
+            std::wstring folderLocation = converter.from_bytes(dataRow.trackRef->FirstChildElement( "FolderLocation" )->GetText());
             fs::path customFullFolderLocation =
             basePath / fs::path( folderLocation );
             // std::cout << customFullFolderLocation << std::endl;
@@ -509,48 +503,48 @@ void MainWindow::TracksToCustoms( wxCommandEvent& event ) {
 
             //  handle TRAC strings
             fs::path bar = djh2Folder / "Info for TRAC.csv";
-            std::ofstream csv = std::ofstream( bar.generic_string() );
+            std::wofstream csv = std::wofstream( bar.generic_string() );
 
             tinyxml2::XMLElement* element;
 
             // MixName
             element = dataRow.trackRef->FirstChildElement( "MixName" );
             if ( element != nullptr ) {
-                csv << element->GetText() << "," << textData[element->GetText()]
-                    << std::endl;
+                std::wstring elmText = converter.from_bytes(element->GetText());
+                csv << elmText << "," << textData[elmText] << std::endl;
 
                 element = element->NextSiblingElement( "MixName" );
+                elmText = converter.from_bytes(element->GetText());
                 if ( element != nullptr ) {
-                    csv << element->GetText() << ","
-                        << textData[element->GetText()] << std::endl;
+                    csv << elmText << "," << textData[elmText] << std::endl;
                 }
             }
 
             // MixArtist
             element = dataRow.trackRef->FirstChildElement( "MixArtist" );
             if ( element != nullptr ) {
-                csv << element->GetText() << "," << textData[element->GetText()]
-                    << std::endl;
+                std::wstring elmText = converter.from_bytes(element->GetText());
+                csv << elmText << "," << textData[elmText] << std::endl;
 
                 element = element->NextSiblingElement( "MixArtist" );
+                elmText = converter.from_bytes(element->GetText());
                 if ( element != nullptr ) {
-                    csv << element->GetText() << ","
-                        << textData[element->GetText()] << std::endl;
+                    csv << elmText << "," << textData[elmText] << std::endl;
                 }
             }
 
             // MixHeadline
             element = dataRow.trackRef->FirstChildElement( "MixHeadline" );
             if ( element != nullptr ) {
-                csv << element->GetText() << "," << textData[element->GetText()]
-                    << std::endl;
+                std::wstring elmText = converter.from_bytes(element->GetText());
+                csv << elmText << "," << textData[elmText] << std::endl;
             }
 
             // MixHeadlineDJName
             element = dataRow.trackRef->FirstChildElement( "MixHeadlineDJName" );
             if ( element != nullptr ) {
-                csv << element->GetText() << "," << textData[element->GetText()]
-                    << std::endl;
+                std::wstring elmText = converter.from_bytes(element->GetText());
+                csv << elmText << "," << textData[elmText] << std::endl;
             }
 
             csv.close();
@@ -563,7 +557,7 @@ void MainWindow::SetBackupFolder( wxCommandEvent& event ) {
     wxDirDialog* dialog =
     new wxDirDialog( this, "Open Custom's folder", "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST );
     if ( dialog->ShowModal() == wxID_OK ) {
-        fs::path path = fs::path( dialog->GetPath().ToStdString() );
+        fs::path path = fs::path( dialog->GetPath().ToStdWstring() );
         mINI::INIFile settings = mINI::INIFile( SETTINGS_FILE_NAME );
         mINI::INIStructure ini;
         settings.read( ini );
@@ -573,13 +567,13 @@ void MainWindow::SetBackupFolder( wxCommandEvent& event ) {
 }
 
 void MainWindow::ManualBackup( wxCommandEvent& event ) {
-    std::string text =
+    std::wstring text =
     wxGetTextFromUser( "Please enter the name of the backup:", "Caption", wxEmptyString, this )
-    .ToStdString();
+    .ToStdWstring();
     CreateBackup( backupFolderPath, text );
 }
 
-void MainWindow::CreateBackup( std::filesystem::path baseFolder, std::string name ) {
+void MainWindow::CreateBackup( std::filesystem::path baseFolder, std::wstring name ) {
     if ( fs::exists( baseFolder ) ) {
         fs::path thisBackup = baseFolder / name;
         fs::create_directory( thisBackup );
@@ -612,7 +606,7 @@ void MainWindow::RestoreBackup( wxCommandEvent& event ) {
     // std::cout << event.GetId() << std::endl;
     wxStringClientData* data = (wxStringClientData*)event.GetEventUserData();
     if ( !tracklistingPath.empty() && !tracIDPath.empty() ) {
-        fs::path src( data->GetData().ToStdString() );
+        fs::path src( data->GetData().ToStdWstring() );
         fs::copy_options copyOptions;
         copyOptions |= fs::copy_options::overwrite_existing;
         fs::path backupTracklisting = src / "tracklisting.xml";
@@ -644,41 +638,43 @@ void MainWindow::UpdateTable() {
     tinyxml2::XMLElement* track =
     tracklisting.RootElement()->FirstChildElement();
 
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+
     while ( track != nullptr ) {
         TableRow row;
 
-        std::string id = "";
-        std::string name1 = "";
-        std::string name2 = "";
-        std::string artist1 = "";
-        std::string artist2 = "";
-        std::string bpm = "";
+        std::wstring id = L"";
+        std::wstring name1 = L"";
+        std::wstring name2 = L"";
+        std::wstring artist1 = L"";
+        std::wstring artist2 = L"";
+        std::wstring bpm = L"";
 
         tinyxml2::XMLElement* token = track->FirstChildElement( "IDTag" );
         if ( token != nullptr )
-            id = token->GetText();
+            id = converter.from_bytes(token->GetText());
 
         token = track->FirstChildElement( "MixName" );
         if ( token != nullptr ) {
-            name1 = token->GetText();
+            name1 = converter.from_bytes(token->GetText());
 
             token = token->NextSiblingElement( "MixName" );
             if ( token != nullptr )
-                name2 = token->GetText();
+                name2 = converter.from_bytes(token->GetText());
         }
 
         token = track->FirstChildElement( "MixArtist" );
         if ( token != nullptr ) {
-            artist1 = token->GetText();
+            artist1 = converter.from_bytes(token->GetText());
 
             token = token->NextSiblingElement( "MixArtist" );
             if ( token != nullptr )
-                artist2 = token->GetText();
+                artist2 = converter.from_bytes(token->GetText());
         }
 
         token = track->FirstChildElement( "BPM" );
         if ( token != nullptr )
-            bpm = token->GetText();
+            bpm = converter.from_bytes(token->GetText());
 
         row.id = id;
 
@@ -688,7 +684,7 @@ void MainWindow::UpdateTable() {
         //   else "[key]"
 
         if ( artist1.empty() )
-            row.artist1 = "";
+            row.artist1 = L"";
         else {
             if ( textData.count( artist1 ) == 1 )
                 row.artist1 = textData[artist1];
@@ -697,7 +693,7 @@ void MainWindow::UpdateTable() {
         }
 
         if ( name1.empty() )
-            row.song1 = "";
+            row.song1 = L"";
         else {
             if ( textData.count( name1 ) == 1 )
                 row.song1 = textData[name1];
@@ -706,7 +702,7 @@ void MainWindow::UpdateTable() {
         }
 
         if ( artist2.empty() )
-            row.artist2 = "";
+            row.artist2 = L"";
         else {
             if ( textData.count( artist2 ) == 1 )
                 row.artist2 = textData[artist2];
@@ -715,7 +711,7 @@ void MainWindow::UpdateTable() {
         }
 
         if ( name2.empty() )
-            row.song2 = "";
+            row.song2 = L"";
         else {
             if ( textData.count( name2 ) == 1 )
                 row.song2 = textData[name2];
@@ -745,16 +741,16 @@ void MainWindow::UpdateTable() {
 }
 
 void MainWindow::OnSearch( wxCommandEvent& wxEvent ) {
-    mainTable->Search( wxEvent.GetString().ToStdString() );
+    mainTable->Search( wxEvent.GetString().ToStdWstring() );
 }
 
 void MainWindow::OnCloseEvent( wxCloseEvent& event ) {
     // check if the base folder ends with PS3
     if ( !basePath.empty() && dirty ) {
         // wxLogMessage(wxString() << basePath.filename().generic_string());
-        std::string a =
-        basePath.filename().generic_string(); // in this case, last folder
-        std::string b = "PS3";
+        std::wstring a = basePath.filename().generic_wstring();
+        // in this case, last folder
+        std::wstring b = L"PS3";
 
         // make the path all caps for this comparison
         for ( auto& c : a )
@@ -849,9 +845,9 @@ void MainWindow::ToUpper( wxCommandEvent& event ) {
 
         for ( auto& item : fs::recursive_directory_iterator( basePath ) ) {
             fs::path rel = fs::relative( item.path(), basePath );
-            std::string upperPath = rel.generic_string();
+            std::wstring upperPath = rel.generic_wstring();
 
-            for ( char& ch : upperPath ) {
+            for ( wchar_t& ch : upperPath ) {
                 ch = std::toupper( ch );
             }
 

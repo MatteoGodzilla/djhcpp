@@ -11,7 +11,7 @@ DirectoryDropTarget::DirectoryDropTarget( MainWindow* parent ) {
 bool DirectoryDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString& filenames ) {
     wxLogMessage( "RECEIVED DROP!" );
     for ( auto& file : filenames ) {
-        fs::path p = fs::path( file.ToStdString() );
+        fs::path p = fs::path( file.ToStdWstring() );
         if ( fs::is_directory( p ) ) {
             wxLogMessage( wxString( "Found directory to import:" ) << file );
             if ( fs::exists( p / "DJH2" ) )

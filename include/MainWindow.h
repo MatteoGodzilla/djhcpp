@@ -52,7 +52,7 @@ public:
     void OnSearch( wxCommandEvent& event ) override;
     void OnCloseEvent(wxCloseEvent& event) override;
 
-    void CreateBackup(std::filesystem::path baseFolder, std::string name );
+    void CreateBackup(std::filesystem::path baseFolder, std::wstring name );
     void CreateAutomaticBackup();
     void ParseExtracted(std::filesystem::path path);
     void UpdateTable();
@@ -61,7 +61,7 @@ public:
 
     CURL* curlSession;
     bool dirty = false;
-    std::map<std::string, std::string> textData;
+    std::map<std::wstring, std::wstring> textData;
 private:
     CustomTable* mainTable;
     //wxXmlDocument tracklisting;
@@ -70,7 +70,7 @@ private:
     std::filesystem::path tracklistingPath;
     std::filesystem::path tracIDPath;
     static const int LANG_COUNT = 6;
-    std::string tracLangFiles[LANG_COUNT] = {"TRACE.txt", "TRACF.txt", "TRACSNA", "TRACS.txt", "TRACG.txt", "TRACI.txt"};
+    std::wstring tracLangFiles[LANG_COUNT] = {L"TRACE.txt", L"TRACF.txt", L"TRACSNA", L"TRACS.txt", L"TRACG.txt", L"TRACI.txt"};
     //std::filesystem::path tracEPath;
     //backups
     std::filesystem::path backupFolderPath;

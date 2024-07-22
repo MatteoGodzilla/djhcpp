@@ -5,16 +5,16 @@
 StringsViewer::StringsViewer( MainWindow* parent ) :
     TrackTextViewer( parent ) {
     mainWindowRef = parent;
-    RebuildTable( std::string() );
+    RebuildTable( std::wstring() );
 }
 
 void StringsViewer::OnTextChange( wxCommandEvent& event ) {
     //table->DeleteAllItems();
-    RebuildTable( event.GetString().ToStdString() );
+    RebuildTable( event.GetString().ToStdWstring() );
 }
 
 void StringsViewer::OnEditingDone( wxDataViewEvent& event ) {
-    std::string update = event.GetValue().GetString().ToStdString();
+    std::wstring update = event.GetValue().GetString().ToStdWstring();
     int row = table->GetSelectedRow();
     int col = event.GetColumn();
 
@@ -26,13 +26,13 @@ void StringsViewer::OnEditingDone( wxDataViewEvent& event ) {
         mainWindowRef->textData[oldID] = update;
     } else {
         //the id changed -> bit more complicated
-        std::string oldValue = mainWindowRef->textData[oldID];
+        std::wstring oldValue = mainWindowRef->textData[oldID];
         mainWindowRef->textData.erase( oldID );
         mainWindowRef->textData[update] = oldValue;
     }
 }
 
-void StringsViewer::RebuildTable( std::string query ) {
+void StringsViewer::RebuildTable( std::wstring query ) {
     table->DeleteAllItems();
     for ( auto& pair : mainWindowRef->textData ) {
         bool allowed = false;
@@ -40,8 +40,8 @@ void StringsViewer::RebuildTable( std::string query ) {
         // check if the query is somewhat inside the current string
         // the query must be shorter than the text
 
-        allowed = pair.first.find( query ) != std::string::npos;
-        allowed = allowed || pair.second.find( query ) != std::string::npos;
+        allowed = pair.first.find( query ) != std::wstring::npos;
+        allowed = allowed || pair.second.find( query ) != std::wstring::npos;
 
         int idCharIndex = 0;
         for ( size_t i = 0; i < pair.first.size(); i++ ) {
@@ -74,8 +74,8 @@ void StringsViewer::RebuildTable( std::string query ) {
 
         if ( allowed ) {
             wxVector<wxVariant> row = wxVector<wxVariant>();
-            row.push_back( wxString::FromUTF8( pair.first ) );
-            row.push_back( wxString::FromUTF8( pair.second ) );
+            row.push_back( wxString() << pair.first );
+            row.push_back( wxString() << pair.second );
             table->AppendItem( row );
         }
     }

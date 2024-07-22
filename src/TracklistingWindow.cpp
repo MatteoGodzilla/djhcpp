@@ -37,7 +37,7 @@ void TracklistingWindow::GenTracklisting( wxCommandEvent& event ) {
     invalidFormatParameters = false;
 
     //general informations
-
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     if ( !m_textID->IsEmpty() ) {
         wxString id = m_textID->GetValue();
         XMLElement* elm = doc.NewElement( "IDTag" );
@@ -45,8 +45,8 @@ void TracklistingWindow::GenTracklisting( wxCommandEvent& event ) {
         track->InsertEndChild( elm );
 
         XMLElement* folderLocation = doc.NewElement( "FolderLocation" );
-        std::string folderPath = std::string( "AUDIO\\Audiotracks\\" ) + id.ToStdString();
-        folderLocation->InsertNewText( folderPath.c_str() );
+        std::wstring folderPath = std::wstring( L"AUDIO\\Audiotracks\\" ) + id.ToStdWstring();
+        folderLocation->InsertNewText( converter.to_bytes(folderPath).c_str() );
         track->InsertEndChild( folderLocation );
     } else {
         ErrRequiredParameter( "ID" );
@@ -292,10 +292,10 @@ void TracklistingWindow::GenBaseFolder( wxCommandEvent& event ) {
     if ( dialog->ShowModal() == wxID_OK ) {
         if ( m_textID->IsEmpty() )
             return;
-        fs::path base = fs::path( dialog->GetPath().ToStdString() );
+        fs::path base = fs::path( dialog->GetPath().ToStdWstring() );
         wxString id = m_textID->GetValue();
 
-        fs::path folder = base / id.ToStdString();
+        fs::path folder = base / id.ToStdWstring();
         fs::path xmlFile = base / "Info For Tracklisting.xml";
         fs::path csvFile = base / "info For TRAC.csv";
 

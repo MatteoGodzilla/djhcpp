@@ -27,6 +27,7 @@ std::string ToLower( std::string s ) {
 std::filesystem::path
 FindFileCaseInsensitive( std::filesystem::path startDirectory, std::filesystem::path original ) {
 #ifdef COMPILE_UNIX
+    // FIXME
     // linux or mac os
     std::filesystem::path result( "" );
 
@@ -68,6 +69,7 @@ std::filesystem::path GetRunningPathOfExecutable() {
 
 std::wstring GetFileSystemTypeFromPath( std::filesystem::path path ) {
 #ifdef COMPILE_UNIX
+    //FIXME
     return "";
 #endif
 #ifdef COMPILE_WIN

@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0.0)
-project(djhcpp VERSION 0.2.6)
+cmake_minimum_required(VERSION 3.20.0)
+project(djhcpp VERSION 0.2.7)
 
 set(CMAKE_CXX_STANDARD 17)
 # set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
@@ -32,7 +32,7 @@ add_executable(djhcpp
     src/TrackInfoViewer.cpp
     src/Utils.cpp
     WindowBase.cpp
-    )
+)
 
 add_subdirectory(tinyxml2)
 if(MINGW OR MSYS)
