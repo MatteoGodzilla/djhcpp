@@ -59,7 +59,7 @@ public:
     void ProcessCustom(std::filesystem::path dir);
     void Export();
 
-    CURL* curlSession;
+    CURL* curlSession = NULL;
     bool dirty = false;
     std::map<std::wstring, std::wstring> textData;
 private:

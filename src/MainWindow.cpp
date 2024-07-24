@@ -927,5 +927,6 @@ void MainWindow::ApplyPatchFile( wxCommandEvent& event ) {
 }
 
 MainWindow::~MainWindow() {
-    curl_easy_cleanup( curlSession );
+    if(curlSession)
+        curl_easy_cleanup( curlSession );
 }
