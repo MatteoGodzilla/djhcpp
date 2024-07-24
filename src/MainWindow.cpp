@@ -61,7 +61,8 @@ size_t checkSHA( void* buffer, size_t size, size_t nmemb, void* userp ) {
     return 0;
 }
 
-MainWindow::MainWindow() : WindowBase( NULL ) {
+MainWindow::MainWindow() :
+    WindowBase( NULL ) {
     SetLabel( "DJHCPP v" + DJHCPP_VERSION + "    [" + DJHCPP_BUILD + "]" );
 
     Bind( DJHCPP_EVT_FORCE_LIST_UPDATE, &MainWindow::ManualUpdate, this );
@@ -334,7 +335,7 @@ void MainWindow::ProcessCustom( fs::path dir ) {
     while ( track != nullptr ) {
         // identical
         if ( strcmp( track->Value(), "Track" ) == 0 ) {
-            std::wstring addingTag = converter.from_bytes(track->FirstChildElement( "IDTag" )->GetText());
+            std::wstring addingTag = converter.from_bytes( track->FirstChildElement( "IDTag" )->GetText() );
 
             tinyxml2::XMLElement* tracklistingRoot = tracklisting.RootElement();
             tinyxml2::XMLNode* tracklistingTrack =
@@ -345,7 +346,7 @@ void MainWindow::ProcessCustom( fs::path dir ) {
                 tinyxml2::XMLElement* IDTag =
                 tracklistingTrack->FirstChildElement( "IDTag" );
                 if ( IDTag != nullptr ) {
-                    std::wstring trackTestingID = converter.from_bytes(IDTag->GetText());
+                    std::wstring trackTestingID = converter.from_bytes( IDTag->GetText() );
                     if ( trackTestingID == addingTag ) {
                         wxLogMessage( wxString( "Replacing track node: " ) << addingTag );
                         possibleRemove = tracklistingTrack;
@@ -483,7 +484,7 @@ void MainWindow::TracksToCustoms( wxCommandEvent& event ) {
             fs::create_directory( djh2Folder );
             //  get folderLocation from track
 
-            std::wstring folderLocation = converter.from_bytes(dataRow.trackRef->FirstChildElement( "FolderLocation" )->GetText());
+            std::wstring folderLocation = converter.from_bytes( dataRow.trackRef->FirstChildElement( "FolderLocation" )->GetText() );
             fs::path customFullFolderLocation =
             basePath / fs::path( folderLocation );
             // std::cout << customFullFolderLocation << std::endl;
@@ -510,11 +511,11 @@ void MainWindow::TracksToCustoms( wxCommandEvent& event ) {
             // MixName
             element = dataRow.trackRef->FirstChildElement( "MixName" );
             if ( element != nullptr ) {
-                std::wstring elmText = converter.from_bytes(element->GetText());
+                std::wstring elmText = converter.from_bytes( element->GetText() );
                 csv << elmText << "," << textData[elmText] << std::endl;
 
                 element = element->NextSiblingElement( "MixName" );
-                elmText = converter.from_bytes(element->GetText());
+                elmText = converter.from_bytes( element->GetText() );
                 if ( element != nullptr ) {
                     csv << elmText << "," << textData[elmText] << std::endl;
                 }
@@ -523,11 +524,11 @@ void MainWindow::TracksToCustoms( wxCommandEvent& event ) {
             // MixArtist
             element = dataRow.trackRef->FirstChildElement( "MixArtist" );
             if ( element != nullptr ) {
-                std::wstring elmText = converter.from_bytes(element->GetText());
+                std::wstring elmText = converter.from_bytes( element->GetText() );
                 csv << elmText << "," << textData[elmText] << std::endl;
 
                 element = element->NextSiblingElement( "MixArtist" );
-                elmText = converter.from_bytes(element->GetText());
+                elmText = converter.from_bytes( element->GetText() );
                 if ( element != nullptr ) {
                     csv << elmText << "," << textData[elmText] << std::endl;
                 }
@@ -536,14 +537,14 @@ void MainWindow::TracksToCustoms( wxCommandEvent& event ) {
             // MixHeadline
             element = dataRow.trackRef->FirstChildElement( "MixHeadline" );
             if ( element != nullptr ) {
-                std::wstring elmText = converter.from_bytes(element->GetText());
+                std::wstring elmText = converter.from_bytes( element->GetText() );
                 csv << elmText << "," << textData[elmText] << std::endl;
             }
 
             // MixHeadlineDJName
             element = dataRow.trackRef->FirstChildElement( "MixHeadlineDJName" );
             if ( element != nullptr ) {
-                std::wstring elmText = converter.from_bytes(element->GetText());
+                std::wstring elmText = converter.from_bytes( element->GetText() );
                 csv << elmText << "," << textData[elmText] << std::endl;
             }
 
@@ -652,29 +653,29 @@ void MainWindow::UpdateTable() {
 
         tinyxml2::XMLElement* token = track->FirstChildElement( "IDTag" );
         if ( token != nullptr )
-            id = converter.from_bytes(token->GetText());
+            id = converter.from_bytes( token->GetText() );
 
         token = track->FirstChildElement( "MixName" );
         if ( token != nullptr ) {
-            name1 = converter.from_bytes(token->GetText());
+            name1 = converter.from_bytes( token->GetText() );
 
             token = token->NextSiblingElement( "MixName" );
             if ( token != nullptr )
-                name2 = converter.from_bytes(token->GetText());
+                name2 = converter.from_bytes( token->GetText() );
         }
 
         token = track->FirstChildElement( "MixArtist" );
         if ( token != nullptr ) {
-            artist1 = converter.from_bytes(token->GetText());
+            artist1 = converter.from_bytes( token->GetText() );
 
             token = token->NextSiblingElement( "MixArtist" );
             if ( token != nullptr )
-                artist2 = converter.from_bytes(token->GetText());
+                artist2 = converter.from_bytes( token->GetText() );
         }
 
         token = track->FirstChildElement( "BPM" );
         if ( token != nullptr )
-            bpm = converter.from_bytes(token->GetText());
+            bpm = converter.from_bytes( token->GetText() );
 
         row.id = id;
 
@@ -927,6 +928,6 @@ void MainWindow::ApplyPatchFile( wxCommandEvent& event ) {
 }
 
 MainWindow::~MainWindow() {
-    if(curlSession)
+    if ( curlSession )
         curl_easy_cleanup( curlSession );
 }

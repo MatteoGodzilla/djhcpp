@@ -46,7 +46,7 @@ void TracklistingWindow::GenTracklisting( wxCommandEvent& event ) {
 
         XMLElement* folderLocation = doc.NewElement( "FolderLocation" );
         std::wstring folderPath = std::wstring( L"AUDIO\\Audiotracks\\" ) + id.ToStdWstring();
-        folderLocation->InsertNewText( converter.to_bytes(folderPath).c_str() );
+        folderLocation->InsertNewText( converter.to_bytes( folderPath ).c_str() );
         track->InsertEndChild( folderLocation );
     } else {
         ErrRequiredParameter( "ID" );

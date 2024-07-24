@@ -63,15 +63,15 @@ wxString CustomTable::OnGetItemText( long item, long column ) const {
     TableRow row = data[item];
     switch ( column ) {
     case 1:
-        return wxString(row.id);
+        return wxString( row.id );
     case 2:
-        return wxString(row.artist1);
+        return wxString( row.artist1 );
     case 3:
-        return wxString(row.song1);
+        return wxString( row.song1 );
     case 4:
-        return wxString(row.artist2);
+        return wxString( row.artist2 );
     case 5:
-        return wxString(row.song2);
+        return wxString( row.song2 );
     case 6:
         return wxString() << row.bpm;
     default:

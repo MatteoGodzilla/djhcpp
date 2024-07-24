@@ -24,8 +24,7 @@ std::string ToLower( std::string s ) {
 /// @param original case-insensitive path that you want to find in the
 /// filesystem
 /// @return path to file that has the same name as original, null otherwise
-std::filesystem::path
-FindFileCaseInsensitive( std::filesystem::path startDirectory, std::filesystem::path original ) {
+std::filesystem::path FindFileCaseInsensitive( std::filesystem::path startDirectory, std::filesystem::path original ) {
 #ifdef COMPILE_UNIX
     // FIXME
     // linux or mac os
@@ -70,7 +69,7 @@ std::filesystem::path GetRunningPathOfExecutable() {
 std::wstring GetFileSystemTypeFromPath( std::filesystem::path path ) {
 #ifdef COMPILE_UNIX
     //FIXME
-    return "";
+    return L"";
 #endif
 #ifdef COMPILE_WIN
     wchar_t buffer[256];
