@@ -10,3 +10,6 @@
 [submodule "djhtools"]
 	path = djhtools
 	url = https://github.com/shockdude/djhtools
+[submodule "bit7z"]
+	path = bit7z
+	url = https://github.com/rikyoz/bit7z.git
