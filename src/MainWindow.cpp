@@ -291,13 +291,28 @@ void MainWindow::CreateAutomaticBackup() {
 }
 
 void MainWindow::AddCustomZip( wxCommandEvent& event){
-    wxLogMessage(wxString(fs::temp_directory_path().generic_string()));
+    wxFileDialog* dialog = new wxFileDialog(this, "Open zip file", "", "", "Zip files (*.zip)|*.zip",
+        wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    if(dialog->ShowModal() == wxID_OK){
+        wxString path = dialog->GetPath();
+
+        mz_zip_archive archive;
+        wxLogMessage(path.c_str());
+        mz_bool status = mz_zip_reader_init_file(&archive, path.c_str(), 0);
+        //IT DOES NOT WORK
+        if(status){
+            wxLogMessage(wxString(fs::temp_directory_path().generic_string()));
+            wxLogMessage(path);
+            wxLogMessage(wxString() << mz_zip_reader_get_num_files(&archive));
+        } else {
+            wxLogMessage("FAILED");
+        }
+    }
 }
 
 void MainWindow::AddCustom( wxCommandEvent& event ) {
-    wxDirDialog* dialog = new wxDirDialog(
-    this, "Open Custom's folder", "",
-    wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST | wxDD_MULTIPLE );
+    wxDirDialog* dialog = new wxDirDialog( this, "Open Custom's folder", "",
+        wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST | wxDD_MULTIPLE );
     if ( dialog->ShowModal() == wxID_OK ) {
         wxArrayString paths;
         dialog->GetPaths( paths );

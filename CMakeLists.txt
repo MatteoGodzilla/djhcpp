@@ -32,9 +32,12 @@ add_executable(djhcpp
     src/TrackInfoViewer.cpp
     src/Utils.cpp
     WindowBase.cpp
+    # external
+    miniz-release/miniz.c
 )
 
 add_subdirectory(tinyxml2)
+
 if(MINGW OR MSYS)
     add_subdirectory(wxWidgets)
     set(wxWidgets_LIBRARIES wx::core wx::base wx::xml)
@@ -46,6 +49,8 @@ endif()
 target_include_directories(djhcpp PRIVATE include)
 
 target_include_directories(djhcpp PUBLIC "mINI/src")
+
+target_include_directories(djhcpp PUBLIC miniz-release)
 
 target_link_libraries(djhcpp ${wxWidgets_LIBRARIES} tinyxml2 stdc++fs curl crypto ssl)
 
