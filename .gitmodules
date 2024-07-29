@@ -10,6 +10,3 @@
 [submodule "djhtools"]
 	path = djhtools
 	url = https://github.com/shockdude/djhtools
-[submodule "miniz"]
-	path = miniz
-	url = https://github.com/richgel999/miniz
