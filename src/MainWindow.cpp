@@ -292,20 +292,28 @@ void MainWindow::CreateAutomaticBackup() {
 
 void MainWindow::AddCustomZip( wxCommandEvent& event){
     wxFileDialog* dialog = new wxFileDialog(this, "Open zip file", "", "", "Zip files (*.zip)|*.zip",
-        wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+        wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
     if(dialog->ShowModal() == wxID_OK){
-        wxString path = dialog->GetPath();
+        wxArrayString paths;
+        dialog->GetPaths(paths);
 
-        mz_zip_archive archive;
-        wxLogMessage(path.c_str());
-        mz_bool status = mz_zip_reader_init_file(&archive, path.c_str(), 0);
-        //IT DOES NOT WORK
-        if(status){
-            wxLogMessage(wxString(fs::temp_directory_path().generic_string()));
-            wxLogMessage(path);
-            wxLogMessage(wxString() << mz_zip_reader_get_num_files(&archive));
-        } else {
-            wxLogMessage("FAILED");
+        bit7z::Bit7zLibrary lib("7z.dll");
+        bit7z::BitFileExtractor extractor(lib, bit7z::BitFormat::Zip);
+        extractor.setOverwriteMode(bit7z::OverwriteMode::Overwrite);
+
+        for(size_t i = 0; i < paths.GetCount(); i++){
+            fs::path outputPath = fs::temp_directory_path() / "djhcpp" / std::to_string(i);
+            //library does not support wide strings
+            std::string filePath = paths[i].ToStdString();
+            extractor.extract(filePath, outputPath.generic_string());
+            bit7z::BitArchiveReader archiveReader(lib, filePath, bit7z::BitFormat::Zip);
+            //find the DJH2 folder
+            for ( auto& item : archiveReader.items() ) {
+                if(item.name() == "DJH2" && item.isDir()){
+                    fs::path filesToImport = outputPath / item.path();
+                    ProcessCustom(filesToImport);
+                }
+            }
         }
     }
 }

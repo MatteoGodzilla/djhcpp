@@ -10,7 +10,8 @@
 #include "tinyxml2.h"
 #include "mini/ini.h"
 #include <openssl/sha.h>
-#include "miniz.h"
+// #include "miniz.h"
+#include "bit7z/bit7z.hpp"
 //wxWidgets
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>

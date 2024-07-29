@@ -33,7 +33,7 @@ add_executable(djhcpp
     src/Utils.cpp
     WindowBase.cpp
     # external
-    miniz-release/miniz.c
+    # miniz-release/miniz.c
 )
 
 add_subdirectory(tinyxml2)
@@ -50,9 +50,10 @@ target_include_directories(djhcpp PRIVATE include)
 
 target_include_directories(djhcpp PUBLIC "mINI/src")
 
-target_include_directories(djhcpp PUBLIC miniz-release)
+# target_include_directories(djhcpp PUBLIC miniz-release)
+add_subdirectory(bit7z)
 
-target_link_libraries(djhcpp ${wxWidgets_LIBRARIES} tinyxml2 stdc++fs curl crypto ssl)
+target_link_libraries(djhcpp ${wxWidgets_LIBRARIES} tinyxml2 stdc++fs curl crypto ssl bit7z)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
