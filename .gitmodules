@@ -10,3 +10,6 @@
 [submodule "djhtools"]
 	path = djhtools
 	url = https://github.com/shockdude/djhtools
+[submodule "libzip"]
+	path = libzip
+	url = https://github.com/nih-at/libzip.git
