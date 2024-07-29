@@ -485,11 +485,11 @@ void MainWindow::Export() {
             if ( !fs::exists( p ) )
                 continue;
 
-            std::ofstream trackLangStream( p );
+            std::ofstream trackLangStream( p, std::ios::binary);
             if ( trackLangStream.is_open() ) {
                 for ( auto& pair : textData ) {
                     if ( pair.first != std::wstring( L"" ) ) {
-                        trackLangStream << pair.second << L'\0';
+                        trackLangStream << pair.second << '\0';
                     }
                 }
 
