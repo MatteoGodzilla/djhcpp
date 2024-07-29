@@ -44,10 +44,18 @@ class WindowBase : public wxFrame
 		wxButton* ExtractedFilesBTN;
 		wxBoxSizer* middleSizer;
 		wxButton* addCustomBTN;
+		wxButton* addCustomZipBTN;
 		wxMenuBar* menuBar;
 		wxMenu* fileMenu;
+		wxMenuItem* addCustomMI;
+		wxMenuItem* addCustomZipMI;
+		wxMenuItem* updateManuallyMI;
 		wxMenu* windowsMenu;
+		wxMenuItem* openTrackTextViewer;
 		wxMenu* toolsMenu;
+		wxMenuItem* applyPatchFileMI;
+		wxMenuItem* exportSelectedTracksMI;
+		wxMenuItem* renameToUppercaseMI;
 		wxMenuItem* automaticRenamingToggleMI;
 		wxMenu* backupRestoreMenu;
 
@@ -56,6 +64,7 @@ class WindowBase : public wxFrame
 		virtual void OnSearch( wxCommandEvent& event ) = 0;
 		virtual void OpenExtractedFiles( wxCommandEvent& event ) = 0;
 		virtual void AddCustom( wxCommandEvent& event ) = 0;
+		virtual void AddCustomZip( wxCommandEvent& event ) = 0;
 		virtual void ManualUpdate( wxCommandEvent& event ) = 0;
 		virtual void OpenTrackisting( wxCommandEvent& event ) = 0;
 		virtual void OpenTrackText( wxCommandEvent& event ) = 0;

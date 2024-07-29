@@ -12,7 +12,7 @@
 WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxSize( 640,320 ), wxDefaultSize );
-	this->SetBackgroundColour( wxColour( 255, 255, 255 ) );
+	this->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
 
 	wxBoxSizer* rootSizer;
 	rootSizer = new wxBoxSizer( wxVERTICAL );
@@ -53,10 +53,17 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxBoxSizer* bottomSizer;
 	bottomSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	addCustomBTN = new wxButton( this, wxID_ANY, wxT("Add Custom"), wxDefaultPosition, wxDefaultSize, 0 );
+	addCustomBTN = new wxButton( this, wxID_ANY, wxT("Add Custom From Folder"), wxDefaultPosition, wxDefaultSize, 0 );
 	addCustomBTN->SetFont( wxFont( 14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
+	addCustomBTN->Enable( false );
 
-	bottomSizer->Add( addCustomBTN, 2, wxALL|wxEXPAND, 5 );
+	bottomSizer->Add( addCustomBTN, 1, wxALL|wxEXPAND, 5 );
+
+	addCustomZipBTN = new wxButton( this, wxID_ANY, wxT("Add Custom From Zip"), wxDefaultPosition, wxDefaultSize, 0 );
+	addCustomZipBTN->SetFont( wxFont( 14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
+	addCustomZipBTN->Enable( false );
+
+	bottomSizer->Add( addCustomZipBTN, 1, wxALL|wxEXPAND, 5 );
 
 
 	rootSizer->Add( bottomSizer, 0, wxEXPAND, 5 );
@@ -64,20 +71,23 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 
 	this->SetSizer( rootSizer );
 	this->Layout();
-	addCustomBTN->Enable(false);
 	menuBar = new wxMenuBar( 0 );
 	fileMenu = new wxMenu();
 	wxMenuItem* openExtractedMI;
 	openExtractedMI = new wxMenuItem( fileMenu, wxID_ANY, wxString( wxT("Open Extraced Files") ) , wxEmptyString, wxITEM_NORMAL );
 	fileMenu->Append( openExtractedMI );
 
-	wxMenuItem* addCustomMI;
-	addCustomMI = new wxMenuItem( fileMenu, wxID_ANY, wxString( wxT("Add Custom") ) , wxEmptyString, wxITEM_NORMAL );
+	addCustomMI = new wxMenuItem( fileMenu, wxID_ANY, wxString( wxT("Add Custom From Folder") ) , wxEmptyString, wxITEM_NORMAL );
 	fileMenu->Append( addCustomMI );
+	addCustomMI->Enable( false );
 
-	wxMenuItem* updateManuallyMI;
+	addCustomZipMI = new wxMenuItem( fileMenu, wxID_ANY, wxString( wxT("Add Custom From Zip") ) , wxEmptyString, wxITEM_NORMAL );
+	fileMenu->Append( addCustomZipMI );
+	addCustomZipMI->Enable( false );
+
 	updateManuallyMI = new wxMenuItem( fileMenu, wxID_ANY, wxString( wxT("Update Manually") ) , wxEmptyString, wxITEM_NORMAL );
 	fileMenu->Append( updateManuallyMI );
+	updateManuallyMI->Enable( false );
 
 	menuBar->Append( fileMenu, wxT("File") );
 
@@ -86,26 +96,26 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	openTracklistingGeneratorMI = new wxMenuItem( windowsMenu, wxID_ANY, wxString( wxT("Tracklisting Generator") ) , wxEmptyString, wxITEM_NORMAL );
 	windowsMenu->Append( openTracklistingGeneratorMI );
 
-	wxMenuItem* openTrackTextViewer;
 	openTrackTextViewer = new wxMenuItem( windowsMenu, wxID_ANY, wxString( wxT("Track Text Viewer") ) , wxEmptyString, wxITEM_NORMAL );
 	windowsMenu->Append( openTrackTextViewer );
+	openTrackTextViewer->Enable( false );
 
 	menuBar->Append( windowsMenu, wxT("Windows") );
 
 	toolsMenu = new wxMenu();
-	wxMenuItem* applyPatchFileMI;
 	applyPatchFileMI = new wxMenuItem( toolsMenu, wxID_ANY, wxString( wxT("Apply Patch File") ) , wxEmptyString, wxITEM_NORMAL );
 	toolsMenu->Append( applyPatchFileMI );
+	applyPatchFileMI->Enable( false );
 
-	wxMenuItem* exportSelectedTracksMI;
 	exportSelectedTracksMI = new wxMenuItem( toolsMenu, wxID_ANY, wxString( wxT("Export Selected Tracks As Customs") ) , wxEmptyString, wxITEM_NORMAL );
 	toolsMenu->Append( exportSelectedTracksMI );
+	exportSelectedTracksMI->Enable( false );
 
 	toolsMenu->AppendSeparator();
 
-	wxMenuItem* renameToUppercaseMI;
 	renameToUppercaseMI = new wxMenuItem( toolsMenu, wxID_ANY, wxString( wxT("Rename to Uppercase (PS3/RPCS3 only)") ) , wxEmptyString, wxITEM_NORMAL );
 	toolsMenu->Append( renameToUppercaseMI );
+	renameToUppercaseMI->Enable( false );
 
 	automaticRenamingToggleMI = new wxMenuItem( toolsMenu, wxID_ANY, wxString( wxT("Automatic renaming when closing") ) , wxEmptyString, wxITEM_CHECK );
 	#ifdef __WXMSW__
@@ -149,8 +159,10 @@ WindowBase::WindowBase( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_searchCtrl2->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( WindowBase::OnSearch ), NULL, this );
 	ExtractedFilesBTN->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::OpenExtractedFiles ), NULL, this );
 	addCustomBTN->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::AddCustom ), NULL, this );
+	addCustomZipBTN->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::AddCustomZip ), NULL, this );
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::OpenExtractedFiles ), this, openExtractedMI->GetId());
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::AddCustom ), this, addCustomMI->GetId());
+	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::AddCustomZip ), this, addCustomZipMI->GetId());
 	fileMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::ManualUpdate ), this, updateManuallyMI->GetId());
 	windowsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::OpenTrackisting ), this, openTracklistingGeneratorMI->GetId());
 	windowsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WindowBase::OpenTrackText ), this, openTrackTextViewer->GetId());
@@ -170,6 +182,7 @@ WindowBase::~WindowBase()
 	m_searchCtrl2->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( WindowBase::OnSearch ), NULL, this );
 	ExtractedFilesBTN->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::OpenExtractedFiles ), NULL, this );
 	addCustomBTN->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::AddCustom ), NULL, this );
+	addCustomZipBTN->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WindowBase::AddCustomZip ), NULL, this );
 
 }
 

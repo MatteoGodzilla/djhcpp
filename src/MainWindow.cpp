@@ -253,6 +253,14 @@ void MainWindow::ParseExtracted( fs::path path ) {
         wxLogMessage( wxString( "Successfully loaded " ) << count << " songs from tracklisting." );
 
         addCustomBTN->Enable( true );
+        addCustomMI->Enable(true);
+        addCustomZipBTN->Enable( true );
+        addCustomZipMI->Enable(true);
+        updateManuallyMI->Enable(true);
+        // ApplyPatchFile->Enable(true);
+        exportSelectedTracksMI->Enable(true);
+        openTrackTextViewer->Enable(true);
+        renameToUppercaseMI->Enable(true);
 
         UpdateTable();
         // add backup
@@ -282,6 +290,10 @@ void MainWindow::CreateAutomaticBackup() {
     CreateBackup( backupFolderPath, dateFolder );
 }
 
+void MainWindow::AddCustomZip( wxCommandEvent& event){
+    wxLogMessage(wxString(fs::temp_directory_path().generic_string()));
+}
+
 void MainWindow::AddCustom( wxCommandEvent& event ) {
     wxDirDialog* dialog = new wxDirDialog(
     this, "Open Custom's folder", "",
@@ -290,7 +302,7 @@ void MainWindow::AddCustom( wxCommandEvent& event ) {
         wxArrayString paths;
         dialog->GetPaths( paths );
 
-        bool showOverwriteDialog = true;
+        bool showOverwriteDialog = true; //???
         for ( size_t i = 0; i < paths.GetCount(); i++ ) {
             fs::path dir = fs::path( paths[i].ToStdWstring() );
             if ( fs::exists( dir / "DJH2" ) )

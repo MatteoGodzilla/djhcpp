@@ -33,6 +33,7 @@ public:
     //File Menu items
     void OpenExtractedFiles( wxCommandEvent& event ) override;
     void AddCustom(wxCommandEvent& event) override;
+    void AddCustomZip(wxCommandEvent& event) override;
     void ManualUpdate(wxCommandEvent& event) override;
 
     //Tools Menu items
