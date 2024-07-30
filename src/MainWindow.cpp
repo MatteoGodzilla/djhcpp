@@ -148,6 +148,8 @@ MainWindow::MainWindow() :
 
     // program start
 
+    std::cout << basePath << std::endl;
+
     if ( basePath.empty() )
         return;
 
@@ -253,14 +255,14 @@ void MainWindow::ParseExtracted( fs::path path ) {
         wxLogMessage( wxString( "Successfully loaded " ) << count << " songs from tracklisting." );
 
         addCustomBTN->Enable( true );
-        addCustomMI->Enable(true);
+        addCustomMI->Enable( true );
         addCustomZipBTN->Enable( true );
-        addCustomZipMI->Enable(true);
-        updateManuallyMI->Enable(true);
+        addCustomZipMI->Enable( true );
+        updateManuallyMI->Enable( true );
         // ApplyPatchFile->Enable(true);
-        exportSelectedTracksMI->Enable(true);
-        openTrackTextViewer->Enable(true);
-        renameToUppercaseMI->Enable(true);
+        exportSelectedTracksMI->Enable( true );
+        openTrackTextViewer->Enable( true );
+        renameToUppercaseMI->Enable( true );
 
         UpdateTable();
         // add backup
@@ -290,37 +292,43 @@ void MainWindow::CreateAutomaticBackup() {
     CreateBackup( backupFolderPath, dateFolder );
 }
 
-void MainWindow::AddCustomZip( wxCommandEvent& event){
-    wxFileDialog* dialog = new wxFileDialog(this, "Open zip file", "", "", "Zip files (*.zip)|*.zip",
-        wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
-    if(dialog->ShowModal() == wxID_OK){
+void MainWindow::AddCustomZip( wxCommandEvent& event ) {
+    wxFileDialog* dialog = new wxFileDialog( this, "Open zip file", "", "", "Zip files (*.zip)|*.zip", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE );
+    if ( dialog->ShowModal() == wxID_OK ) {
         wxArrayString paths;
-        dialog->GetPaths(paths);
+        dialog->GetPaths( paths );
 
-        bit7z::Bit7zLibrary lib("7z.dll");
-        bit7z::BitFileExtractor extractor(lib, bit7z::BitFormat::Zip);
-        extractor.setOverwriteMode(bit7z::OverwriteMode::Overwrite);
+        bit7z::Bit7zLibrary lib( "7z.dll" );
+        bit7z::BitFileExtractor extractor( lib, bit7z::BitFormat::Zip );
+        extractor.setOverwriteMode( bit7z::OverwriteMode::Overwrite );
 
-        for(size_t i = 0; i < paths.GetCount(); i++){
-            fs::path outputPath = fs::temp_directory_path() / "djhcpp" / std::to_string(i);
+        fs::path tempRoot = fs::temp_directory_path() / "djhcpp";
+
+        for ( size_t i = 0; i < paths.GetCount(); i++ ) {
+            fs::path outputPath = tempRoot / std::to_string( i );
             //library does not support wide strings
             std::string filePath = paths[i].ToStdString();
-            extractor.extract(filePath, outputPath.generic_string());
-            bit7z::BitArchiveReader archiveReader(lib, filePath, bit7z::BitFormat::Zip);
-            //find the DJH2 folder
+            extractor.extract( filePath, outputPath.generic_string() );
+            bit7z::BitArchiveReader archiveReader( lib, filePath, bit7z::BitFormat::Zip );
+
             for ( auto& item : archiveReader.items() ) {
-                if(item.name() == "DJH2" && item.isDir()){
+                if ( item.name() == "DJH2" && item.isDir() ) {
+                    //we found the DJH2 folder
                     fs::path filesToImport = outputPath / item.path();
-                    ProcessCustom(filesToImport);
+                    ProcessCustom( filesToImport );
+                } else if ( item.extension() == "xml" && !item.isDir() && fs::path( item.nativePath() ).parent_path() != "DJH1" ) {
+                    // we found the correct xml file
+                    fs::path filesToImport = outputPath / fs::path( item.nativePath() ).parent_path();
+                    ProcessCustom( filesToImport );
                 }
             }
         }
+        fs::remove_all( tempRoot );
     }
 }
 
 void MainWindow::AddCustom( wxCommandEvent& event ) {
-    wxDirDialog* dialog = new wxDirDialog( this, "Open Custom's folder", "",
-        wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST | wxDD_MULTIPLE );
+    wxDirDialog* dialog = new wxDirDialog( this, "Open Custom's folder", "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST | wxDD_MULTIPLE );
     if ( dialog->ShowModal() == wxID_OK ) {
         wxArrayString paths;
         dialog->GetPaths( paths );
@@ -485,14 +493,13 @@ void MainWindow::Export() {
             if ( !fs::exists( p ) )
                 continue;
 
-            std::ofstream trackLangStream( p, std::ios::binary);
+            std::ofstream trackLangStream( p, std::ios::binary );
             if ( trackLangStream.is_open() ) {
                 for ( auto& pair : textData ) {
                     if ( pair.first != std::wstring( L"" ) ) {
                         trackLangStream << pair.second << '\0';
                     }
                 }
-
                 trackLangStream.close();
             }
         }
