@@ -41,7 +41,7 @@ CustomTable::CustomTable( MainWindow* parent ) :
     AppendColumn( "Song 1" );
     AppendColumn( "Artist 2" );
     AppendColumn( "Song 2" );
-    AppendColumn( "BPM" );
+    AppendColumn( "BPM", wxLIST_FORMAT_RIGHT );
 
     //used to show enabled column (disabled for now)
     //AppendColumn("Enabled");
@@ -61,17 +61,18 @@ CustomTable::CustomTable( MainWindow* parent ) :
 
 wxString CustomTable::OnGetItemText( long item, long column ) const {
     TableRow row = data[item];
+    std::string emptySlotFiller = "-";
     switch ( column ) {
     case 1:
         return wxString( row.id );
     case 2:
-        return wxString::FromUTF8( row.artist1 );
+        return wxString::FromUTF8( row.artist1.empty() ? emptySlotFiller : row.artist1 );
     case 3:
-        return wxString::FromUTF8( row.song1 );
+        return wxString::FromUTF8( row.song1.empty() ? emptySlotFiller : row.song1 );
     case 4:
-        return wxString::FromUTF8( row.artist2 );
+        return wxString::FromUTF8( row.artist2.empty() ? emptySlotFiller : row.artist2 );
     case 5:
-        return wxString::FromUTF8( row.song2 );
+        return wxString::FromUTF8( row.song2.empty() ? emptySlotFiller : row.song2 );
     case 6:
         return wxString() << row.bpm;
     default:

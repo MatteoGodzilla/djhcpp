@@ -478,6 +478,9 @@ TrackTextViewer::TrackTextViewer( wxWindow* parent, wxWindowID id, const wxStrin
 	m_dataViewListColumn2 = table->AppendTextColumn( wxT("Value"), wxDATAVIEW_CELL_EDITABLE, -1, static_cast<wxAlignment>(wxALIGN_LEFT), wxDATAVIEW_COL_RESIZABLE );
 	bSizer13->Add( table, 1, wxALL|wxEXPAND, 5 );
 
+	updateBTN = new wxButton( this, wxID_ANY, wxT("Update Strings"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer13->Add( updateBTN, 0, wxALL|wxEXPAND, 5 );
+
 
 	this->SetSizer( bSizer13 );
 	this->Layout();
@@ -485,16 +488,16 @@ TrackTextViewer::TrackTextViewer( wxWindow* parent, wxWindowID id, const wxStrin
 	this->Centre( wxBOTH );
 
 	// Connect Events
-	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( TrackTextViewer::OnClose ) );
 	m_searchCtrl2->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TrackTextViewer::OnTextChange ), NULL, this );
 	table->Connect( wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE, wxDataViewEventHandler( TrackTextViewer::OnEditingDone ), NULL, this );
+	updateBTN->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TrackTextViewer::onFinalize ), NULL, this );
 }
 
 TrackTextViewer::~TrackTextViewer()
 {
 	// Disconnect Events
-	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( TrackTextViewer::OnClose ) );
 	m_searchCtrl2->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TrackTextViewer::OnTextChange ), NULL, this );
 	table->Disconnect( wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE, wxDataViewEventHandler( TrackTextViewer::OnEditingDone ), NULL, this );
+	updateBTN->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TrackTextViewer::onFinalize ), NULL, this );
 
 }

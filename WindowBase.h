@@ -187,11 +187,12 @@ class TrackTextViewer : public wxFrame
 		wxDataViewListCtrl* table;
 		wxDataViewColumn* m_dataViewListColumn1;
 		wxDataViewColumn* m_dataViewListColumn2;
+		wxButton* updateBTN;
 
 		// Virtual event handlers, override them in your derived class
-		virtual void OnClose( wxCloseEvent& event ) { event.Skip(); }
 		virtual void OnTextChange( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEditingDone( wxDataViewEvent& event ) { event.Skip(); }
+		virtual void onFinalize( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:

@@ -5,6 +5,7 @@
 StringsViewer::StringsViewer( MainWindow* parent ) :
     TrackTextViewer( parent ) {
     mainWindowRef = parent;
+    localTextData = std::map(mainWindowRef->textData);
     RebuildTable( std::string() );
 }
 
@@ -23,18 +24,26 @@ void StringsViewer::OnEditingDone( wxDataViewEvent& event ) {
 
     if ( col == 1 ) {
         // the value changed
-        mainWindowRef->textData[oldID] = update;
+        localTextData[oldID] = update;
     } else {
         //the id changed -> bit more complicated
-        std::string oldValue = mainWindowRef->textData[oldID];
-        mainWindowRef->textData.erase( oldID );
-        mainWindowRef->textData[update] = oldValue;
+        std::string oldValue = localTextData[oldID];
+        localTextData.erase( oldID );
+        localTextData[update] = oldValue;
     }
 }
 
+void StringsViewer::onFinalize( wxCommandEvent& event ) {
+    mainWindowRef->CreateAutomaticBackup();
+
+    mainWindowRef->textData = std::map(localTextData);
+    mainWindowRef->Export();
+    event.Skip();
+};
+
 void StringsViewer::RebuildTable( std::string query ) {
     table->DeleteAllItems();
-    for ( auto& pair : mainWindowRef->textData ) {
+    for ( auto& pair : localTextData ) {
         bool allowed = false;
 
         // check if the query is somewhat inside the current string
@@ -79,10 +88,4 @@ void StringsViewer::RebuildTable( std::string query ) {
             table->AppendItem( row );
         }
     }
-}
-
-void StringsViewer::OnClose( wxCloseEvent& event ) {
-    mainWindowRef->CreateAutomaticBackup();
-    mainWindowRef->Export();
-    event.Skip();
 }
