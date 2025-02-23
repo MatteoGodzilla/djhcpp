@@ -5,16 +5,16 @@
 StringsViewer::StringsViewer( MainWindow* parent ) :
     TrackTextViewer( parent ) {
     mainWindowRef = parent;
-    RebuildTable( std::wstring() );
+    RebuildTable( std::string() );
 }
 
 void StringsViewer::OnTextChange( wxCommandEvent& event ) {
     //table->DeleteAllItems();
-    RebuildTable( event.GetString().ToStdWstring() );
+    RebuildTable( event.GetString().ToStdString() );
 }
 
 void StringsViewer::OnEditingDone( wxDataViewEvent& event ) {
-    std::wstring update = event.GetValue().GetString().ToStdWstring();
+    std::string update = event.GetValue().GetString().ToStdString();
     int row = table->GetSelectedRow();
     int col = event.GetColumn();
 
@@ -26,13 +26,13 @@ void StringsViewer::OnEditingDone( wxDataViewEvent& event ) {
         mainWindowRef->textData[oldID] = update;
     } else {
         //the id changed -> bit more complicated
-        std::wstring oldValue = mainWindowRef->textData[oldID];
+        std::string oldValue = mainWindowRef->textData[oldID];
         mainWindowRef->textData.erase( oldID );
         mainWindowRef->textData[update] = oldValue;
     }
 }
 
-void StringsViewer::RebuildTable( std::wstring query ) {
+void StringsViewer::RebuildTable( std::string query ) {
     table->DeleteAllItems();
     for ( auto& pair : mainWindowRef->textData ) {
         bool allowed = false;
@@ -74,8 +74,8 @@ void StringsViewer::RebuildTable( std::wstring query ) {
 
         if ( allowed ) {
             wxVector<wxVariant> row = wxVector<wxVariant>();
-            row.push_back( wxString() << pair.first );
-            row.push_back( wxString() << pair.second );
+            row.push_back( wxString::FromUTF8(pair.first) );
+            row.push_back( wxString::FromUTF8(pair.second) );
             table->AppendItem( row );
         }
     }

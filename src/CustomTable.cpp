@@ -2,15 +2,15 @@
 
 #include "MainWindow.h"
 
-int FuzzyExact( std::wstring query, std::wstring text ) {
+int FuzzyExact( std::string query, std::string text ) {
     size_t searchIndex = 0;
     size_t textIndex = 0;
 
-    for ( wchar_t& ch : query ) {
+    for ( auto& ch : query ) {
         ch = std::tolower( ch );
     }
 
-    for ( wchar_t& ch : text ) {
+    for ( auto& ch : text ) {
         ch = std::tolower( ch );
     }
 
@@ -65,13 +65,13 @@ wxString CustomTable::OnGetItemText( long item, long column ) const {
     case 1:
         return wxString( row.id );
     case 2:
-        return wxString( row.artist1 );
+        return wxString::FromUTF8( row.artist1 );
     case 3:
-        return wxString( row.song1 );
+        return wxString::FromUTF8( row.song1 );
     case 4:
-        return wxString( row.artist2 );
+        return wxString::FromUTF8( row.artist2 );
     case 5:
-        return wxString( row.song2 );
+        return wxString::FromUTF8( row.song2 );
     case 6:
         return wxString() << row.bpm;
     default:
@@ -83,7 +83,7 @@ int CustomTable::OnGetItemColumnImage( long item, long column ) const {
     return -1;
 }
 
-void CustomTable::Search( std::wstring query ) {
+void CustomTable::Search( std::string query ) {
     //actually just sorts
     std::sort( data.begin(), data.end(), [&]( const TableRow& a, const TableRow& b ) {
         //calculate max score for each row

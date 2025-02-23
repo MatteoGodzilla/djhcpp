@@ -64,7 +64,7 @@ public:
 
     CURL* curlSession = NULL;
     bool dirty = false;
-    std::map<std::wstring, std::wstring> textData;
+    std::map<std::string, std::string> textData;
 private:
     CustomTable* mainTable;
     //wxXmlDocument tracklisting;
@@ -73,7 +73,7 @@ private:
     std::filesystem::path tracklistingPath;
     std::filesystem::path tracIDPath;
     static const int LANG_COUNT = 6;
-    std::wstring tracLangFiles[LANG_COUNT] = {L"TRACE.txt", L"TRACF.txt", L"TRACSNA", L"TRACS.txt", L"TRACG.txt", L"TRACI.txt"};
+    std::string tracLangFiles[LANG_COUNT] = {"TRACE.txt", "TRACF.txt", "TRACSNA", "TRACS.txt", "TRACG.txt", "TRACI.txt"};
     //std::filesystem::path tracEPath;
     //backups
     std::filesystem::path backupFolderPath;

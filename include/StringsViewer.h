@@ -11,7 +11,7 @@ public:
     virtual void OnEditingDone( wxDataViewEvent& event ) override;
     virtual void OnClose( wxCloseEvent& event ) override;
 private:
-    void RebuildTable(std::wstring query);
+    void RebuildTable(std::string query);
 
     MainWindow* mainWindowRef;
 };

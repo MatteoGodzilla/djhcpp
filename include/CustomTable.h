@@ -11,12 +11,13 @@
 #include "tinyxml2.h"
 #include "TrackInfoViewer.h"
 
+//This is the actual data parsed, so this MUST have std::string
 struct TableRow{
-    std::wstring id;
-    std::wstring artist1;
-    std::wstring song1;
-    std::wstring artist2;
-    std::wstring song2;
+    std::string id;
+    std::string artist1;
+    std::string song1;
+    std::string artist2;
+    std::string song2;
     float bpm;
     //not shown
     bool enabled = false;
@@ -30,7 +31,7 @@ public:
     CustomTable(MainWindow *parent);
     wxString OnGetItemText(long item, long column) const override;
     int OnGetItemColumnImage(long item, long column) const override;
-    void Search(std::wstring query);
+    void Search(std::string query);
     void OnColumnClick(wxListEvent& event);
     void OnKeyDown(wxListEvent& event);
     void OnActivate(wxListEvent& event);
