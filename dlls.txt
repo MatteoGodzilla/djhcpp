@@ -1,0 +1,17 @@
+libcrypto-3-x64.dll
+libcurl-4.dll
+libgcc_s_seh-1.dll
+libwinpthread-1.dll
+libbrotlidec.dll
+libidn2-0.dll
+libpsl-5.dll
+libnghttp2-14.dll
+libssh2-1.dll
+libssl-3-x64.dll
+zlib1.dll
+libstdc++-6.dll
+libzstd.dll 
+libbrotlicommon.dll 
+libintl-8.dll 
+libunistring-5.dll 
+libiconv-2.dll 
