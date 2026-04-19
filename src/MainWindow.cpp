@@ -542,7 +542,7 @@ void MainWindow::TracksToCustoms( wxCommandEvent& event ) {
 
             //  handle TRAC strings
             fs::path bar = djh2Folder / "Info for TRAC.csv";
-            std::wofstream csv = std::wofstream( bar.generic_string() );
+            std::ofstream csv = std::ofstream( bar.generic_string() );
 
             tinyxml2::XMLElement* element;
 
