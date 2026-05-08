@@ -7,6 +7,12 @@
     let 
         system = "x86_64-linux";
         pkgs = import nixpkgs { inherit system; };
+        dependencies = [ 
+            pkgs.cmake
+            pkgs.wxwidgets_3_3
+            pkgs.curlFull
+            pkgs.cpm-cmake
+        ];
     in
     {
         packages.${system}.default = pkgs.stdenv.mkDerivation {
@@ -18,12 +24,7 @@
                 deepClone = true;
                 hash="sha256-t8aQo64K4eK0TEjRjgdk/iwYueflHrTRmrHC/Q9Ff84=";
             };
-            buildInputs = [ 
-                pkgs.cmake
-                pkgs.wxwidgets_3_3
-                pkgs.curlFull
-                pkgs.cpm-cmake
-            ];
+            buildInputs = dependencies;
             buildPhase = ''
                 runHook preBuild
                 ./build-release.sh
@@ -35,6 +36,9 @@
                 cp ./build/djhcpp $out/bin
                 runHook postInstall
             '';
+        };
+        devShells.${system}.default = pkgs.mkShell {
+            packages = dependencies;            
         };
     };
 }
